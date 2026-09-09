@@ -913,16 +913,16 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             draw_chart_grid $canvas $x $y $w $h 4 5
             $canvas create line $x [expr {$y + $h}] [expr {$x + $w}] [expr {$y + $h}] -fill "#333333" -width 1
             $canvas create line $x $y $x [expr {$y + $h}] -fill "#333333" -width 1
-            set rmsf_label "RMSF"
+            set rmsf_label "RMSF (Å)"
             if {$multi_panel} {
-                set rmsf_label "RMSF ([dict get $panel label])"
+                set rmsf_label "RMSF (Å)"
             }
             $canvas create text [expr {$x + ($w / 2.0)}] [expr {$y + $h + 22}] \
                 -anchor n \
                 -font TkDefaultFont \
                 -fill "#333333" \
                 -text $rmsf_label
-            if {[llength $panel_points] == 0 || $row_count <= 1} {
+            if {[llength $panel_points] == 0} {
                 $canvas create text [expr {$x + 8}] [expr {$y + 18}] \
                     -anchor w \
                     -font TkSmallCaptionFont \
@@ -945,7 +945,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
                 } else {
                     set sx [expr {$x + ((double($value) - double($min_val)) / (double($max_val) - double($min_val)) * $w)}]
                 }
-                set sy [expr {$y + (double($row) / double($row_count - 1) * $h)}]
+                set sy [expr {$y + ((double($row) + 0.5) / double($row_count) * $h)}]
                 lappend coords $sx $sy
             }
             if {[llength $coords] >= 4} {
@@ -1079,7 +1079,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
                 $plot_w \
                 [expr {[dict get $layout rmsd_y1] - [dict get $layout rmsd_y0]}] \
                 $rmsd_points \
-                "RMSD" \
+                "RMSD (Å)" \
                 "#111111" \
                 0.0 \
                 y_axis
@@ -1099,7 +1099,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
                     $plot_w \
                     [expr {$panel_rmsd_y1 - $panel_rmsd_y0}] \
                     [chain_rmsd_points $panel $rmsd_points $rmsd_by_chain_points] \
-                    "RMSD ([dict get $panel label])" \
+                    "RMSD (Å)" \
                     "#111111" \
                     0.0 \
                     y_axis
@@ -1461,12 +1461,14 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
     }
 
     proc select_record {record} {
+        variable canvas
         variable selected_record
         variable status_var
         clear_canvas_highlight
         clear_structure_highlight
         set selected_record $record
         draw_canvas_selection $record
+        context_selection $canvas $record
 
         set molids [::RMSXFlipbookTimeline::state_get molids {}]
         set slice_zero [expr {[dict get $record slice_index] - 1}]
@@ -1715,6 +1717,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             [dict get $prepared rmsd_by_chain_points] \
             [dict get $prepared rmsd_slice_points] \
             [dict get $prepared rmsf_points]
+        context_attach $target_canvas $prepared
         return [result_from_prepared $prepared 1 [dict get [dict get $prepared opts] pick]]
     }
 
@@ -1786,5 +1789,149 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             [dict get $result rmsf_points] \
             [file tail [dict get $result csv]]]
         return $result
+    }
+}
+
+# Linked RMSD/RMSF comparison plots. Geometry belongs to each canvas so a
+# pop-out and the embedded heatmap cannot silently select each other's cells.
+namespace eval ::RMSXFlipbookTimeline::PlotWindow {
+    variable context_views {}
+
+    proc context_forget {target actual} {
+        variable context_views
+        if {$target eq $actual} {dict unset context_views $target}
+    }
+
+    proc context_attach {target prepared} {
+        variable context_views
+        set layout [dict get $prepared layout]
+        set zones {}
+        set panel_index 0
+        foreach panel [dict get $layout panels] {
+            if {[dict get $layout show_rmsd]} {
+                if {[dict get $layout multi_panel]} {
+                    set y0 [dict get $panel rmsd_y0]; set y1 [dict get $panel rmsd_y1]
+                } else {
+                    set y0 [dict get $layout rmsd_y0]; set y1 [dict get $layout rmsd_y1]
+                }
+                set points [chain_rmsd_points $panel [dict get $prepared rmsd_points] [dict get $prepared rmsd_by_chain_points]]
+                if {[llength $points]} {
+                    lassign [xy_extents $points] frame_min frame_max
+                    lappend zones [dict create kind rmsd panel $panel_index x0 [dict get $layout left] x1 [expr {[dict get $layout left]+[dict get $layout plot_width]}] y0 $y0 y1 $y1 points $points frame_min $frame_min frame_max $frame_max]
+                }
+            }
+            if {[dict get $layout show_rmsf]} {
+                lappend zones [dict create kind rmsf panel $panel_index x0 [dict get $layout rmsf_x0] x1 [dict get $layout rmsf_x1] y0 [dict get $panel y0] y1 [dict get $panel y1] points [panel_rmsf_points $panel [dict get $prepared rmsf_points]]]
+            }
+            incr panel_index
+        }
+        set generation {}; set columns {}
+        set current [::RMSXFlipbookTimeline::Results::get]
+        if {$current ne {} && [dict exists $current folder] && [file normalize [dict get $current folder]] eq [file normalize [dict get $prepared folder]]} {
+            set generation [dict get $current id]
+            if {[dict exists $current dataset columns]} {set columns [dict get $current dataset columns]}
+        }
+        dict set context_views $target [dict create layout $layout zones $zones generation $generation columns $columns]
+        bind $target <Motion> [list ::RMSXFlipbookTimeline::PlotWindow::context_event $target %x %y 0]
+        bind $target <Button-1> +[list ::RMSXFlipbookTimeline::PlotWindow::context_event $target %x %y 1]
+        # Navigation::attach replaces Destroy on redraw; append once afterward.
+        bind $target <Destroy> +[list ::RMSXFlipbookTimeline::PlotWindow::context_forget $target %W]
+    }
+
+    proc context_column_for_frame {columns frame} {
+        set best -1; set distance Inf; set index 0
+        foreach column $columns {
+            if {[dict exists $column frame_start] && [dict exists $column frame_end]} {
+                set first [dict get $column frame_start]; set last [dict get $column frame_end]
+                set d [expr {max(double($first)-$frame,0.0,$frame-double($last))}]
+                if {$d < $distance} {set distance $d; set best $index}
+            }
+            incr index
+        }
+        return $best
+    }
+
+    proc context_hit {view x y selected} {
+        set layout [dict get $view layout]
+        foreach zone [dict get $view zones] {
+            if {$x < [dict get $zone x0] || $x > [dict get $zone x1] || $y < [dict get $zone y0] || $y > [dict get $zone y1]} {continue}
+            set panel [lindex [dict get $layout panels] [dict get $zone panel]]
+            set rows [dict get $panel row_indices]
+            set row [lindex $rows end]; set column 0
+            if {[llength $selected] == 2} {
+                set column [lindex $selected 1]
+                if {[lsearch -exact $rows [lindex $selected 0]] >= 0} {set row [lindex $selected 0]}
+            }
+            if {[dict get $zone kind] eq "rmsf"} {
+                set fraction [expr {($y-[dict get $zone y0])/double([dict get $zone y1]-[dict get $zone y0])}]
+                set local [expr {min([llength $rows]-1,max(0,int($fraction*[llength $rows])))}]
+                set row [lindex $rows $local]; set value {}
+                foreach point [dict get $zone points] {if {[lindex $point 0] == $local} {set value [lindex $point 1]; break}}
+                if {$value eq {}} {return {}}
+                set message [format {%s · residue %s · RMSF %.3f Å} [dict get $panel label] [dict get [lindex [dict get $layout cell_records] 0] resid] $value]
+                foreach rec [dict get $layout cell_records] {
+                    if {[dict get $rec row] == $row} {set message [format {%s · %s · RMSF %.3f Å} [dict get $panel label] [residue_label $rec] $value]; break}
+                }
+            } else {
+                set fraction [expr {($x-[dict get $zone x0])/double([dict get $zone x1]-[dict get $zone x0])}]
+                set wanted [expr {[dict get $zone frame_min]+$fraction*([dict get $zone frame_max]-[dict get $zone frame_min])}]
+                set nearest {}; set distance Inf
+                foreach point [dict get $zone points] {
+                    set d [expr {abs([lindex $point 0]-$wanted)}]
+                    if {$d < $distance} {set distance $d; set nearest $point}
+                }
+                lassign $nearest frame value
+                set column [context_column_for_frame [dict get $view columns] $frame]
+                set message [format {%s · frame %.0f · RMSD %.3f Å} [dict get $panel label] $frame $value]
+                if {$column >= 0} {append message [format { · slice %d} [expr {$column+1}]]}
+            }
+            return [dict create coordinate [list $row $column] message $message]
+        }
+        return {}
+    }
+
+    proc context_event {target x y select} {
+        variable context_views; variable status_var
+        if {![dict exists $context_views $target]} {return}
+        set selected {}
+        if {[dict exists $::RMSXFlipbookTimeline::Navigation::views $target selected]} {set selected [dict get $::RMSXFlipbookTimeline::Navigation::views $target selected]}
+        set view [dict get $context_views $target]
+        set hit [context_hit $view [$target canvasx $x] [$target canvasy $y] $selected]
+        if {$hit eq {}} {return}
+        if {$select} {
+            set current [::RMSXFlipbookTimeline::Results::get]
+            if {$current eq {} || [dict get $view generation] ne [dict get $current id]} {return}
+            ::RMSXFlipbookTimeline::Navigation::choose $target [dict get $hit coordinate]
+        }
+        set status_var [dict get $hit message]
+        if {[info exists ::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_canvas] && $target eq $::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_canvas} {
+            set ::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_status_var $status_var
+        }
+        return $hit
+    }
+
+    proc context_selection {target record} {
+        variable context_views
+        if {![dict exists $context_views $target]} {return}
+        set view [dict get $context_views $target]
+        set columns [dict get $view columns]
+        set column [expr {[dict get $record slice_index]-1}]
+        set metadata [lindex $columns $column]
+        foreach zone [dict get $view zones] {
+            if {[dict get $zone kind] eq "rmsd"} {
+                if {![dict exists $metadata frame_start] || ![dict exists $metadata frame_end]} {continue}
+                set frame [expr {([dict get $metadata frame_start]+[dict get $metadata frame_end])/2.0}]
+                set span [expr {[dict get $zone frame_max]-[dict get $zone frame_min]}]
+                set fraction [expr {$span > 0 ? ($frame-[dict get $zone frame_min])/$span : 0.5}]
+                set x [expr {[dict get $zone x0]+[clamp $fraction 0 1]*([dict get $zone x1]-[dict get $zone x0])}]
+                $target create line $x [dict get $zone y0] $x [dict get $zone y1] -fill "#b42318" -width 2 -tags {selection_highlight comparison_marker}
+            } elseif {[dict exists $record row]} {
+                set panel [lindex [dict get $view layout panels] [dict get $zone panel]]
+                set local [lsearch -exact [dict get $panel row_indices] [dict get $record row]]
+                if {$local < 0} {continue}
+                set y [expr {[dict get $zone y0]+($local+0.5)/[dict get $panel row_count]*([dict get $zone y1]-[dict get $zone y0])}]
+                $target create line [dict get $zone x0] $y [dict get $zone x1] $y -fill "#b42318" -width 2 -tags {selection_highlight comparison_marker}
+            }
+        }
     }
 }

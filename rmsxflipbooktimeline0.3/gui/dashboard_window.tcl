@@ -1401,6 +1401,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
                 [dict get [dict get $prepared layout] canvas_width] \
                 [dict get [dict get $prepared layout] canvas_height]]
             ::RMSXFlipbookTimeline::Navigation::attach $embedded_heatmap_canvas [dict get [dict get $prepared layout] records] [list ::RMSXFlipbookTimeline::Dashboard::select_embedded_native $embedded_heatmap_canvas] [list ::RMSXFlipbookTimeline::PlotWindow::clear_on_canvas $embedded_heatmap_canvas]
+            ::RMSXFlipbookTimeline::PlotWindow::context_attach $embedded_heatmap_canvas $prepared
             $embedded_heatmap_canvas bind pickable <Motion> {::RMSXFlipbookTimeline::Dashboard::embedded_native_plot_hover_current}
             $embedded_heatmap_canvas bind pickable <Leave> {}
         }
@@ -3654,7 +3655,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             -textvariable ::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_status_var \
             -wraplength 520 -anchor w
         ttk::checkbutton $parent.context \
-            -text "RMSD/RMSF" \
+            -text "Compare: RMSD / RMSF" \
             -variable ::RMSXFlipbookTimeline::Dashboard::native_show_context_plots \
             -command ::RMSXFlipbookTimeline::Dashboard::refresh_native_heatmap_view
         ttk::label $parent.citation \
@@ -3664,10 +3665,11 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             -justify right \
             -wraplength 320
         set embedded_heatmap_canvas $parent.canvas
-        grid $parent.canvas -row 0 -column 0 -columnspan 2 -sticky nsew
-        grid $parent.summary -row 1 -column 0 -columnspan 2 -sticky ew -pady {3 0}
-        grid $parent.context -row 2 -column 0 -sticky w -pady {2 0}
-        grid $parent.citation -row 2 -column 1 -sticky ne -padx {14 0} -pady {2 0}
+        grid $parent.canvas -row 1 -column 0 -columnspan 2 -sticky nsew
+        grid $parent.summary -row 2 -column 0 -columnspan 2 -sticky ew -pady {3 0}
+        grid $parent.context -row 0 -column 0 -sticky w -pady {2 4}
+        help_tip $parent.context "Show comparison plots. Click RMSD to select a slice; click RMSF to select a residue. Heatmap selections mark both plots."
+        grid $parent.citation -row 0 -column 1 -sticky ne -padx {14 0} -pady {2 0}
         bind $parent.canvas <Configure> {::RMSXFlipbookTimeline::Dashboard::schedule_embedded_heatmap_resize_redraw %w}
         help_tip $parent.citation $citation_footer_note
         clear_embedded_heatmap

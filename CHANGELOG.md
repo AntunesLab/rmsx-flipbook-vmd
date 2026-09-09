@@ -2,6 +2,7 @@
 
 ## 0.3 — review build
 
+- Restore linked comparison plots: click RMSD to choose a slice and RMSF to choose a residue, with cross-plot selection markers, values in Å, and per-canvas/result guards. Move the comparison toggle above the embedded heatmap and align RMSF samples to heatmap cell centers.
 - Restore per-protein rotation when VMD reopens a closed dashboard; each
   protein turns about its own center while the flipbook row stays in place.
 - One version authority (`rmsxflipbooktimeline0.3/VERSION`) and active package.

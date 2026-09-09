@@ -353,6 +353,14 @@
       "script": "smoke_linked_residue_identity.tcl",
       "capability": "vmd",
       "experimental": true
+    },
+    {
+      "id": "comparison_plots",
+      "script": "smoke_comparison_plots.tcl",
+      "capability": "gui",
+      "seed_outputs": [
+        "native-rmsx-real-multichain-protease"
+      ]
     }
   ]
 }
