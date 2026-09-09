@@ -1,0 +1,358 @@
+{
+  "schema": 1,
+  "tests": [
+    {
+      "id": "angle_overlay",
+      "script": "smoke_angle_overlay.tcl",
+      "capability": "tcl",
+      "experimental": true
+    },
+    {
+      "id": "controls",
+      "script": "smoke_controls.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ],
+      "args": [
+        "outputs/native-rmsx-1ubq-9/chain_7_rmsx"
+      ]
+    },
+    {
+      "id": "csv_fallback",
+      "script": "smoke_csv_fallback.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ],
+      "args": [
+        "fixtures/upstream/test_files/1UBQ_rmsx/chain_7_rmsx"
+      ]
+    },
+    {
+      "id": "dashboard_commands",
+      "script": "smoke_dashboard_commands.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "dashboard_show",
+      "script": "smoke_dashboard_show.tcl",
+      "capability": "gui",
+      "async": true
+    },
+    {
+      "id": "gui_native_slice_size_command",
+      "script": "smoke_gui_native_slice_size_command.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "gui_show",
+      "script": "smoke_gui_show.tcl",
+      "capability": "gui",
+      "async": true
+    },
+    {
+      "id": "gui_timeline_commands",
+      "script": "smoke_gui_timeline_commands.tcl",
+      "capability": "tcl",
+      "experimental": true
+    },
+    {
+      "id": "heatmap_folder",
+      "script": "smoke_heatmap_folder.tcl",
+      "capability": "tcl",
+      "args": [
+        "fixtures/upstream/test_files/example1/chain_7_rmsx",
+        "outputs/heatmap.svg"
+      ]
+    },
+    {
+      "id": "heatmap_svg",
+      "script": "smoke_heatmap_svg.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "hotkeys",
+      "script": "smoke_hotkeys.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "load_folder",
+      "script": "smoke_load_folder.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ],
+      "args": [
+        "outputs/native-rmsx-1ubq-9/chain_7_rmsx"
+      ]
+    },
+    {
+      "id": "manifest_reload",
+      "script": "smoke_manifest_reload.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "mouse_preserve_view",
+      "script": "smoke_mouse_preserve_view.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-slice-size-smoke"
+      ]
+    },
+    {
+      "id": "mouse_rotation",
+      "script": "smoke_mouse_rotation.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-slice-size-smoke"
+      ]
+    },
+    {
+      "id": "multimodel_export",
+      "script": "smoke_multimodel_export.tcl",
+      "capability": "vmd",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "native_all_chain",
+      "script": "smoke_native_all_chain.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_analysis",
+      "script": "smoke_native_analysis.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_dna",
+      "script": "smoke_native_dna.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_file_types",
+      "script": "smoke_native_file_types.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_lddt",
+      "script": "smoke_native_lddt.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_mask_log",
+      "script": "smoke_native_mask_log.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_output_safety",
+      "script": "smoke_native_output_safety.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "native_progress",
+      "script": "smoke_native_progress.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_real_multichain",
+      "script": "smoke_native_real_multichain.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_shift_map",
+      "script": "smoke_native_shift_map.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_slice_size",
+      "script": "smoke_native_slice_size.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "native_stale_output",
+      "script": "smoke_native_stale_output.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "package",
+      "script": "smoke_package.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "plot_window",
+      "script": "smoke_plot_window.tcl",
+      "capability": "gui",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "plot_window_multichain_draw",
+      "script": "smoke_plot_window_multichain_draw.tcl",
+      "capability": "gui",
+      "seed_outputs": [
+        "native-rmsx-real-multichain-protease"
+      ],
+      "async": true
+    },
+    {
+      "id": "release_experimental",
+      "script": "smoke_release_experimental.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "release_package",
+      "script": "smoke_release_package.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "render_export",
+      "script": "smoke_render_export.tcl",
+      "capability": "render",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "repair_bfactors",
+      "script": "smoke_repair_bfactors.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "repo_examples",
+      "script": "smoke_repo_examples.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "report_svg",
+      "script": "smoke_report_svg.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_cross_correlation",
+      "script": "smoke_timeline_cross_correlation.tcl",
+      "capability": "vmd",
+      "experimental": true,
+      "optional": true
+    },
+    {
+      "id": "timeline_filter_svg",
+      "script": "smoke_timeline_filter_svg.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_live_calculators",
+      "script": "smoke_timeline_live_calculators.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "timeline_neighborhood",
+      "script": "smoke_timeline_neighborhood.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_neighborhood_vmd",
+      "script": "smoke_timeline_neighborhood_vmd.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "timeline_package_isolation",
+      "script": "smoke_timeline_package_isolation.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_rmsx_csv",
+      "script": "smoke_timeline_rmsx_csv.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_rmsx_slice_targets",
+      "script": "smoke_timeline_rmsx_slice_targets.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "timeline_tml_roundtrip",
+      "script": "smoke_timeline_tml_roundtrip.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "viewer_plot",
+      "script": "smoke_viewer_plot.tcl",
+      "capability": "vmd",
+      "experimental": true,
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "timeline_filter_png_gui",
+      "script": "smoke_timeline_filter_svg.tcl",
+      "capability": "gui"
+    },
+    {
+      "id": "core_transactions",
+      "script": "smoke_core_transactions.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "residue_identity_v2",
+      "script": "smoke_residue_identity_v2.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "session_operation",
+      "script": "smoke_session_operation.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_cancel",
+      "script": "smoke_timeline_cancel.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "dashboard_current_result",
+      "script": "smoke_dashboard_current_result.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "native_transaction_lifecycle",
+      "script": "smoke_native_transaction_lifecycle.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "navigation_v03",
+      "script": "smoke_navigation_v03.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "staged_loader_v03",
+      "script": "smoke_staged_loader_v03.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "figure_export_v03",
+      "script": "smoke_figure_export_v03.tcl",
+      "capability": "render"
+    },
+    {
+      "id": "session_lifecycle_v03",
+      "script": "smoke_session_lifecycle_v03.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "linked_residue_identity",
+      "script": "smoke_linked_residue_identity.tcl",
+      "capability": "vmd",
+      "experimental": true
+    }
+  ]
+}

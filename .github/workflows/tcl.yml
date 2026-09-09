@@ -1,0 +1,57 @@
+name: Portable Tcl and release tooling
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tcl:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Tcl 8.6 on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y tcl8.6
+      - name: Install Tcl 8.6 on macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install tcl-tk@8
+          echo "$(brew --prefix tcl-tk@8)/bin" >> "$GITHUB_PATH"
+      - name: Install Tcl 8.6 on Windows
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        id: msys2
+        with:
+          msystem: MINGW64
+          install: mingw-w64-x86_64-tcl
+          path-type: inherit
+      - name: Select Windows Tcl runtime
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+        run: '"TCLSH=$env:MSYS2_LOCATION\mingw64\bin\tclsh86.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append'
+      - name: Verify source and tooling
+        run: |
+          python scripts/check_release.py
+          python scripts/tooling_tests.py
+      - name: Run portable Tcl suite
+        run: python scripts/run_tests.py --profile tcl --artifacts artifacts/tcl
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tcl-${{ matrix.os }}
+          path: artifacts/tcl/**/test.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tcl-summary-${{ matrix.os }}
+          path: artifacts/tcl/summary.json
