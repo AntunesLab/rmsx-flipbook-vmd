@@ -1,7 +1,7 @@
 package require Tcl 8.6
 set package_dir [file dirname [file dirname [info script]]]
-source [file join $package_dir rmsxflipbooktimeline.tcl]
-source [file join $package_dir gui dashboard_window.tcl]
+source -encoding utf-8 [file join $package_dir rmsxflipbooktimeline.tcl]
+source -encoding utf-8 [file join $package_dir gui dashboard_window.tcl]
 proc expect {expression message} { if {![uplevel 1 [list expr $expression]]} { error $message } }
 set original [file join [pwd] result-original]
 set other [file join [pwd] next-input]

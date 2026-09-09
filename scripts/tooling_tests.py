@@ -24,13 +24,13 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode == 0, success, result.stdout)
 
     def test_round_trip_and_duplicate_install_preserve_user_startup(self):
-        for original in [b"set user_setting 17\r\n", b"set user_setting 17"]:
+        for original in [b"set user_setting 17\r\n", b"set user_setting 17", b"# legacy comment: \xe9\r\nset user_setting 17\r\n"]:
             with tempfile.TemporaryDirectory(prefix="rmsx-install-test-") as tmp:
                 home = Path(tmp)
                 (home / "vmd.rc").write_bytes(original)
                 self.run_installer(home, "install")
                 self.run_installer(home, "install")
-                self.assertEqual((home / "vmd.rc").read_text().count(install.START), 1)
+                self.assertEqual((home / "vmd.rc").read_bytes().count(install.START.encode()), 1)
                 tclsh = os.environ.get("TCLSH", shutil.which("tclsh8.6") or "tclsh")
                 script = home / "check_install.tcl"
                 script.write_text('set calls 0\nproc vmd_install_extension {args} {incr ::calls}\n' +
@@ -38,7 +38,7 @@ class InstallerTests(unittest.TestCase):
                                   'source ' + install.tcl_literal(home / "vmd.rc") + '\n' +
                                   'if {$calls != 1} {error "Duplicate registration"}\n' +
                                   'if {[package provide rmsxflipbooktimeline] ne "' +
-                                  (run_tests.PACKAGE / "VERSION").read_text().strip() +
+                                  (run_tests.PACKAGE / "VERSION").read_text(encoding="utf-8").strip() +
                                   '"} {error "Wrong installed version"}\n')
                 result = subprocess.run([tclsh, str(script)], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 self.assertEqual(result.returncode, 0, result.stdout)
@@ -48,20 +48,20 @@ class InstallerTests(unittest.TestCase):
     def test_unmanaged_and_modified_files_are_preserved(self):
         with tempfile.TemporaryDirectory(prefix="rmsx-install-test-") as tmp:
             home = Path(tmp)
-            version = (run_tests.PACKAGE / "VERSION").read_text().strip()
+            version = (run_tests.PACKAGE / "VERSION").read_text(encoding="utf-8").strip()
             target = home / "plugin path/tcl" / f"rmsxflipbooktimeline{version}"
             target.mkdir(parents=True)
             keep = target / "private-notes.txt"
             keep.write_text("keep this")
             self.run_installer(home, "install", success=False)
-            self.assertEqual(keep.read_text(), "keep this")
+            self.assertEqual(keep.read_text(encoding="utf-8"), "keep this")
             keep.unlink()
             target.rmdir()
             self.run_installer(home, "install")
             installed = target / "VERSION"
             installed.write_text("user modification")
             self.run_installer(home, "uninstall", success=False)
-            self.assertEqual(installed.read_text(), "user modification")
+            self.assertEqual(installed.read_text(encoding="utf-8"), "user modification")
 
     def test_failed_upgrade_restores_owned_package_startup_and_receipt(self):
         with tempfile.TemporaryDirectory(prefix="rmsx-install-rollback-") as tmp:

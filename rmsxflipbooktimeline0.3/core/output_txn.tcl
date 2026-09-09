@@ -21,12 +21,14 @@ namespace eval ::RMSXFlipbookTimeline::OutputTxn {
     }
     proc read_dict {path} {
         set f [open $path r]
+        fconfigure $f -encoding utf-8
         try {set data [read $f]} finally {close $f}
         if {[catch {dict size $data}]} {error "Invalid RMSX metadata: $path"}
         return $data
     }
     proc write_dict {path data} {
         set f [open $path {WRONLY CREAT EXCL}]
+        fconfigure $f -encoding utf-8 -translation lf
         try {puts $f $data; flush $f} finally {close $f}
     }
     proc digest {path} {
@@ -244,8 +246,23 @@ namespace eval ::RMSXFlipbookTimeline::OutputTxn {
     }
     proc rewrite_paths {value from to} {
         if {$value eq $from} {return $to}
-        if {[string first "${from}/" $value] == 0} {return "${to}[string range $value [string length $from] end]"}
-        if {[catch {llength $value} n] || $n < 2} {return $value}
+        set is_list [expr {![catch {llength $value} n]}]
+        set path_list 0
+        if {$is_list && $n > 1} {
+            set path_list 1
+            foreach item $value {
+                if {$item ne "" && [file pathtype $item] ne "absolute"} {set path_list 0; break}
+            }
+        }
+        if {!$path_list && [string first "${from}/" $value] == 0} {return "${to}[string range $value [string length $from] end]"}
+        if {!$is_list || $n == 0} {return $value}
+        if {$n == 1} {
+            set item [lindex $value 0]
+            if {$item eq $value} {return $value}
+            set next [rewrite_paths $item $from $to]
+            if {$next ne $item} {return [list $next]}
+            return $value
+        }
         set out {}
         set changed 0
         foreach item $value {

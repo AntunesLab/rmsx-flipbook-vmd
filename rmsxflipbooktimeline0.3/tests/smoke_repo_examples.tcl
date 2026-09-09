@@ -1,7 +1,7 @@
 ################################################################################
 # RMSX Flipbook Timeline repo example smoke test
 #
-# Runs representative precomputed examples from downloads/rmsx/AntunesLab-rmsx.
+# Runs representative precomputed examples from isolated copies of the curated upstream fixtures.
 ################################################################################
 
 proc smoke_fail {message} {

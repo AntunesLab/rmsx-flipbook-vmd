@@ -198,7 +198,7 @@ namespace eval ::RMSXFlipbookTimeline::Style {
         foreach molid $molids {
             foreach repid [rep_indices $molid] {
                 mol modstyle $repid $molid {*}$rep_args
-                set actual [lindex [lindex [molinfo $molid get [list "rep$repid"]] 0] 0]
+                set actual [lindex [lindex [molinfo $molid get [list [list representation $repid]]] 0] 0]
                 if {![string equal -nocase $actual $rep]} {error "Representation $rep is unavailable in this VMD build (VMD retained $actual); choose Tube or Lines"}
             }
         }

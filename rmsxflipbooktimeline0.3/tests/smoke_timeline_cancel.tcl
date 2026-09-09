@@ -1,5 +1,5 @@
 package require Tcl 8.6
-source [file join [file dirname [file dirname [info script]]] rmsxflipbooktimeline.tcl]
+source -encoding utf-8 [file join [file dirname [file dirname [info script]]] rmsxflipbooktimeline.tcl]
 proc expect {expression message} { if {![uplevel 1 [list expr $expression]]} { error $message } }
 if {[info commands mol] eq ""} { error "This test requires VMD" }
 set fixtures [file join $::env(RMSX_TEST_WORKDIR) fixtures upstream test_files]

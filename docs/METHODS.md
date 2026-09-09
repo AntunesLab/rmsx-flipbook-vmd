@@ -47,6 +47,13 @@ trajectory's frame spacing must not be confused with the integrator timestep.
 If physical timing is unknown, retain frame/slice indices rather than inventing
 nanoseconds. The short protease demonstration is 27 frames from upstream data.
 
+Public native APIs now default to unknown physical time, matching the blank
+dashboard timing input. Frame-only RMSD sidecars omit the `Time` column.
+Supplying an explicit `-rmsd_time_step` establishes known time unless
+`-time_known 0` is also supplied; the explicit unknown flag takes precedence.
+Historical numerical tests declare their reference timestep explicitly. This
+changes metadata defaults and output labels, not the coordinate calculations.
+
 ## Masking and missing data
 
 Masks are stored separately from values. Masked residues do not determine the

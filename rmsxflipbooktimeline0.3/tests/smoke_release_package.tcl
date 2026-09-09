@@ -118,7 +118,7 @@ if {![catch {::RMSXFlipbookTimeline::apply_ramachandran_overlay 0} err] || [stri
     smoke_fail "phi/psi overlay should report an experimental-feature error by default"
 }
 
-if {[catch {source [file join $plugin_dir gui dashboard_window.tcl]} err]} {
+if {[catch {source -encoding utf-8 [file join $plugin_dir gui dashboard_window.tcl]} err]} {
     smoke_fail "dashboard source failed: $err"
 }
 

@@ -34,7 +34,7 @@ foreach command {
     }
 }
 
-if {[catch {source [file join $plugin_dir gui dashboard_window.tcl]} err]} {
+if {[catch {source -encoding utf-8 [file join $plugin_dir gui dashboard_window.tcl]} err]} {
     smoke_fail "dashboard source failed: $err"
 }
 

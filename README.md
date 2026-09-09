@@ -9,6 +9,7 @@ Normal analysis and viewing require VMD with Tcl/Tk 8.6. They do not require
 Python, R, a web browser, or changes to VMD source. Python 3.9+ is used only by
 installation, launch convenience, testing and packaging tools.
 
+- [Illustrated quick start](docs/QUICK_START.md)
 - [Install and register in VMD](rmsxflipbooktimeline0.3/INSTALL.md)
 - [User guide](rmsxflipbooktimeline0.3/USER_GUIDE.md)
 - [Scientific methods and formats](docs/METHODS.md)

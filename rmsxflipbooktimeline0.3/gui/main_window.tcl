@@ -7,7 +7,7 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
     variable folder ""
     variable quality "Balanced"
     variable palette "viridis"
-    variable rep "NewTube"
+    variable rep [::RMSXFlipbookTimeline::Style::default_rep]
     variable res "32"
     variable thick "0.30"
     variable spacing "auto"
@@ -23,7 +23,7 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
     variable native_slice_size ""
     variable native_start "0"
     variable native_end "-1"
-    variable native_time_step "0.04888821"
+    variable native_time_step ""
     variable native_metric "RMSX"
     variable native_analysis_type "protein"
     variable native_log_transform "0"
@@ -147,13 +147,13 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
     proc quality_settings {name} {
         switch -- $name {
             Fast {
-                return [dict create rep NewTube res 16 thick 0.22]
+                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res 16 thick 0.22]
             }
             Balanced {
-                return [dict create rep NewTube res 32 thick 0.30]
+                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res 32 thick 0.30]
             }
             Screenshot {
-                return [dict create rep NewTube res 80 thick 0.30]
+                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res 80 thick 0.30]
             }
             default {
                 return [dict create]
@@ -1507,7 +1507,7 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
     proc run_native_analysis {} {
         if {[::RMSXFlipbookTimeline::Operation::running]} { set_status "An operation is already running."; return }
         if {[info commands ::RMSXFlipbookTimeline::Dashboard::run_native_metric] eq ""} {
-            source [file join [::RMSXFlipbookTimeline::package_root] gui dashboard_window.tcl]
+            source -encoding utf-8 [file join [::RMSXFlipbookTimeline::package_root] gui dashboard_window.tcl]
         }
         foreach name {native_topology native_trajectory native_output native_chain native_slices native_slice_size native_start native_end native_time_step native_metric native_analysis_type native_log_transform native_mask_selection timeline_molid timeline_selection} {
             if {[info exists ::RMSXFlipbookTimeline::GUI::$name]} {
@@ -1629,7 +1629,7 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
         ttk::label $controls.rep_label -text "Style"
         ttk::combobox $controls.rep_combo \
             -textvariable ::RMSXFlipbookTimeline::GUI::rep \
-            -values {NewTube NewCartoon Tube Licorice Lines} \
+            -values [::RMSXFlipbookTimeline::Style::representation_choices] \
             -state readonly \
             -width 12
 
@@ -1735,7 +1735,7 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
             -values {protein dna rna generic} \
             -width 10 \
             -state readonly
-        ttk::label $native.time_step_label -text "Time Step"
+        ttk::label $native.time_step_label -text "Step (ps; optional)"
         ttk::entry $native.time_step_entry -textvariable ::RMSXFlipbookTimeline::GUI::native_time_step -width 10
         ttk::checkbutton $native.log_check \
             -text "Log Transform" \

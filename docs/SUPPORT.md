@@ -31,6 +31,14 @@ that Tcl runtime only. It does not certify the corresponding VMD graphics,
 mouse, renderer, loader or lifecycle behavior. Keep actual test receipts,
 source revision, VMD architecture and Tcl/Tk versions with every support claim.
 
+The local compatibility diagnostics exercised the full backend on the three
+installed ARM builds, including numerical parity, loaders and cleanup. They
+identified VMD1.9.4's absent `NewTube` representation; the plugin now chooses
+`Tube` there and checks actual applied representation state. Those development
+runs do not replace the final source-revision receipt. See
+[VMD interoperability](VMD_INTEROP.md) for the observed console, key-binding,
+PDB identity and display behavior, and how the extension handles it.
+
 ## CI activation
 
 The portable workflow can run on GitHub-hosted machines. Linux installs Tcl8.6;

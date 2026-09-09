@@ -294,6 +294,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         set available {}
         foreach id $ids {if {[lsearch -exact [molinfo list] $id] >= 0} {lappend available $id}}
         if {![llength $available]} {error "The current result has no available 3D structures"}
+        if {[llength $available] != [llength $ids]} {error "Some structures from the current result were deleted. Reload the saved result before 3D export; its matrix remains available."}
         return $available
     }
     proc projected_bounds {ids} {
@@ -384,16 +385,22 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         try {
             foreach id [molinfo list] {molinfo $id set drawn [expr {[lsearch -exact $ids $id] >= 0}]}
             ::RMSXFlipbookTimeline::state_set molids $ids
-            foreach {key value} [list projection Orthographic axes Off stage Off background [dict get $options background] \
+            foreach {key value} [list axes Off stage Off background [dict get $options background] \
                 shadows [expr {[dict get $options shadows] ? "on" : "off"}] \
                 ambientocclusion [expr {[dict get $options ambient_occlusion] ? "on" : "off"}] depthcue off] {
                 ::RMSXFlipbookTimeline::Scene::apply $key $value
             }
+            if {[dict get $options framing] eq "fit"} {::RMSXFlipbookTimeline::Scene::apply projection Orthographic}
             set preset [dict get $options view_preset]
             if {$preset ne "current"} {::RMSXFlipbookTimeline::Style::apply_view_preset $preset}
             set bounds [projected_bounds $ids]
             set width [dict get $options width]; set height [dict get $options height]
-            if {$height eq "auto"} {set height [expr {max(160,int(ceil($width*[dict get $bounds height]/[dict get $bounds width])))}]}
+            if {$height eq "auto"} {
+                if {[dict get $options framing] eq "current" && [dict exists $snapshot values size]} {
+                    lassign [dict get $snapshot values size] old_width old_height
+                    set height [expr {max(160,int(round($width*double($old_height)/max(1,$old_width))))}]
+                } else {set height [expr {max(160,int(ceil($width*[dict get $bounds height]/[dict get $bounds width])))}]}
+            }
             if {$height > 8192} {set width [expr {max(160,int($width*8192.0/$height))}]; set height 8192}
             if {[dict get $options framing] eq "fit"} {
                 set bounds [center_projected $ids]
@@ -447,6 +454,16 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         return [dict merge $result [dict create folder $folder dry_run 0 render_image $path]]
     }
     proc xml {text} {return [::RMSXFlipbookTimeline::NativeAnalysis::xml_escape $text]}
+    proc legend_color {fraction palette} {
+        if {[info commands colorinfo] ne "" && ![catch {
+            set first [colorinfo num]
+            set last [expr {[colorinfo max]-1}]
+            set index [expr {$first+int(round($fraction*($last-$first)))}]
+            lassign [colorinfo rgb $index] r g b
+            set rgb [format {#%02x%02x%02x} [expr {int(round(255*$r))}] [expr {int(round(255*$g))}] [expr {int(round(255*$b))}]]
+        }]} {return $rgb}
+        return [::RMSXFlipbookTimeline::NativeAnalysis::heatmap_color $fraction 0.0 1.0 $palette]
+    }
     proc figure_svg {image_result result png filename} {
         set fp [open $png rb]
         try {set encoded [binary encode base64 -maxlen 0 [read $fp]]} finally {close $fp}
@@ -459,12 +476,21 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         if {[string tolower $metric] in {lddt lddt_map 1-lddt}} {set metric 1-lDDT}
         set units [data_value $result units [data_value $dataset unit ""]]
         if {$metric eq "1-lDDT"} {set units unitless}
+        if {$units eq ""} {set units {units not recorded}}
         set title [data_value $result label "RMSX / Flipbook"]
         set settings [data_value $result display_settings [::RMSXFlipbookTimeline::display_record]]
         set palette [data_value $settings palette viridis]
         # VMD's active palette is global; read it to describe the rendered image.
         catch {set palette [colorinfo scale method]}
         set lo [data_value $settings color_min 0.0]; set hi [data_value $settings color_max 10.0]
+        set ids [data_value $result molids {}]
+        if {[llength $ids]} {
+            catch {
+                set actual_range [mol scaleminmax [lindex $ids 0] 0]
+                if {[llength $actual_range] == 2 && [string is double -strict [lindex $actual_range 0]] && [string is double -strict [lindex $actual_range 1]]} {lassign $actual_range lo hi}
+                dict set settings color_method [lindex [lindex [molinfo [lindex $ids 0] get [list [list color 0]]] 0] 0]
+            }
+        }
         set norm_lo [data_value $settings norm_min 0.0]; set norm_hi [data_value $settings norm_max 10.0]
         if {[data_value $settings color_method User2] eq "User2"} {
             set raw_lo [data_value $settings raw_min 0.0]; set raw_hi [data_value $settings raw_max 1.0]
@@ -482,6 +508,8 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 set column [lindex $columns $i]
                 if {[dict exists $column time] && [dict exists $column time_unit]} {
                     append label " · [dict get $column time] [dict get $column time_unit]"
+                } elseif {[dict exists $column frame_start] && [dict exists $column frame_end]} {
+                    append label " · frames [dict get $column frame_start]–[dict get $column frame_end]"
                 } elseif {[dict exists $column frame]} {append label " · frame [dict get $column frame]"}
             }
             lappend labels $label
@@ -491,6 +519,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         set legend_y [expr {$top+$h+36+$label_rows*24}]
         set canvas_h [expr {$legend_y+100}]
         set fp [open $filename w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp [format {<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="%d" height="%d" viewBox="0 0 %d %d">} [expr {$w+2*$margin}] $canvas_h [expr {$w+2*$margin}] $canvas_h]
             puts $fp {<rect width="100%" height="100%" fill="white"/>}
@@ -506,7 +535,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             }
             for {set i 0} {$i < 100} {incr i} {
                 set value [expr {$lo+($hi-$lo)*$i/99.0}]
-                set color [::RMSXFlipbookTimeline::NativeAnalysis::heatmap_color $value $lo $hi $palette]
+                set color [legend_color [expr {$i/99.0}] $palette]
                 puts $fp [format {<rect x="%.2f" y="%d" width="%.2f" height="14" fill="%s"/>} [expr {$margin+$i*$w/100.0}] $legend_y [expr {$w/100.0+0.1}] $color]
             }
             puts $fp [format {<text x="32" y="%d" font-family="sans-serif" font-size="12">%.4g %s</text>} [expr {$legend_y+32}] $lo [xml $units]]

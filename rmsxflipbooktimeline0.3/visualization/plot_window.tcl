@@ -80,7 +80,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             error "Cannot draw plot for empty RMSX matrix: $csv"
         }
         set range [::RMSXFlipbookTimeline::NativeAnalysis::matrix_value_range $columns]
-        set mask_metadata [::RMSXFlipbookTimeline::NativeAnalysis::read_mask_metadata_file [file join $folder masked_residues.csv]]
+        set mask_metadata [::RMSXFlipbookTimeline::NativeAnalysis::align_mask_metadata $residues [::RMSXFlipbookTimeline::NativeAnalysis::read_mask_metadata_file [file join $folder masked_residues.csv]]]
         return [dict create \
             csv $csv \
             residues $residues \
@@ -104,17 +104,12 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
     }
 
     proc residue_label {record} {
-        set chain [string trim [dict get $record chain]]
-        set resid [dict get $record resid]
-        if {$chain eq ""} {
-            return $resid
-        }
-        return "$chain:$resid"
+        return [::RMSXFlipbookTimeline::ResidueIdentity::label $record]
     }
 
     proc residue_axis_label {record} {
         if {[dict exists $record resid]} {
-            return [dict get $record resid]
+            return "[dict get $record resid][::RMSXFlipbookTimeline::ResidueIdentity::value $record insertion]"
         }
         return [residue_label $record]
     }
@@ -1624,7 +1619,11 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
         set rmsf_points {}
         if {[file exists $rmsd_path]} {
             set rmsd_points [::RMSXFlipbookTimeline::NativeAnalysis::read_numeric_xy_csv $rmsd_path Frame RMSD]
-            set rmsd_time_points [::RMSXFlipbookTimeline::NativeAnalysis::read_numeric_xy_csv $rmsd_path Frame Time]
+            set rmsd_time_points {}
+            set rmsd_table [::RMSXFlipbookTimeline::NativeAnalysis::read_simple_csv $rmsd_path]
+            if {[lsearch -exact [dict get $rmsd_table header] Time] >= 0} {
+                set rmsd_time_points [::RMSXFlipbookTimeline::NativeAnalysis::read_numeric_xy_csv $rmsd_path Frame Time]
+            }
             set rmsd_slice_points [::RMSXFlipbookTimeline::NativeAnalysis::binned_y_means $rmsd_points [llength [dict get $matrix columns]]]
         }
         if {[file exists $rmsd_by_chain_path]} {

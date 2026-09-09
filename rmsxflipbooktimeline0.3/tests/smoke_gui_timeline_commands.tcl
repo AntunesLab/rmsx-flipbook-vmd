@@ -57,7 +57,7 @@ if {[catch {package require rmsxflipbooktimeline 0.3} err]} {
     smoke_fail "package require failed: $err"
 }
 
-if {[catch {source [file join $plugin_dir gui main_window.tcl]} err]} {
+if {[catch {source -encoding utf-8 [file join $plugin_dir gui main_window.tcl]} err]} {
     smoke_fail "GUI source failed: $err"
 }
 

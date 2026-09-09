@@ -10,6 +10,7 @@ THIRD_PARTY_NOTICES.md
 docs/MEETING.md
 docs/METHODS.md
 docs/SUPPORT.md
+docs/VMD_INTEROP.md
 fixtures/README.md
 fixtures/dna/LICENSE
 fixtures/dna/bdna.pdb
@@ -242,3 +243,8 @@ scripts/test_harness.tcl
 scripts/test_rmsxflipbooktimeline_release.sh
 scripts/tooling_tests.py
 scripts/vmd_process.py
+docs/QUICK_START.md
+docs/figures/ubiquitin.png
+docs/figures/ubiquitin.svg
+docs/figures/protease.png
+docs/figures/protease.svg

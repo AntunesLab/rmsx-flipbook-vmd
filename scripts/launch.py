@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--vmd", default=os.environ.get("VMD_EXECUTABLE", "vmd"))
     parser.add_argument("--demo", choices=["single", "multi"])

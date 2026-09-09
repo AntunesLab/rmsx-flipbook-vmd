@@ -56,8 +56,8 @@ if {![winfo exists .rmsxflipbooktimeline_plot]} {
 if {[llength [.rmsxflipbooktimeline_plot.outer.canvas find all]] <= 0} {
     smoke_fail "Plot canvas is empty"
 }
-if {[dict get $plot_result masked_rows] != 4 || [dict get $plot_result masked_cells] != 12} {
-    smoke_fail "Expected 4 masked rows and 12 masked cells, got $plot_result"
+if {[dict get $plot_result masked_rows] != 22 || [dict get $plot_result masked_cells] != 198} {
+    smoke_fail "Expected fixture mask of 22 rows across 9 columns (198 cells), got $plot_result"
 }
 if {[llength [.rmsxflipbooktimeline_plot.outer.canvas find withtag mask_hatch]] <= 0} {
     smoke_fail "Plot canvas is missing mask hatch overlays"

@@ -36,7 +36,7 @@ def check_manifest(entries):
 
 
 def verify_fixtures():
-    manifest = json.loads((ROOT / "fixtures/provenance.json").read_text())
+    manifest = json.loads((ROOT / "fixtures/provenance.json").read_text(encoding="utf-8"))
     for entry in manifest["files"]:
         path = ROOT / "fixtures" / entry["file"]
         if hashlib.sha256(path.read_bytes()).hexdigest() != entry["sha256"]:
@@ -102,11 +102,11 @@ def run_one(entry, args, artifact_root):
         if entry["capability"] == "tcl":
             result = subprocess.run(command, cwd=work, env=env, stdout=subprocess.PIPE,
                                     stdin=subprocess.DEVNULL, stderr=subprocess.STDOUT,
-                                    text=True, errors="replace", timeout=args.timeout)
+                                    text=True, encoding="utf-8", errors="replace", timeout=args.timeout)
         else:
             result = vmd_process.run(command, cwd=work, env=env, timeout=args.timeout)
         output, code = result.stdout, result.returncode
-        receipt = status_path.read_text() if status_path.exists() else ""
+        receipt = status_path.read_text(encoding="utf-8") if status_path.exists() else ""
         if receipt.startswith("PASS\n") and code == 0:
             status, reason = "PASS", "Assertions completed"
         elif receipt:
@@ -123,15 +123,17 @@ def run_one(entry, args, artifact_root):
         reason = f"Timed out after {args.timeout}s"
     except OSError as exc:
         output, reason = str(exc), f"Cannot launch required runtime: {exc}"
-    (work / "test.log").write_text(output)
+    (work / "test.log").write_text(output, encoding="utf-8")
     return {"id": entry["id"], "status": status, "reason": reason,
             "seconds": round(time.monotonic() - began, 3), "exit_code": code,
             "capability": entry["capability"], "script": entry["script"],
-            "receipt": status_path.read_text() if status_path.exists() else None,
+            "receipt": status_path.read_text(encoding="utf-8") if status_path.exists() else None,
             "log": str(work / "test.log")}
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--profile", choices=["tcl", "vmd", "gui", "release"], default="tcl")
     parser.add_argument("--vmd", default=os.environ.get("VMD_EXECUTABLE", "vmd"))
@@ -141,7 +143,7 @@ def main():
     parser.add_argument("--artifacts", type=Path, help="New directory; defaults to a unique OS temp directory")
     parser.add_argument("--list", action="store_true")
     args = parser.parse_args()
-    entries = json.loads(MANIFEST.read_text())["tests"]
+    entries = json.loads(MANIFEST.read_text(encoding="utf-8"))["tests"]
     try:
         check_manifest(entries)
         verify_fixtures()
@@ -172,20 +174,20 @@ def main():
         results.append(result)
         print(f"{result['status']:4s} {entry['id']} ({result['seconds']}s)", flush=True)
         if result["status"] != "PASS":
-            print(f"     {result['reason']} — {result['log']}", flush=True)
+            print(f"     {result['reason']} - {result['log']}", flush=True)
     after_source = source_provenance()
     source_changed = before_source["sha256"] != after_source["sha256"]
     summary = {"schema": 2, "profile": args.profile,
                "source": before_source, "source_changed_during_run": source_changed,
                "platform": platform.platform(), "architecture": platform.machine(),
-               "version": (PACKAGE / "VERSION").read_text().strip(),
+               "version": (PACKAGE / "VERSION").read_text(encoding="utf-8").strip(),
                "complete_local_release_profile": args.profile == "release" and not args.only,
                "qualification_scope": "local_runtime_only",
                "release_qualified": False,
                "required_platforms_pending": ["Intel macOS", "Linux graphical VMD",
                                                "Windows VMD", "maintainer-approved stable VMD"],
                "results": results}
-    (artifact_root / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    (artifact_root / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     counts = {s: sum(r["status"] == s for r in results) for s in ["PASS", "FAIL", "SKIP"]}
     print(f"{counts}; report: {artifact_root / 'summary.json'}")
     if source_changed:

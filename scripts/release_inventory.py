@@ -15,7 +15,7 @@ def expected_inventory():
 
 
 def release_paths():
-    names = [line.strip() for line in LIST.read_text().splitlines()
+    names = [line.strip() for line in LIST.read_text(encoding="utf-8").splitlines()
              if line.strip() and not line.lstrip().startswith("#")]
     if len(names) != len(set(names)):
         raise ValueError("Duplicate file in release_files.txt")

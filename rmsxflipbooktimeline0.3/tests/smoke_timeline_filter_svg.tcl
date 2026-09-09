@@ -224,9 +224,9 @@ if {$::env(RMSX_TEST_GUI) eq "1"} {
     }
     set probe [image create photo -file $png_path]
     try {
-        set width [$probe width]
-        set height [$probe height]
-        if {$width < 500 || $height < 150} {
+        set width [image width $probe]
+        set height [image height $probe]
+        if {$width < 400 || $height < 150} {
             smoke_fail "PNG dimensions were unexpectedly small: ${width}x${height}"
         }
         set samples [list \

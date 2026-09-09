@@ -1,6 +1,6 @@
 # Standalone graphical launch with an optional disposable demonstration dataset.
 lappend auto_path $::env(RMSX_LAUNCH_REPO)
-source [file join $::env(RMSX_LAUNCH_PACKAGE) register.tcl]
+source -encoding utf-8 [file join $::env(RMSX_LAUNCH_PACKAGE) register.tcl]
 if {$::env(RMSX_LAUNCH_DEMO) ne ""} {
     set work $::env(RMSX_LAUNCH_WORK)
     set single [expr {$::env(RMSX_LAUNCH_DEMO) eq "single"}]
@@ -14,7 +14,7 @@ if {$::env(RMSX_LAUNCH_DEMO) ne ""} {
         native_output [file join $work new-analysis] \
         native_chain [expr {$single ? "7" : "all"}] \
         native_slices 9 native_start 0 native_end -1 native_metric RMSX \
-        native_time_step 0.04888821] {
+        native_time_step {}] {
         ::RMSXFlipbookTimeline::state_set $key $value
     }
 }

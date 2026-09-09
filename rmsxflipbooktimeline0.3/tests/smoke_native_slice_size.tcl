@@ -60,7 +60,7 @@ if {[catch {
         -end_frame 314 \
         -overwrite 1 \
         -cleanup 1 \
-        -rmsd_time_step 0.04888821 \
+        -time_known 1 -rmsd_time_step 0.04888821 \
         -verbose 0
 } result]} {
     smoke_fail "run_native_analysis with -slice_size failed: $result"

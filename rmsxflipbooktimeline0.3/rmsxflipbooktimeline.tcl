@@ -241,30 +241,30 @@ namespace eval ::RMSXFlipbookTimeline {
         init_state
     }
 
-    source [file join $basedir core effects.tcl]
-    source [file join $basedir core residue_identity.tcl]
-    source [file join $basedir core output_txn.tcl]
-    source [file join $basedir core session.tcl]
-    source [file join $basedir visualization navigation.tcl]
-    source [file join $basedir core values.tcl]
-    source [file join $basedir visualization layout.tcl]
-    source [file join $basedir visualization style.tcl]
-    source [file join $basedir visualization mask.tcl]
-    source [file join $basedir visualization hotkeys.tcl]
-    source [file join $basedir visualization mouse_rotate.tcl]
-    source [file join $basedir visualization plot_window.tcl]
-    source [file join $basedir visualization render.tcl]
-    source [file join $basedir core manifest.tcl]
-    source [file join $basedir core loader.tcl]
-    source [file join $basedir core native_analysis.tcl]
-    source [file join $basedir core matrix.tcl]
-    source [file join $basedir core timeline_io.tcl]
-    source [file join $basedir core timeline_analysis.tcl]
-    source [file join $basedir visualization timeline_plot.tcl]
-    source [file join $basedir visualization neighborhood_flipbook.tcl]
+    source -encoding utf-8 [file join $basedir core effects.tcl]
+    source -encoding utf-8 [file join $basedir core residue_identity.tcl]
+    source -encoding utf-8 [file join $basedir core output_txn.tcl]
+    source -encoding utf-8 [file join $basedir core session.tcl]
+    source -encoding utf-8 [file join $basedir visualization navigation.tcl]
+    source -encoding utf-8 [file join $basedir core values.tcl]
+    source -encoding utf-8 [file join $basedir visualization layout.tcl]
+    source -encoding utf-8 [file join $basedir visualization style.tcl]
+    source -encoding utf-8 [file join $basedir visualization mask.tcl]
+    source -encoding utf-8 [file join $basedir visualization hotkeys.tcl]
+    source -encoding utf-8 [file join $basedir visualization mouse_rotate.tcl]
+    source -encoding utf-8 [file join $basedir visualization plot_window.tcl]
+    source -encoding utf-8 [file join $basedir visualization render.tcl]
+    source -encoding utf-8 [file join $basedir core manifest.tcl]
+    source -encoding utf-8 [file join $basedir core loader.tcl]
+    source -encoding utf-8 [file join $basedir core native_analysis.tcl]
+    source -encoding utf-8 [file join $basedir core matrix.tcl]
+    source -encoding utf-8 [file join $basedir core timeline_io.tcl]
+    source -encoding utf-8 [file join $basedir core timeline_analysis.tcl]
+    source -encoding utf-8 [file join $basedir visualization timeline_plot.tcl]
+    source -encoding utf-8 [file join $basedir visualization neighborhood_flipbook.tcl]
     if {[experimental_enabled]} {
-        source [file join $basedir visualization viewer_plot.tcl]
-        source [file join $basedir visualization angle_overlay.tcl]
+        source -encoding utf-8 [file join $basedir visualization viewer_plot.tcl]
+        source -encoding utf-8 [file join $basedir visualization angle_overlay.tcl]
     }
 
     ::RMSXFlipbookTimeline::Effects::register viewer_plot {
@@ -649,7 +649,7 @@ namespace eval ::RMSXFlipbookTimeline {
 
         set gui_file [file join [state_get basedir [file dirname [info script]]] gui main_window.tcl]
         if {[file exists $gui_file]} {
-            source $gui_file
+            source -encoding utf-8 $gui_file
         }
 
         if {[info commands ::RMSXFlipbookTimeline::GUI::show] eq ""} {
@@ -669,7 +669,7 @@ namespace eval ::RMSXFlipbookTimeline {
 
         set dashboard_file [file join [state_get basedir [file dirname [info script]]] gui dashboard_window.tcl]
         if {[info commands ::RMSXFlipbookTimeline::Dashboard::show] eq "" && [file exists $dashboard_file]} {
-            source $dashboard_file
+            source -encoding utf-8 $dashboard_file
         }
 
         if {[info commands ::RMSXFlipbookTimeline::Dashboard::show] eq ""} {

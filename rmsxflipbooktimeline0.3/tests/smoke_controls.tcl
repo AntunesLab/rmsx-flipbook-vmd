@@ -157,7 +157,7 @@ if {[catch {
         $folder \
         quality Fast \
         palette magma \
-        rep NewTube \
+        rep [::RMSXFlipbookTimeline::Style::default_rep] \
         res 16 \
         thick 0.22 \
         spacing 30.0 \
@@ -183,7 +183,7 @@ if {[catch {
     ::RMSXFlipbookTimeline::apply_settings \
         quality Balanced \
         palette viridis \
-        rep NewTube \
+        rep [::RMSXFlipbookTimeline::Style::default_rep] \
         res 24 \
         thick 0.28 \
         spacing 40.0 \
@@ -202,8 +202,8 @@ if {[llength $representation] == 1 && [llength [lindex $representation 0]] > 1} 
     set representation [lindex $representation 0]
 }
 
-if {[lindex $representation 0] ne "NewTube"} {
-    smoke_fail "expected NewTube rep, got $representation"
+if {[lindex $representation 0] ne [::RMSXFlipbookTimeline::Style::default_rep]} {
+    smoke_fail "expected [::RMSXFlipbookTimeline::Style::default_rep] rep, got $representation"
 }
 if {[lindex $representation 2] != 24} {
     smoke_fail "expected rep resolution 24, got $representation"

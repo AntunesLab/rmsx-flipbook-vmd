@@ -30,5 +30,11 @@ assert {$original eq "ORIGINAL"} "Failed render replaced old file"
 set dry [file join $::env(RMSX_TEST_WORKDIR) nonexistent nested image.png]
 ::RMSXFlipbookTimeline::render_flipbook_image -output_name $dry -dry_run 1
 assert {![file exists [file dirname $dry]]} "Dry run created directories"
+set ids [::RMSXFlipbookTimeline::Render::result_molids]
+mol delete [lindex $ids end]
+set incomplete [file join $::env(RMSX_TEST_WORKDIR) outputs incomplete.svg]
+assert {[catch {::RMSXFlipbookTimeline::write_flipbook_figure $incomplete} message]} "Export silently omitted a deleted result structure"
+assert {![file exists $incomplete]} "Incomplete structure export published a figure"
+assert {[dict exists [::RMSXFlipbookTimeline::Results::get] dataset]} "Deleting a structure discarded its matrix snapshot"
 puts "Figure export v0.3 smoke passed"
 quit

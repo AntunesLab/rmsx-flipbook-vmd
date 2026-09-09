@@ -33,7 +33,12 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     variable native_topology ""
     variable native_trajectory ""
     variable native_output ""
+    variable saved_result {}
+    variable pending_native_view {}
+    variable native_view_serial 0
     variable native_chain "all"
+    variable native_chain_groups {}
+    variable native_chain_groups_topology ""
     variable native_slices "9"
     variable native_slice_size ""
     variable native_slicing_mode "slices"
@@ -45,7 +50,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     variable native_frame_count_attempt_key ""
     variable native_start "0"
     variable native_end "-1"
-    variable native_time_step "0.049"
+    variable native_time_step ""
     variable native_total_time_ns "auto"
     variable native_detected_time_step_ps ""
     variable native_detected_total_time_ns ""
@@ -429,6 +434,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             return $step
         }
         set displayed [string trim $native_time_step]
+        if {$displayed eq ""} { return "" }
         if {[string is double -strict [string trim $native_detected_time_step_ps]]} {
             set detected [expr {double($native_detected_time_step_ps)}]
             set detected_displays [list \
@@ -566,7 +572,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             if {[catch {set value [molinfo $molid get $field]}]} {
                 continue
             }
-            if {[string is double -strict $value] && double($value) >= 0.0} {
+            if {[string is double -strict $value] && double($value) > 0.0} {
                 return [dict create step_ps [expr {double($value)}] source "VMD $field"]
             }
         }
@@ -585,11 +591,9 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             set estimate [metadata_time_estimate $trajectory $frames]
         }
         if {[llength $estimate] == 0} {
-            set native_time_estimate_source "fallback"
-            if {[string is double -strict [string trim $native_time_step]] && $frames > 1} {
-                set native_detected_time_step_ps [format_compact_double [expr {double($native_time_step)}] 9]
-                set native_detected_total_time_ns [format_total_time_display_ns [expr {(($frames - 1) * double($native_time_step)) / 1000.0}]]
-            }
+            set native_time_estimate_source ""
+            set native_detected_time_step_ps ""
+            set native_detected_total_time_ns ""
             return {}
         }
 
@@ -669,9 +673,6 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set native_start [::RMSXFlipbookTimeline::state_get native_start $native_start]
         set native_end [::RMSXFlipbookTimeline::state_get native_end $native_end]
         set native_time_step [::RMSXFlipbookTimeline::state_get native_time_step $native_time_step]
-        if {$native_time_step eq "0.04888821"} {
-            set native_time_step "0.049"
-        }
         set native_total_time_ns [::RMSXFlipbookTimeline::state_get native_total_time_ns $native_total_time_ns]
         set native_detected_time_step_ps [::RMSXFlipbookTimeline::state_get native_detected_time_step_ps $native_detected_time_step_ps]
         set native_detected_total_time_ns [::RMSXFlipbookTimeline::state_get native_detected_total_time_ns $native_detected_total_time_ns]
@@ -1301,7 +1302,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         return [dict create layout $layout rows [dict get $dataset row_count] columns [dict get $dataset column_count]]
     }
 
-    proc embedded_native_plot_args {folder csv_path width} {
+    proc embedded_native_plot_args {folder csv_path width {record __current__}} {
         variable timeline_scale_min
         variable timeline_scale_max
         variable native_show_context_plots
@@ -1330,7 +1331,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             show_rmsf_chart $show_context \
             show_slice_rmsd_chart 0 \
             show_summary_chart 0]
-        foreach item [native_plot_time_axis_args] {
+        foreach item [native_plot_time_axis_args $record] {
             lappend args $item
         }
         if {[string trim $csv_path] ne ""} {
@@ -1344,8 +1345,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         return $args
     }
 
-    proc native_plot_time_axis_args {} {
-        set current [::RMSXFlipbookTimeline::Results::get]
+    proc native_plot_time_axis_args {{current __current__}} {
+        if {$current eq "__current__"} {set current [::RMSXFlipbookTimeline::Results::get]}
         set args {}
         if {$current eq {}} { return $args }
         if {[dict exists $current time_step_ps] && [dict get $current time_step_ps] ne ""} {
@@ -1535,6 +1536,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set start_value [validate_int "Start frame" $native_start 0]
         set end_value [validate_int "End frame" $native_end -1]
         set time_step_value [effective_time_step_ps_for_run]
+        set time_known [expr {$time_step_value ne ""}]
+        set calculator_time_step [expr {$time_known ? $time_step_value : 1.0}]
         set manual_length_ns [native_total_time_override_ns_value]
         set slices_value [validate_int "Slices" $native_slices 1]
         set use_slice_size [expr {$native_slicing_mode eq "slice_size"}]
@@ -1572,7 +1575,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {$chain_mode in {all * auto}} {
             set command [list $all_proc $native_topology $native_trajectory $run_output]
         } else {
-            set command [list $single_proc $native_topology $native_trajectory $run_output -chain $native_chain]
+            set command [list $single_proc $native_topology $native_trajectory $run_output -chain [selected_chain_group]]
         }
         lappend command {*}$slicing_args \
             -start_frame $start_value \
@@ -1581,7 +1584,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             -progress_callback ::RMSXFlipbookTimeline::Operation::checkpoint \
             -cleanup 1 \
             -analysis_type $native_analysis_type \
-            -rmsd_time_step $time_step_value \
+            -rmsd_time_step $calculator_time_step \
+            -time_known $time_known \
             -manual_length_ns $manual_length_ns \
             -log_transform $native_log_transform \
             -mask_selection $native_mask_selection \
@@ -1600,22 +1604,49 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         } else {
             set folder $run_output
         }
+        set resolved_plan [result_frame_plan $result]
+        set result_first $start_value
+        set result_last $end_value
+        if {[dict exists $resolved_plan start_frame]} { set result_first [dict get $resolved_plan start_frame] }
+        if {[dict exists $resolved_plan end_frame]} { set result_last [dict get $resolved_plan end_frame] }
+        variable saved_result
+        set saved_result [dict create folder $folder metric $native_metric label $native_metric source_paths [list $native_topology $native_trajectory] chain $native_chain selection [result_analysis_selection $result] frame_first $result_first frame_last $result_last native_result $result time_known $time_known time_step_ps $time_step_value view_options [timeline_plot_options]]
+        refresh_export_controls
         ::RMSXFlipbookTimeline::Operation::checkpoint [dict create stage loading message "Analysis saved; loading result…"]
-        if {[catch {::RMSXFlipbookTimeline::load_folder $folder palette [::RMSXFlipbookTimeline::state_get palette viridis]} load_error load_options]} {
-            return -code error -errorcode {RMSXFLIPBOOK PARTIAL} "Analysis saved to $folder; view could not load: $load_error"
+        if {[catch {load_folder_with_view $folder $saved_result} load_error load_options]} {
+            return -code error -errorcode {RMSXFLIPBOOK PARTIAL} "Analysis saved to $folder; display failed: $load_error. Use Retry view."
         }
-        ::RMSXFlipbookTimeline::Results::update [dict create metric $native_metric label $native_metric source_paths [list $native_topology $native_trajectory] chain $native_chain frame_first $start_value frame_last $end_value native_result $result time_step_ps $time_step_value view_options [timeline_plot_options]]
+        set saved_result {}
         focus_flipbook_scene
         ensure_default_mouse_rotation
-        if {[catch {render_native_heatmap $native_metric} view_error]} {
-            ::RMSXFlipbookTimeline::Results::update [dict create status partial]
-            return -code error -errorcode {RMSXFLIPBOOK PARTIAL} "Analysis saved; heatmap failed: $view_error"
-        }
         add_dataset_item $label flipbook $folder
         set_status [format "%s complete: %s" $label $folder]
         refresh_dashboard
         maybe_scroll_easy_to_heatmap_after_run
         return $result
+    }
+
+    proc result_analysis_selection {result} {
+        if {[dict exists $result analysis_selection]} {return [dict get $result analysis_selection]}
+        set selections {}
+        if {[dict exists $result chain_results]} {
+            foreach child [dict get $result chain_results] {
+                set selection [result_analysis_selection $child]
+                if {$selection ne "" && [lsearch -exact $selections "($selection)"] < 0} {lappend selections "($selection)"}
+            }
+        }
+        return [join $selections " or "]
+    }
+
+    proc result_frame_plan {result} {
+        if {[dict exists $result plan]} { return [dict get $result plan] }
+        if {[dict exists $result chain_results]} {
+            foreach child [dict get $result chain_results] {
+                set plan [result_frame_plan $child]
+                if {$plan ne {}} { return $plan }
+            }
+        }
+        return {}
     }
 
     proc result_total_frame_count {result} {
@@ -1656,7 +1687,18 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             {*}[timeline_live_options] \
             {*}[timeline_plot_options]]
         if {[dict exists $result dataset]} {
-            ::RMSXFlipbookTimeline::Results::publish [dict create kind matrix label $timeline_metric metric $timeline_metric dataset [dict get $result dataset] source_molid $molid selection $::RMSXFlipbookTimeline::Dashboard::timeline_selection view_options [timeline_plot_options] palette $::RMSXFlipbookTimeline::Dashboard::palette]
+            set dataset [dict get $result dataset]
+            set metadata [dict create label $timeline_metric source_molid $molid selection $::RMSXFlipbookTimeline::Dashboard::timeline_selection view_options [timeline_plot_options] palette $::RMSXFlipbookTimeline::Dashboard::palette]
+            set columns [dict get $dataset columns]
+            if {[llength $columns]} {
+                set first [lindex $columns 0]; set last [lindex $columns end]
+                foreach {column key out} [list $first frame frame_first $last frame frame_last] {
+                    if {[dict exists $column $key]} {dict set metadata $out [dict get $column $key]}
+                }
+                if {[dict exists $first frame_start]} {dict set metadata frame_first [dict get $first frame_start]}
+                if {[dict exists $last frame_end]} {dict set metadata frame_last [dict get $last frame_end]}
+            }
+            ::RMSXFlipbookTimeline::Results::update $metadata
         }
         set detail "live molecule $molid"
         set mode_label "frames"
@@ -1741,7 +1783,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {[lsearch -exact [molinfo list] $center_molid] != -1} {
             catch {mol top $center_molid}
         }
-        catch {display update ui}
+        catch {display update}
     }
 
     proc toggle_mouse_rotation {} {
@@ -1946,13 +1988,16 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     proc _load_existing_folder {} {
         variable folder
         if {$folder eq "" || ![file isdirectory $folder]} { error "Choose an existing result folder first." }
-        set result [::RMSXFlipbookTimeline::load_folder $folder palette [::RMSXFlipbookTimeline::state_get palette viridis]]
+        variable saved_result
+        set saved_result [dict create folder $folder]
+        if {[catch {load_folder_with_view $folder {}} message options]} {
+            refresh_export_controls
+            return -options $options $message
+        }
+        set saved_result {}
+        set result [::RMSXFlipbookTimeline::Results::get]
         focus_flipbook_scene
         ensure_default_mouse_rotation
-        if {[catch {render_native_heatmap} message]} {
-            ::RMSXFlipbookTimeline::Results::update [dict create status partial]
-            return -code error -errorcode {RMSXFLIPBOOK PARTIAL} "Result loaded; heatmap failed: $message"
-        }
         add_dataset_item "Flipbook" flipbook $folder
         set_status "Loaded [file tail $folder]."
         refresh_dashboard
@@ -2591,7 +2636,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             [dict get $plan used] \
             [dict get $plan frames] \
             [dict get $plan leftover]]
-        set time_note ""
+        set time_note " Time unknown; using frame/slice indices."
         if {![catch {set override_ns [native_total_time_override_ns_value]}] && $override_ns ne ""} {
             set step_ps [time_step_from_total_ns $override_ns [dict get $plan frames]]
             set time_note [format " Time %s ns override; step %s ps." \
@@ -2648,10 +2693,14 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             return
         }
         set key [current_native_frame_count_key]
-        if {$key eq ""} {
-            return
-        }
         if {$native_frame_count_key ne "" && $native_frame_count_key ne $key} {
+            variable native_time_step
+            variable native_total_time_ns
+            set native_time_step ""
+            set native_total_time_ns auto
+            set native_frame_count_key ""
+            ::RMSXFlipbookTimeline::state_set native_time_step ""
+            ::RMSXFlipbookTimeline::state_set native_total_time_ns auto
             set native_detected_total_frames ""
             set native_detected_time_step_ps ""
             set native_detected_total_time_ns ""
@@ -2662,6 +2711,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             ::RMSXFlipbookTimeline::state_set native_detected_total_time_ns ""
             ::RMSXFlipbookTimeline::state_set native_time_estimate_source ""
         }
+        if {$key eq ""} { return }
         if {$native_frame_count_key eq $key && $native_detected_total_frames ne ""} {
             return
         }
@@ -3323,12 +3373,12 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         foreach widget {native_slices_entry native_slice_size_entry native_start_entry native_time_step_entry native_total_time_ns_entry native_chain_entry} {
             bind $parent.$widget <FocusOut> ::RMSXFlipbookTimeline::Dashboard::refresh_dashboard
         }
-        help_tip $parent.native_chain_entry "Chain identifier from the topology; all analyzes every valid chain. Use refresh to inspect the chosen topology."
+        help_tip $parent.native_chain_entry "Exact chain/segment group from the topology; all analyzes every group. Refresh discovers labels and keeps blank segments distinct. Typed aliases must be unambiguous."
         help_tip $parent.chains "Read chain identifiers from the selected topology."
         help_tip $parent.native_end_entry "Last uses the final trajectory frame. Frame indices start at zero."
         help_tip $parent.native_slice_size_entry "Number of trajectory frames per slice."
         help_tip $parent.native_slices_entry "Number of slices. The preview reports any unused remainder."
-        help_tip $parent.native_time_step_entry "Time interval between saved trajectory frames, in picoseconds."
+        help_tip $parent.native_time_step_entry "Time interval between saved trajectory frames, in picoseconds. Leave blank when unknown; plots use frames or slices. A value detected from this source can be edited."
         help_tip $parent.native_total_time_ns_entry "Optional trajectory span in nanoseconds; auto uses detected timing."
         refresh_slicing_mode_controls
     }
@@ -3556,6 +3606,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         ttk::button $parent.spacing_plus -text + -width 2 -command {::RMSXFlipbookTimeline::Dashboard::nudge_spacing 2.0}
         ttk::button $parent.reset_view -text Reset -command ::RMSXFlipbookTimeline::Dashboard::reset_view
         ttk::button $parent.clear -text "Remove…" -command ::RMSXFlipbookTimeline::Dashboard::clear_scene
+        ttk::button $parent.retry -text "Retry view" -command ::RMSXFlipbookTimeline::Dashboard::retry_saved_result -state disabled
         foreach {col widget} {0 run 1 popout 2 save 3 figure} {
             grid $parent.$widget -row 0 -column $col -sticky ew -padx {0 6} -pady 2
         }
@@ -3563,9 +3614,11 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         foreach {col widget} {0 spacing 1 spacing_minus 2 spacing_plus 3 reset_view 4 clear} {
             grid $parent.$widget -row 1 -column $col -sticky w -padx {0 6} -pady {4 0}
         }
+        grid $parent.retry -row 2 -column 0 -columnspan 4 -sticky w -pady {4 0}
         grid columnconfigure $parent 3 -weight 1
         help_tip $parent.clear "Remove plugin-owned molecules and the current result. Files are kept."
         help_tip $parent.figure "Export a figure from the committed current result."
+        help_tip $parent.retry "Retry the last saved result whose display failed. This opens the saved files and never reruns the analysis."
     }
 
     proc build_results_tree {parent} {
@@ -4253,12 +4306,17 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {$current eq {}} {
             set result_title "No result loaded"
             set result_summary "Run an analysis or open a result folder."
+            refresh_export_controls
             return
         }
         set label "Result"
         foreach key {metric label} { if {[dict exists $current $key] && [dict get $current $key] ne ""} { set label [dict get $current $key] } }
         if {[string equal -nocase $label lddt]} { set label 1-lDDT }
+        set units ""
+        if {[dict exists $current units]} {set units [dict get $current units]}
+        if {$units eq "" && [dict exists $current dataset unit]} {set units [dict get $current dataset unit]}
         set result_title "Current result: $label"
+        if {$units ne ""} {append result_title " ($units)"}
         set summary {}
         if {[dict exists $current folder]} { lappend summary [file tail [dict get $current folder]] }
         if {[dict exists $current chain]} { lappend summary "Chain [dict get $current chain]" }
@@ -4267,6 +4325,11 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {[dict exists $current dataset] && [dict get $current dataset] ne {}} {
             set data [dict get $current dataset]
             if {[dict exists $data row_count] && [dict exists $data column_count]} { lappend summary "[dict get $data row_count] rows × [dict get $data column_count] columns" }
+        }
+        if {[dict exists $current selection] && [dict get $current selection] ne ""} {
+            set selection [dict get $current selection]
+            if {[string length $selection] > 64} {set selection "[string range $selection 0 60]…"}
+            lappend summary "Selection: $selection"
         }
         if {[dict exists $current status]} { lappend summary [string totitle [dict get $current status]] }
         set result_summary [join $summary " · "]
@@ -4284,8 +4347,11 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             if {[winfo exists $widget]} { $widget configure -state [expr {$has_scene && !$busy ? "normal" : "disabled"}] }
         }
         foreach widget [list [easy_child actions].figure [tab_content export].image.figure] {
-            if {[winfo exists $widget]} { $widget configure -state [expr {$current ne {} && !$busy ? "normal" : "disabled"}] }
+            if {[winfo exists $widget]} { $widget configure -state [expr {$has_scene && !$busy ? "normal" : "disabled"}] }
         }
+        variable saved_result
+        set retry [easy_child actions].retry
+        if {[winfo exists $retry]} {$retry configure -state [expr {$saved_result ne {} && [dict exists $saved_result folder] && [file isdirectory [dict get $saved_result folder]] && !$busy ? "normal" : "disabled"}]}
         foreach kind {tml svg png} {
             set widget [tab_content export].files.$kind
             if {[winfo exists $widget]} { $widget configure -state [expr {$has_matrix && !$busy ? "normal" : "disabled"}] }
@@ -4340,15 +4406,36 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         variable native_chain
         if {[::RMSXFlipbookTimeline::Operation::running]} { return }
         if {![file isfile $native_topology]} { set_status "Choose a topology first."; return }
-        if {[catch {::RMSXFlipbookTimeline::NativeAnalysis::discover_valid_chains $native_topology "protein or nucleic" auto} chains]} {
+        if {[catch {::RMSXFlipbookTimeline::NativeAnalysis::discover_chain_groups $native_topology "protein or nucleic" auto} groups]} {
             set_status "Could not read chains: $chains"
             return
         }
-        set choices [linsert $chains 0 all]
+        variable native_chain_groups
+        variable native_chain_groups_topology
+        set native_chain_groups {}
+        set native_chain_groups_topology [file normalize $native_topology]
+        set choices {all}
+        foreach group $groups {
+            set label [dict get $group label]
+            dict set native_chain_groups $label $group
+            lappend choices $label
+        }
         set widget [easy_child settings].native_chain_entry
         if {[winfo exists $widget]} { $widget configure -values $choices }
         if {[lsearch -exact $choices $native_chain] < 0} { set native_chain all }
         set_status "Chains: [join $choices {, }]"
+    }
+
+    proc selected_chain_group {} {
+        variable native_chain
+        variable native_chain_groups
+        variable native_chain_groups_topology
+        variable native_topology
+        if {$native_chain_groups_topology ne "" && [file normalize $native_topology] eq $native_chain_groups_topology && [dict exists $native_chain_groups $native_chain]} {
+            return [dict get $native_chain_groups $native_chain]
+        }
+        # Typed scalar aliases remain supported; the calculator rejects ambiguity.
+        return $native_chain
     }
 
     proc help_tip {widget message} {
@@ -4526,5 +4613,89 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {![string is integer -strict $count] || $count < 1} { return 0 }
         if {[catch {effective_time_step_ps_for_run}]} { return 0 }
         return 1
+    }
+}
+
+namespace eval ::RMSXFlipbookTimeline::Dashboard {
+    proc discard_pending_native_view {} {
+        variable pending_native_view
+        if {$pending_native_view ne {} && [dict exists $pending_native_view canvas] && [dict get $pending_native_view canvas] ne ""} {
+            catch {destroy [dict get $pending_native_view canvas]}
+        }
+        set pending_native_view {}
+    }
+    proc stage_native_view {metadata candidate} {
+        variable pending_native_view
+        variable embedded_heatmap_canvas
+        variable native_view_serial
+        discard_pending_native_view
+        set folder [dict get $candidate result folder]
+        set csv ""
+        if {[dict exists $candidate dataset provenance csv]} {set csv [dict get $candidate dataset provenance csv]}
+        set prepared [::RMSXFlipbookTimeline::PlotWindow::prepare {*}[embedded_native_plot_args $folder $csv [embedded_heatmap_width] $metadata]]
+        set stage ""
+        if {$embedded_heatmap_canvas ne "" && [info commands winfo] ne "" && [winfo exists $embedded_heatmap_canvas]} {
+            set stage "[winfo parent $embedded_heatmap_canvas].candidate[incr native_view_serial]"
+            canvas $stage -background white -width [winfo width $embedded_heatmap_canvas] -height [dict get $prepared layout canvas_height] -scrollregion [list 0 0 [dict get $prepared layout canvas_width] [dict get $prepared layout canvas_height]]
+            set snapshot [::RMSXFlipbookTimeline::ViewState::capture ::RMSXFlipbookTimeline::PlotWindow]
+            try {
+                ::RMSXFlipbookTimeline::PlotWindow::draw_prepared $stage $prepared
+            } on error {message options} {
+                destroy $stage
+                return -options $options $message
+            } finally {::RMSXFlipbookTimeline::ViewState::restore $snapshot}
+        }
+        set pending_native_view [dict create prepared $prepared canvas $stage]
+        return $pending_native_view
+    }
+    proc activate_native_view {} {
+        variable pending_native_view
+        variable embedded_heatmap_canvas
+        variable embedded_heatmap_mode
+        variable embedded_heatmap_status_var
+        variable embedded_heatmap_last_width
+        if {$pending_native_view eq {}} {return}
+        set prepared [dict get $pending_native_view prepared]
+        set stage [dict get $pending_native_view canvas]
+        if {$stage ne ""} {
+            set old $embedded_heatmap_canvas
+            set embedded_heatmap_canvas $stage
+            set ::RMSXFlipbookTimeline::PlotWindow::canvas $stage
+            ::RMSXFlipbookTimeline::PlotWindow::install_record_map [dict get $prepared layout records]
+            grid $stage -row 0 -column 0 -columnspan 2 -sticky nsew
+            bind $stage <Configure> {::RMSXFlipbookTimeline::Dashboard::schedule_embedded_heatmap_resize_redraw %w}
+            ::RMSXFlipbookTimeline::Navigation::attach $stage [dict get $prepared layout records] [list ::RMSXFlipbookTimeline::Dashboard::select_embedded_native $stage] [list ::RMSXFlipbookTimeline::PlotWindow::clear_on_canvas $stage]
+            $stage bind pickable <Motion> {::RMSXFlipbookTimeline::Dashboard::embedded_native_plot_hover_current}
+            if {$old ne $stage && [winfo exists $old]} {destroy $old}
+            set embedded_heatmap_last_width [winfo width $stage]
+            ::RMSXFlipbookTimeline::PlotWindow::install_pick_trace
+        }
+        set embedded_heatmap_mode native
+        set embedded_heatmap_status_var "[dict get $prepared metric_label]: [dict get $prepared layout rows] rows × [dict get $prepared layout columns] slices"
+        set pending_native_view {}
+    }
+    proc load_folder_with_view {folder metadata} {
+        discard_pending_native_view
+        try {
+            set result [::RMSXFlipbookTimeline::load_folder $folder palette [::RMSXFlipbookTimeline::state_get palette viridis] activation_callback [list ::RMSXFlipbookTimeline::Dashboard::stage_native_view $metadata]]
+            if {$metadata ne {}} {::RMSXFlipbookTimeline::Results::update $metadata}
+            activate_native_view
+            return $result
+        } on error {message options} {
+            discard_pending_native_view
+            return -options $options $message
+        }
+    }
+    proc retry_saved_result {} {
+        return [perform_operation retry_saved_result ::RMSXFlipbookTimeline::Dashboard::_retry_saved_result]
+    }
+    proc _retry_saved_result {} {
+        variable saved_result
+        if {$saved_result eq {} || ![dict exists $saved_result folder]} {error "No saved result is waiting for display"}
+        set result [load_folder_with_view [dict get $saved_result folder] $saved_result]
+        set saved_result {}
+        refresh_dashboard
+        set_status "Saved result displayed."
+        return $result
     }
 }

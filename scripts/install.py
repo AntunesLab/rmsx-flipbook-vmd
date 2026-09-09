@@ -9,6 +9,7 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 START = "# BEGIN RMSX-FLIPBOOK-TIMELINE MANAGED BLOCK"
@@ -17,7 +18,7 @@ MARKER = ".rmsxflipbooktimeline-install.json"
 
 
 def tcl_literal(value):
-    return '"' + str(value).replace("\\", "/").replace('"', '\\"').replace("$", "\\$").replace("[", "\\[") + '"'
+    return ('"' + str(value).replace("\\", "/").replace('"', '\\"').replace("$", "\\$").replace("[", "\\[") + '"').encode("ascii", "backslashreplace").decode("ascii")
 
 
 def digest(path):
@@ -63,7 +64,7 @@ def atomic_text(path, text):
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temp = tempfile.mkstemp(prefix=".rmsx-write-", dir=path.parent)
     try:
-        with os.fdopen(fd, "w", newline="") as handle:
+        with os.fdopen(fd, "w", encoding="utf-8", errors="surrogateescape", newline="") as handle:
             handle.write(text)
         os.replace(temp, path)
     finally:
@@ -72,6 +73,8 @@ def atomic_text(path, text):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["install", "uninstall"])
     parser.add_argument("--prefix", type=Path, default=Path.home() / "vmd-plugins")
@@ -80,10 +83,10 @@ def main():
     args = parser.parse_args()
     prefix, startup = args.prefix.expanduser().resolve(), args.startup_file.expanduser().resolve()
     marker = prefix / MARKER
-    previous = json.loads(marker.read_text()) if marker.exists() else None
+    previous = json.loads(marker.read_text(encoding="utf-8")) if marker.exists() else None
     if previous and Path(previous["startup"]) != startup:
         parser.error(f"Existing installation uses startup file {previous['startup']}")
-    old_text = startup.read_bytes().decode("utf-8") if startup.exists() else ""
+    old_text = startup.read_bytes().decode("utf-8", errors="surrogateescape") if startup.exists() else ""
     text = strip_block(old_text, bool(previous and previous.get("separator_added")))
     old_package = verify_owned(prefix, previous) if previous else None
     if args.action == "uninstall":
@@ -95,7 +98,7 @@ def main():
         print(f"Removed managed extension from {prefix}; other startup content preserved")
         return
     source = next(p for p in ROOT.glob("rmsxflipbooktimeline*") if p.is_dir())
-    version = (source / "VERSION").read_text().strip()
+    version = (source / "VERSION").read_text(encoding="utf-8").strip()
     relative = f"tcl/rmsxflipbooktimeline{version}"
     target = prefix / relative
     if target.exists() and target != old_package:
@@ -103,7 +106,7 @@ def main():
     prefix.mkdir(parents=True, exist_ok=True)
     staged = Path(tempfile.mkdtemp(prefix=".rmsx-stage-", dir=prefix)) / source.name
     retained = staged.parent / "previous-package"
-    old_marker = marker.read_text() if marker.exists() else None
+    old_marker = marker.read_text(encoding="utf-8") if marker.exists() else None
     startup_existed = startup.exists()
     published = False
     try:
@@ -112,7 +115,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         block = (f"{START}\n"
                  f"lappend auto_path {tcl_literal(prefix / 'tcl')}\n"
-                 f"source {tcl_literal(target / 'register.tcl')}\n{END}\n")
+                 f"source -encoding utf-8 {tcl_literal(target / 'register.tcl')}\n{END}\n")
         if startup.exists() and old_text != text + block:
             backup = startup.with_name(startup.name + ".rmsx-backup")
             if not backup.exists():
@@ -145,7 +148,7 @@ def main():
                 marker.unlink()
             raise
         print(f"Installed RMSX/Flipbook Timeline {version} in {target}")
-        print("Restart VMD; open Plugins/Extensions → Analysis → RMSX and Flipbook Timeline")
+        print("Restart VMD; open Plugins/Extensions > Analysis > RMSX and Flipbook Timeline")
     finally:
         shutil.rmtree(staged.parent, ignore_errors=True)
 

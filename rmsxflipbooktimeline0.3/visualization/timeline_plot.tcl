@@ -21,6 +21,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
     variable highlight_reps {}
     variable trace_installed 0
     variable selected_record {}
+    variable candidate_serial 0
 
     array set record_by_tag {}
 
@@ -400,8 +401,13 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
             ttk::label $outer.status -textvariable ::RMSXFlipbookTimeline::TimelinePlot::status_var -anchor w
             grid $outer.status -row 4 -column 0 -columnspan 2 -sticky ew -pady {8 0}
         }
-        bind $window <Destroy> {+if {"%W" eq ".rmsxflipbooktimeline_timeline_plot"} {::RMSXFlipbookTimeline::TimelinePlot::on_window_destroy}}
+        bind $window <Destroy> [list ::RMSXFlipbookTimeline::TimelinePlot::window_destroyed $window %W]
         return $canvas
+    }
+
+    proc window_destroyed {expected actual} {
+        variable window
+        if {$actual eq $expected && $window eq $expected} {on_window_destroy}
     }
 
     proc on_window_destroy {} {
@@ -1159,6 +1165,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
     }
 
     proc show {dataset args} {
+        variable window
         variable canvas
         variable current_dataset
         variable current_palette
@@ -1166,70 +1173,77 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
         variable current_scale_max
         variable selected_record
         variable status_var
+        variable candidate_serial
         set defaults [dict create palette "" width 980 scale_mode fit threshold_min "" threshold_max "" scale_min "" scale_max "" draw 1 pick 1 title "" controls auto]
         set opts [::RMSXFlipbookTimeline::parse_kv_options $defaults {*}$args]
-        set current_dataset [::RMSXFlipbookTimeline::Matrix::validate $dataset]
-        set selected_record {}
-        if {[info commands ::RMSXFlipbookTimeline::NeighborhoodFlipbook::clear] ne ""} {
-            catch {::RMSXFlipbookTimeline::NeighborhoodFlipbook::clear}
-        }
-        ::RMSXFlipbookTimeline::state_set current_timeline_dataset $current_dataset
+        # Validate all data/layout inputs before replacing any view state.
+        set dataset [::RMSXFlipbookTimeline::Matrix::validate $dataset]
+        foreach key {title value_label unit row_count column_count} {if {![dict exists $dataset $key]} {error "Timeline dataset is missing '$key'"}}
         set palette [string trim [dict get $opts palette]]
-        if {$palette eq ""} {
-            set palette [::RMSXFlipbookTimeline::state_get palette viridis]
-        }
-        set layout [build_layout $current_dataset \
-            width [dict get $opts width] \
-            scale_mode [dict get $opts scale_mode] \
-            threshold_min [dict get $opts threshold_min] \
-            threshold_max [dict get $opts threshold_max] \
-            scale_min [dict get $opts scale_min] \
-            scale_max [dict get $opts scale_max]]
-        lassign [color_scale_range $current_dataset $layout] current_scale_min current_scale_max
-        set current_palette $palette
-        sync_neighborhood_controls_from_state
-        install_record_map [dict get $layout records]
+        if {$palette eq ""} {set palette [::RMSXFlipbookTimeline::state_get palette viridis]}
+        set layout [build_layout $dataset width [dict get $opts width] scale_mode [dict get $opts scale_mode] threshold_min [dict get $opts threshold_min] threshold_max [dict get $opts threshold_max] scale_min [dict get $opts scale_min] scale_max [dict get $opts scale_max]]
+        lassign [color_scale_range $dataset $layout] scale_min scale_max
+        set snapshot [::RMSXFlipbookTimeline::ViewState::capture ::RMSXFlipbookTimeline::TimelinePlot]
+        set old_state [::RMSXFlipbookTimeline::state_dict]
+        set old_window $window
+        set staged_window ""
         set drawn 0
-        if {[dict get $opts draw]} {
-            set controls [dict get $opts controls]
-            if {[string tolower [string trim $controls]] eq "auto"} {
-                set controls [timeline_controls_for_dataset $current_dataset]
+        try {
+            set current_dataset $dataset
+            set selected_record {}
+            set current_scale_min $scale_min
+            set current_scale_max $scale_max
+            set current_palette $palette
+            if {[dict get $opts draw]} {
+                package require Tk
+                set controls [dict get $opts controls]
+                if {[string tolower [string trim $controls]] eq "auto"} {set controls [timeline_controls_for_dataset $dataset]}
+                set controls [expr {$controls ? 1 : 0}]
+                set title [string trim [dict get $opts title]]
+                if {$title eq ""} {set title "RMSX Flipbook Timeline"}
+                set window .rmsxflipbooktimeline_timeline_plot
+                if {[winfo exists $window]} {set window ".rmsxflipbooktimeline_timeline_candidate[incr candidate_serial]"}
+                set staged_window $window
+                set canvas [ensure_window [dict get $layout canvas_width] [dict get $layout canvas_height] $title controls $controls]
+                wm withdraw $window
+                draw $dataset $layout $palette
+                if {$controls} {
+                    configure_scrubber [dict get $dataset column_count]
+                    set status_var "Use arrow keys or click a heatmap cell to select a frame and residue."
+                } else {set status_var ""}
+                set drawn 1
+            } else {set canvas ""}
+            install_record_map [dict get $layout records]
+            if {[dict get $opts pick]} {install_pick_trace} else {remove_pick_trace}
+        } on error {message options} {
+            if {$staged_window ne "" && [info commands winfo] ne "" && [winfo exists $staged_window]} {
+                bind $staged_window <Destroy> {}
+                destroy $staged_window
             }
-            set controls [expr {$controls ? 1 : 0}]
-            focus_live_matrix_scene $current_dataset
-            set title [string trim [dict get $opts title]]
-            if {$title eq ""} {
-                set title "RMSX Flipbook Timeline"
-            }
-            set canvas [ensure_window [dict get $layout canvas_width] [dict get $layout canvas_height] $title controls $controls]
-            draw $current_dataset $layout $palette
-            if {$controls} {
-                configure_scrubber [dict get $current_dataset column_count]
-                set status_var "Click or drag a heatmap cell to jump frames and highlight the row selection."
-            } else {
-                set status_var ""
-            }
-            set drawn 1
-        } else {
-            set canvas ""
+            ::RMSXFlipbookTimeline::ViewState::restore $snapshot
+            ::RMSXFlipbookTimeline::state_replace $old_state
+            return -options $options $message
         }
-        if {[dict get $opts pick]} {
-            install_pick_trace
-            catch {mouse mode pick}
+        # All potentially failing preparation/drawing has passed. Publish once.
+        clear_structure_highlight
+        if {[info commands ::RMSXFlipbookTimeline::NeighborhoodFlipbook::clear] ne ""} {catch {::RMSXFlipbookTimeline::NeighborhoodFlipbook::clear}}
+        ::RMSXFlipbookTimeline::state_set current_timeline_dataset $dataset
+        ::RMSXFlipbookTimeline::publish_matrix_result $dataset $opts
+        if {$drawn} {
+            focus_live_matrix_scene $dataset
+            wm deiconify $window
+            if {$old_window ne $window && [winfo exists $old_window]} {destroy $old_window}
+        } elseif {[info commands winfo] ne "" && [winfo exists $old_window]} {
+            bind $old_window <Destroy> {}
+            destroy $old_window
         }
-        ::RMSXFlipbookTimeline::publish_matrix_result $current_dataset $opts
-        return [dict create \
-            rows [dict get $current_dataset row_count] \
-            columns [dict get $current_dataset column_count] \
-            min [lindex [color_scale_range $current_dataset $layout] 0] \
-            max [lindex [color_scale_range $current_dataset $layout] 1] \
-            drawn $drawn \
-            dataset $current_dataset]
+        return [dict create rows [dict get $dataset row_count] columns [dict get $dataset column_count] min $scale_min max $scale_max drawn $drawn dataset $dataset]
     }
 
     proc show_live {molid metric args} {
         set dataset [::RMSXFlipbookTimeline::TimelineAnalysis::calculate $molid $metric {*}$args]
         set defaults [dict create \
+            selection all \
             column_mode frames \
             slicing_mode slices \
             slices "" \
@@ -1237,6 +1251,9 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
             slice_aggregation auto \
             slice_representative first]
         set opts [::RMSXFlipbookTimeline::parse_kv_options $defaults {*}$args]
+        dict set dataset provenance selection [dict get $opts selection]
+        # calculate resolves top once; preserve that concrete source identity.
+        if {[dict exists $dataset molid]} {dict set dataset provenance molid [dict get $dataset molid]}
         set column_mode [string tolower [string trim [dict get $opts column_mode]]]
         if {$column_mode in {slice slices}} {
             set dataset [::RMSXFlipbookTimeline::Matrix::aggregate_to_slices \
@@ -1654,6 +1671,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
             scale_min [dict get $opts scale_min] \
             scale_max [dict get $opts scale_max]]
         set fp [open $filename w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp [format {<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">} \
                 [dict get $layout canvas_width] [dict get $layout canvas_height] [dict get $layout canvas_width] [dict get $layout canvas_height]]

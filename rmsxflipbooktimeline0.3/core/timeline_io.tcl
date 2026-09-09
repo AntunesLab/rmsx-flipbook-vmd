@@ -154,12 +154,28 @@ namespace eval ::RMSXFlipbookTimeline::TimelineIO {
         for {set col 0} {$col < [llength $slice_columns]} {incr col} {
             set item [lindex $slice_columns $col]
             set label [lindex $item 0]
-            lappend columns [dict create \
+            set column [dict create \
                 index $col \
                 slice_index $col \
                 label $label \
                 target_type slice \
                 source_column $label]
+            if {[dict exists $method plan] && [regexp {^slice_([0-9]+)} $label _ number]} {
+                set plan [dict get $method plan]
+                set start [expr {[dict get $plan start_frame] + ($number-1)*[dict get $plan slice_size]}]
+                set end $start
+                if {[dict get $method metric] eq "rmsx"} {set end [expr {$start+[dict get $plan slice_size]-1}]}
+                dict set column frame_start $start
+                dict set column frame_end $end
+                if {[dict get $method time_known] && [dict get $method time_step_ps] ne ""} {
+                    set origin [dict get $method parameters rmsd_time_origin]
+                    set step [dict get $method time_step_ps]
+                    dict set column time [expr {$origin+$start*$step}]
+                    dict set column time_end [expr {$origin+$end*$step}]
+                    dict set column time_unit ps
+                }
+            }
+            lappend columns $column
             lappend values [lindex $item 1]
         }
 
@@ -209,6 +225,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelineIO {
     proc write_tml_body {dataset filename} {
         set filename [file normalize $filename]
         set fp [open $filename w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp "# VMD Timeline data file"
             puts $fp "# FILE_VERSION= 1.4"
@@ -304,6 +321,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelineIO {
         set opts [::RMSXFlipbookTimeline::parse_kv_options $defaults {*}$args]
         set filename [file normalize $filename]
         set fp [open $filename r]
+        fconfigure $fp -encoding utf-8
         set lines {}
         set headers [dict create]
         set num_frames 0

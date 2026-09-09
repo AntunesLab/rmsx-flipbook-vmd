@@ -63,6 +63,7 @@ namespace eval ::RMSXFlipbookTimeline::Manifest {
 
     proc write_payload {manifest filename} {
         set fp [open $filename w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp "# RMSX Flipbook Timeline session; Tcl dict data, never executable code"
             puts $fp $manifest
@@ -71,19 +72,11 @@ namespace eval ::RMSXFlipbookTimeline::Manifest {
 
     proc read {filename} {
         set fp [open $filename r]
+        fconfigure $fp -encoding utf-8
         set lines [split [::read $fp] "\n"]
         close $fp
-
-        set payload ""
-        foreach line $lines {
-            set trimmed [string trim $line]
-            if {$trimmed eq "" || [string index $trimmed 0] eq "#"} {
-                continue
-            }
-            set payload $trimmed
-            break
-        }
-
+        while {[llength $lines] && ([string trim [lindex $lines 0]] eq "" || [string match {#*} [string trimleft [lindex $lines 0]]])} {set lines [lrange $lines 1 end]}
+        set payload [string trim [join $lines "\n"]]
         if {$payload eq ""} {
             error "Manifest has no Tcl dict payload: $filename"
         }

@@ -21,7 +21,7 @@ def run(command, *, cwd=None, env=None, timeout=None, stream=False):
         try:
             result = subprocess.run(command, cwd=cwd, env=env, stdin=read_fd,
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                    timeout=timeout, text=True, errors="replace")
+                                    timeout=timeout, text=True, encoding="utf-8", errors="replace")
             if stream:
                 sys.stdout.write(result.stdout)
             return result

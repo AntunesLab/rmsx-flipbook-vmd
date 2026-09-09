@@ -1,8 +1,8 @@
 # Legacy UI forwards native setup into the shared dashboard operation/safety path.
 package require Tcl 8.6
-source [file join $::env(RMSX_TEST_PACKAGE) rmsxflipbooktimeline.tcl]
-source [file join $::env(RMSX_TEST_PACKAGE) gui dashboard_window.tcl]
-source [file join $::env(RMSX_TEST_PACKAGE) gui main_window.tcl]
+source -encoding utf-8 [file join $::env(RMSX_TEST_PACKAGE) rmsxflipbooktimeline.tcl]
+source -encoding utf-8 [file join $::env(RMSX_TEST_PACKAGE) gui dashboard_window.tcl]
+source -encoding utf-8 [file join $::env(RMSX_TEST_PACKAGE) gui main_window.tcl]
 proc expect {expression message} { if {![uplevel 1 [list expr $expression]]} { error $message } }
 rename ::RMSXFlipbookTimeline::Dashboard::run_native_metric ::RMSXFlipbookTimeline::Dashboard::run_native_metric_real
 proc ::RMSXFlipbookTimeline::Dashboard::run_native_metric {} {

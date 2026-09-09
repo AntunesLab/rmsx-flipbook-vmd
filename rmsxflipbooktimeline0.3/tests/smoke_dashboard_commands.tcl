@@ -47,7 +47,7 @@ if {[info commands ::RMSXFlipbookTimeline::GUI::show] ne ""} {
     smoke_fail "classic GUI should not be sourced by package require alone"
 }
 
-if {[catch {source [file join $plugin_dir gui dashboard_window.tcl]} err]} {
+if {[catch {source -encoding utf-8 [file join $plugin_dir gui dashboard_window.tcl]} err]} {
     smoke_fail "dashboard source failed: $err"
 }
 
@@ -96,7 +96,7 @@ foreach metric {Displacement SS {Native contacts} cross_correlation residue_func
         smoke_fail "native metric values should not include Timeline-only metric $metric"
     }
 }
-assert_equal $::RMSXFlipbookTimeline::Dashboard::native_time_step 0.049 "dashboard default frame step"
+assert_equal $::RMSXFlipbookTimeline::Dashboard::native_time_step "" "dashboard default time must be unknown"
 assert_equal $::RMSXFlipbookTimeline::Dashboard::native_total_time_ns auto "dashboard total-time override should default to auto"
 foreach palette {viridis magma inferno plasma cividis rocket mako turbo BWR RWB RGB} {
     if {[lsearch -exact [::RMSXFlipbookTimeline::Dashboard::palette_values] $palette] < 0} {
@@ -179,6 +179,8 @@ set ::RMSXFlipbookTimeline::Dashboard::native_slices 2
 set ::RMSXFlipbookTimeline::Dashboard::native_slice_size 20
 set ::RMSXFlipbookTimeline::Dashboard::native_end 39
 set previous ""
+set ::RMSXFlipbookTimeline::Dashboard::native_time_step ""
+set ::RMSXFlipbookTimeline::Dashboard::native_total_time_ns auto
 foreach {metric prefix} {RMSX rmsx Shift-Map shift 1-lDDT lddt} {
     foreach {chain suffix} {7 single all all} {
         set ::RMSXFlipbookTimeline::Dashboard::native_metric $metric
@@ -188,6 +190,8 @@ foreach {metric prefix} {RMSX rmsx Shift-Map shift 1-lDDT lddt} {
         set call [lindex $::calls end]
         assert_equal [dict get $call kind] ${prefix}_${suffix} "metric/chain dispatch"
         assert_equal [option_value [dict get $call args] -num_slices] 2 "slice count argument"
+        assert_equal [option_value [dict get $call args] -time_known] 0 "unknown time must be declared"
+        assert_equal [dict get [::RMSXFlipbookTimeline::Results::get] time_step_ps] "" "unknown time must not become physical time"
         assert_equal [option_value [dict get $call args] -overwrite] 0 "dashboard must never force overwrite"
         assert_equal [option_value [dict get $call args] -progress_callback] ::RMSXFlipbookTimeline::Operation::checkpoint "dashboard progress callback"
         assert_equal [file dirname [dict get $call output]] [file normalize $parent] "new output must be under selected parent"
@@ -202,6 +206,23 @@ set ::RMSXFlipbookTimeline::Dashboard::native_slicing_mode slice_size
 set args [dict get [lindex $::calls end] args]
 assert_equal [option_value $args -slice_size] 20 "slice-size argument"
 assert_equal [option_value $args -num_slices] "" "slice-size mode must not send slice count"
+# An exact discovered group is passed intact; changing the source invalidates it.
+set exact_group [dict create group_schema 1 id {segid A} field segid value A blank_segment 0 label {segid A}]
+set ::RMSXFlipbookTimeline::Dashboard::native_chain_groups [dict create {segid A} $exact_group]
+set ::RMSXFlipbookTimeline::Dashboard::native_chain_groups_topology [file normalize $::RMSXFlipbookTimeline::Dashboard::native_topology]
+set ::RMSXFlipbookTimeline::Dashboard::native_chain {segid A}
+assert_equal [::RMSXFlipbookTimeline::Dashboard::selected_chain_group] $exact_group "typed group identity must survive UI selection"
+set ::RMSXFlipbookTimeline::Dashboard::native_time_step 2.5
+::RMSXFlipbookTimeline::Dashboard::run_native_metric
+set args [dict get [lindex $::calls end] args]
+assert_equal [option_value $args -chain] $exact_group "native call must receive exact group"
+assert_equal [option_value $args -time_known] 1 "explicit physical step must be declared known"
+assert_equal [option_value $args -rmsd_time_step] 2.5 "explicit physical step must survive"
+set ::RMSXFlipbookTimeline::Dashboard::native_frame_count_key previous-source
+set ::RMSXFlipbookTimeline::Dashboard::native_detected_time_step_ps 2.5
+::RMSXFlipbookTimeline::Dashboard::schedule_auto_frame_count 60000
+assert_equal $::RMSXFlipbookTimeline::Dashboard::native_time_step "" "new source must clear prior source timing"
+if {$::RMSXFlipbookTimeline::Dashboard::native_frame_count_after ne ""} {after cancel $::RMSXFlipbookTimeline::Dashboard::native_frame_count_after}
 # Human labels map back to stable calculation keys.
 foreach {label key} {SS secondary_structure H-bonds hbonds {Salt bridges} salt_bridges {Native contacts} native_contacts Contacts inter_selection_contacts Δphi delta_phi 1-lDDT lddt} {
     assert_equal [::RMSXFlipbookTimeline::Dashboard::metric_key $label] $key "display alias"

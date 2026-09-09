@@ -62,7 +62,7 @@ if {[catch {
         -cleanup 1 \
         -log_transform 1 \
         -mask_selection "resid 1:5; resid 48" \
-        -rmsd_time_step 0.04888821 \
+        -time_known 1 -rmsd_time_step 0.04888821 \
         -verbose 0
 } result]} {
     smoke_fail "run_native_analysis failed: $result"

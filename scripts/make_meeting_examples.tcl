@@ -7,12 +7,12 @@ proc rmsx_meeting_examples {} {
     package require rmsxflipbooktimeline 0.3
     set fixtures [file join $root fixtures upstream test_files]
     file mkdir $out
-    set single [::RMSXFlipbookTimeline::run_native_analysis [file join $fixtures 1UBQ.pdb] [file join $fixtures mon_sys.dcd] [file join $out ubiquitin] -chain 7 -num_slices 3 -start_frame 0 -end_frame 26 -verbose 0]
+    set single [::RMSXFlipbookTimeline::run_native_analysis [file join $fixtures 1UBQ.pdb] [file join $fixtures mon_sys.dcd] [file join $out ubiquitin] -chain 7 -num_slices 3 -start_frame 0 -end_frame 26 -time_known 0 -verbose 0]
     ::RMSXFlipbookTimeline::load_folder [dict get $single output_dir]
     ::RMSXFlipbookTimeline::Results::update [dict create label {Ubiquitin · local fluctuations}]
     ::RMSXFlipbookTimeline::write_flipbook_figure [file join $out ubiquitin.svg]
-    set multi [::RMSXFlipbookTimeline::run_native_all_chain_analysis [file join $fixtures protease_backbone.pdb] [file join $fixtures short_protease_backbone.dcd] [file join $out protease] -num_slices 3 -start_frame 0 -end_frame 26 -mask_selection {resid 25:26} -verbose 0]
-    ::RMSXFlipbookTimeline::load_folder [dict get $multi combined_dir]
+    set multi [::RMSXFlipbookTimeline::run_native_all_chain_analysis [file join $fixtures protease_backbone.pdb] [file join $fixtures short_protease_backbone.dcd] [file join $out protease] -num_slices 3 -start_frame 0 -end_frame 26 -mask_selection {resid 25:26} -time_known 0 -verbose 0]
+    ::RMSXFlipbookTimeline::load_folder [dict get $multi output_dir]
     ::RMSXFlipbookTimeline::Results::update [dict create label {HIV protease · two-chain masked example}]
     ::RMSXFlipbookTimeline::write_flipbook_figure [file join $out protease.svg]
     set fp [open [file join $out COMPLETED.tcldict] w]

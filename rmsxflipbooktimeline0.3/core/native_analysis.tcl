@@ -45,18 +45,22 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         variable working_scopes
         if {[llength $args] % 2} {error "Analysis options must be key/value pairs"}
         set overwrite 0; set cleanup 1; set callback ""
+        set explicit_time_known 0; set explicit_time_step 0
         foreach {key value} $args {
             set key [string trimleft $key -]
             switch -- $key {
                 overwrite {set overwrite $value}
                 cleanup {set cleanup $value}
                 progress_callback {set callback $value}
+                time_known {set explicit_time_known 1}
+                rmsd_time_step {set explicit_time_step 1}
                 safe_output_dir {if {![::RMSXFlipbookTimeline::truthy $value]} {error "safe_output_dir 0 is no longer supported; choose a dedicated output directory"}}
             }
             if {$key in {csv_name rmsd_name rmsf_name summary_name native_csv_name} && $value ne ""} {
                 if {[file pathtype $value] ne "relative" || ".." in [file split $value]} {error "Analysis output names must remain inside the result directory: $value"}
             }
         }
+        if {$explicit_time_step && !$explicit_time_known} {lappend args -time_known 1}
         foreach path [list $topology $trajectory] {
             if {![file isfile $path] || ![file readable $path]} {error "Input file is not readable: $path"}
         }
@@ -70,6 +74,10 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         set succeeded 0
         try {
             set result [$kernel $topology $trajectory $stage {*}$args -overwrite 0 -progress_callback $relay]
+            if {[dict exists $result parameters time_known] && ![dict get $result parameters time_known]} {
+                dict set result parameters rmsd_time_step ""
+                dict set result parameters rmsd_time_origin ""
+            }
             dict set result method [method_details $kernel $result]
             emit_progress [dict create progress_callback $callback] [dict create stage publishing output_dir $target message "Publishing complete analysis output"]
             set vmd_version unknown
@@ -136,6 +144,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         set field [dict get $group field]
         if {$field ni {chain segid}} {error "Unsupported chain group field: $field"}
         set clause "$field [::RMSXFlipbookTimeline::ResidueIdentity::literal [dict get $group value]]"
+        if {$field eq "chain" && [dict get $group value] eq ""} {set clause {chain "" " "}}
         if {[dict get $group blank_segment]} {append clause { and segid ""}}
         return $clause
     }
@@ -194,15 +203,16 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         return [format "%.15g" [expr {double($value)}]]
     }
 
-    proc write_rmsd_csv {filename rows} {
+    proc write_rmsd_csv {filename rows {time_known 1}} {
         set fp [open $filename w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
-            puts $fp "Frame,Time,RMSD"
+            puts $fp [expr {$time_known ? "Frame,Time,RMSD" : "Frame,RMSD"}]
             foreach row $rows {
-                puts $fp [join [list \
-                    [numeric_csv_value [dict get $row frame]] \
-                    [numeric_csv_value [dict get $row time]] \
-                    [numeric_csv_value [dict get $row rmsd]]] ","]
+                set values [list [numeric_csv_value [dict get $row frame]]]
+                if {$time_known} {lappend values [numeric_csv_value [dict get $row time]]}
+                lappend values [numeric_csv_value [dict get $row rmsd]]
+                puts $fp [join $values ","]
             }
         } finally {
             catch {close $fp}
@@ -367,6 +377,10 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             [dict get $opts manual_length] \
             [dict get $opts manual_unit]]
         if {$manual_ns eq ""} {
+            if {[dict exists $opts time_known] && ![dict get $opts time_known]} {
+                set sim_name [file rootname [file tail $trajectory]]
+                return "${prefix}_${sim_name}_[dict get $plan adjusted_frames]_frames.${extension}"
+            }
             set frames [dict get $plan adjusted_frames]
             if {$frames <= 1} {
                 set manual_ns 0.0
@@ -764,7 +778,9 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
     proc load_structure_file {path requested_type} {
         set normalized [file normalize $path]
         set mol_type [resolve_molfile_type $normalized $requested_type topology]
-        if {$mol_type eq ""} {
+        if {$mol_type eq "pdb"} {
+            set molid [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $normalized]
+        } elseif {$mol_type eq ""} {
             set molid [mol new $normalized waitfor all]
         } else {
             set molid [mol new $normalized type $mol_type waitfor all]
@@ -993,6 +1009,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         file mkdir $output_dir
         set sentinel_path [file join $output_dir [output_sentinel_name]]
         set fp [open $sentinel_path w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp "managed_by=rmsx"
         } finally {
@@ -1254,6 +1271,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         set frame_order {}
         set by_frame [dict create]
         set chain_rows {}
+        set time_known ""
         foreach chain_dir $chain_dirs {
             set chain [chain_id_from_output_dir $chain_dir]
             set rmsd_path [file join $chain_dir rmsd.csv]
@@ -1263,11 +1281,14 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             set csv_data [read_simple_csv $rmsd_path]
             set header [dict get $csv_data header]
             set frame_index [csv_column_index $header Frame]
-            set time_index [csv_column_index $header Time]
+            set time_index [lsearch -exact $header Time]
+            set this_known [expr {$time_index >= 0}]
+            if {$time_known ne "" && $time_known != $this_known} {error "Cannot combine known-time and frame-only RMSD sidecars"}
+            set time_known $this_known
             set rmsd_index [csv_column_index $header RMSD]
             foreach row [dict get $csv_data rows] {
                 set frame [string trim [lindex $row $frame_index]]
-                set time [string trim [lindex $row $time_index]]
+                set time [expr {$time_known ? [string trim [lindex $row $time_index]] : ""}]
                 set rmsd [string trim [lindex $row $rmsd_index]]
                 if {![string is double -strict $rmsd]} {
                     continue
@@ -1281,7 +1302,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                 set values [lindex $entry 2]
                 lappend values [expr {double($rmsd)}]
                 dict set by_frame $key [list $frame $time $values]
-                lappend chain_rows [list $chain $frame $time $rmsd]
+                if {$time_known} {lappend chain_rows [list $chain $frame $time $rmsd]} else {lappend chain_rows [list $chain $frame $rmsd]}
             }
         }
         if {[llength $frame_order] == 0} {
@@ -1297,20 +1318,20 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                 set total [expr {$total + double($value)}]
             }
             set mean [expr {$total / double([llength $values])}]
-            lappend mean_rows [list [lindex $entry 0] [lindex $entry 1] [numeric_csv_value $mean]]
+            if {$time_known} {lappend mean_rows [list [lindex $entry 0] [lindex $entry 1] [numeric_csv_value $mean]]} else {lappend mean_rows [list [lindex $entry 0] [numeric_csv_value $mean]]}
         }
 
         set out_path [file join $combined_dir [dict get $opts output_name]]
         if {![dict get $opts overwrite] && [file exists $out_path]} {
             error "Combined RMSD CSV already exists: $out_path"
         }
-        write_simple_csv $out_path {Frame Time RMSD} $mean_rows
+        write_simple_csv $out_path [expr {$time_known ? {Frame Time RMSD} : {Frame RMSD}}] $mean_rows
 
         set by_chain_path [file join $combined_dir [dict get $opts by_chain_name]]
         if {![dict get $opts overwrite] && [file exists $by_chain_path]} {
             error "Combined chain RMSD CSV already exists: $by_chain_path"
         }
-        write_simple_csv $by_chain_path {ChainID Frame Time RMSD} $chain_rows
+        write_simple_csv $by_chain_path [expr {$time_known ? {ChainID Frame Time RMSD} : {ChainID Frame RMSD}}] $chain_rows
 
         return [dict create rmsd_csv $out_path rmsd_by_chain_csv $by_chain_path]
     }
@@ -1419,6 +1440,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
 
     proc read_simple_csv {filename} {
         set f [open $filename r]
+        fconfigure $f -encoding utf-8
         try {set text [read $f]} finally {close $f}
         set records {}; set record {}; set field ""; set quoted 0
         for {set i 0} {$i < [string length $text]} {incr i} {
@@ -1443,6 +1465,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
 
     proc write_simple_csv {filename header rows} {
         set fp [open $filename w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp [join [lmap value $header {csv_quote $value}] ","]
             foreach row $rows {
@@ -1553,13 +1576,13 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             if {![file exists $pdb_path]} {
                 continue
             }
-            set molid [mol new $pdb_path type pdb waitfor all]
+            set molid [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $pdb_path]
             try {
                 set sel [atomselect $molid "all"]
                 try {
                     set beta_values [beta_values_for_selection_by_record_key $sel $residue_records [lindex $item 1]]
                     $sel set beta $beta_values
-                    ::RMSXFlipbookTimeline::OutputTxn::atomic_write $pdb_path [list $sel writepdb]
+                    ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $sel $pdb_path
                     lappend updated [file normalize $pdb_path]
                 } finally {
                     catch {$sel delete}
@@ -1719,12 +1742,12 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
 
     proc method_details {kernel result} {
         if {[string match *lddt* $kernel]} {
-            set method [dict create metric lddt value_label {1 - lDDT} unit unitless alignment none reference first_selected_frame representative_atom {one atom per residue, defined by analysis_selection} sampling slice_first_frame neighbor_cutoff 15.0 thresholds {0.5 1.0 2.0 4.0} comparison strict_less_than empty_neighbor_instability 0.0]
+            set method [dict create metric lddt value_label 1-lDDT unit unitless alignment none reference first_selected_frame representative_atom {one atom per residue, defined by analysis_selection} sampling slice_first_frame neighbor_cutoff 15.0 thresholds {0.5 1.0 2.0 4.0} comparison strict_less_than empty_neighbor_instability 0.0]
             foreach source {inclusion_radius thresholds empty_neighbor_instability} target {neighbor_cutoff thresholds empty_neighbor_instability} {
                 if {[dict exists $result $source]} {dict set method $target [dict get $result $source]}
             }
         } elseif {[string match *shift* $kernel]} {
-            set method [dict create metric shift value_label Shift unit Å alignment none reference first_selected_frame representative_atom {one atom per residue, defined by analysis_selection} sampling slice_first_frame]
+            set method [dict create metric shift value_label Shift-Map unit Å alignment none reference first_selected_frame representative_atom {one atom per residue, defined by analysis_selection} sampling slice_first_frame]
         } else {
             set method [dict create metric rmsx value_label RMSX unit Å alignment none calculation {VMD measure rmsf per residue within each slice}]
         }
@@ -1736,7 +1759,17 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             dict set method value_label "ln(1 + [dict get $method value_label])"
         }
         if {[dict exists $result parameters]} {dict set method parameters [dict get $result parameters]}
+        set time_known [expr {[dict exists $result parameters time_known] ? [dict get $result parameters time_known] : 0}]
+        dict set method time_known $time_known
+        dict set method time_unit [expr {$time_known ? "ps" : "unknown"}]
+        dict set method time_step_ps [expr {$time_known && [dict exists $result parameters rmsd_time_step] ? [dict get $result parameters rmsd_time_step] : ""}]
         if {[dict exists $result analysis_selection]} {dict set method analysis_selection [dict get $result analysis_selection]}
+        if {[dict exists $result plan]} {
+            dict set method plan [dict get $result plan]
+        } elseif {[dict exists $result chain_results] && [llength [dict get $result chain_results]]} {
+            set child [lindex [dict get $result chain_results] 0]
+            if {[dict exists $child plan]} {dict set method plan [dict get $child plan]}
+        }
         return $method
     }
     proc csv_method_metadata {csv_path} {
@@ -2304,6 +2337,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         }
 
         set fp [open $svg_path w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp [format {<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">} $width $height $width $height]
             puts $fp [format {<metadata>interpolate=%s; fill_label=%s</metadata>} [expr {$interpolate ? "true" : "false"}] [xml_escape $fill_label]]
@@ -2515,6 +2549,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         }
 
         set fp [open $svg_path w]
+        fconfigure $fp -encoding utf-8 -translation lf
         try {
             puts $fp [format {<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">} $width $height $width $height]
             puts $fp [format {<metadata>layout=%s; interpolate=%s; fill_label=%s</metadata>} [xml_escape $layout] [expr {$interpolate ? "true" : "false"}] [xml_escape $fill_label]]
@@ -2658,7 +2693,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
         }
     }
 
-    proc fitted_rmsd_rows {molid analysis_selection vmd_start vmd_end traj_start time_step time_origin} {
+    proc fitted_rmsd_rows {molid analysis_selection vmd_start vmd_end traj_start time_step time_origin {time_known 1}} {
         set ref [atomselect $molid $analysis_selection frame $vmd_start]
         if {[$ref num] == 0} {
             catch {$ref delete}
@@ -2685,7 +2720,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
 
                     lappend rows [dict create \
                         frame $traj_frame \
-                        time [expr {$time_origin + ($traj_frame * $time_step)}] \
+                        time [expr {$time_known ? $time_origin + ($traj_frame * $time_step) : ""}] \
                         rmsd $rmsd]
                 } finally {
                     catch {$sel delete}
@@ -2806,6 +2841,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             write_mask_metadata 1 \
             allow_fully_masked 0 \
             defer_mask_clipping 0 \
+            time_known 0 \
             rmsd_time_step 0.04888821 \
             rmsd_time_origin 0.0 \
             progress_callback "" \
@@ -3045,7 +3081,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                     try {
                         set beta_values [beta_values_for_selection $full_sel $residue_records [lindex $item 1]]
                         $full_sel set beta $beta_values
-                        $full_sel writepdb $pdb_path
+                        ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $full_sel $pdb_path
                     } finally {
                         catch {$full_sel delete}
                     }
@@ -3087,8 +3123,9 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                     $vmd_analysis_end \
                     [dict get $plan start_frame] \
                     [dict get $opts rmsd_time_step] \
-                    [dict get $opts rmsd_time_origin]]
-                write_rmsd_csv $rmsd_path $rmsd_rows
+                    [dict get $opts rmsd_time_origin] \
+                    [dict get $opts time_known]]
+                write_rmsd_csv $rmsd_path $rmsd_rows [dict get $opts time_known]
             }
         } finally {
             if {[dict get $opts cleanup]} {
@@ -3175,6 +3212,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             write_mask_metadata 1 \
             allow_fully_masked 0 \
             defer_mask_clipping 0 \
+            time_known 0 \
             rmsd_time_step 0.04888821 \
             rmsd_time_origin 0.0 \
             progress_callback "" \
@@ -3422,7 +3460,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                     try {
                         set beta_values [beta_values_for_selection $full_sel $residue_records [lindex $item 1]]
                         $full_sel set beta $beta_values
-                        $full_sel writepdb $pdb_path
+                        ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $full_sel $pdb_path
                     } finally {
                         catch {$full_sel delete}
                     }
@@ -3464,8 +3502,9 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                     $vmd_analysis_end \
                     [dict get $plan start_frame] \
                     [dict get $opts rmsd_time_step] \
-                    [dict get $opts rmsd_time_origin]]
-                write_rmsd_csv $rmsd_path $rmsd_rows
+                    [dict get $opts rmsd_time_origin] \
+                    [dict get $opts time_known]]
+                write_rmsd_csv $rmsd_path $rmsd_rows [dict get $opts time_known]
             }
         } finally {
             if {[dict get $opts cleanup]} {
@@ -3554,6 +3593,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             write_mask_metadata 1 \
             allow_fully_masked 0 \
             defer_mask_clipping 0 \
+            time_known 0 \
             rmsd_time_step 0.04888821 \
             rmsd_time_origin 0.0 \
             inclusion_radius 15.0 \
@@ -3818,7 +3858,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                     try {
                         set beta_values [beta_values_for_selection $full_sel $residue_records [lindex $item 1]]
                         $full_sel set beta $beta_values
-                        $full_sel writepdb $pdb_path
+                        ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $full_sel $pdb_path
                     } finally {
                         catch {$full_sel delete}
                     }
@@ -3860,8 +3900,9 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                     $vmd_analysis_end \
                     [dict get $plan start_frame] \
                     [dict get $opts rmsd_time_step] \
-                    [dict get $opts rmsd_time_origin]]
-                write_rmsd_csv $rmsd_path $rmsd_rows
+                    [dict get $opts rmsd_time_origin] \
+                    [dict get $opts time_known]]
+                write_rmsd_csv $rmsd_path $rmsd_rows [dict get $opts time_known]
             }
         } finally {
             if {[dict get $opts cleanup]} {
@@ -3941,6 +3982,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             mask_selection "" \
             write_mask_metadata 1 \
             allow_fully_masked 1 \
+            time_known 0 \
             rmsd_time_step 0.04888821 \
             rmsd_time_origin 0.0 \
             summary_n 3 \
@@ -4042,6 +4084,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                 -write_mask_metadata [dict get $opts write_mask_metadata] \
                 -allow_fully_masked [dict get $opts allow_fully_masked] \
                 -defer_mask_clipping $mask_active \
+                -time_known [dict get $opts time_known] \
                 -rmsd_time_step [dict get $opts rmsd_time_step] \
                 -rmsd_time_origin [dict get $opts rmsd_time_origin] \
                 -summary_n [dict get $opts summary_n] \
@@ -4187,6 +4230,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             mask_selection "" \
             write_mask_metadata 1 \
             allow_fully_masked 1 \
+            time_known 0 \
             rmsd_time_step 0.04888821 \
             rmsd_time_origin 0.0 \
             summary_n 3 \
@@ -4288,6 +4332,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                 -write_mask_metadata [dict get $opts write_mask_metadata] \
                 -allow_fully_masked [dict get $opts allow_fully_masked] \
                 -defer_mask_clipping $mask_active \
+                -time_known [dict get $opts time_known] \
                 -rmsd_time_step [dict get $opts rmsd_time_step] \
                 -rmsd_time_origin [dict get $opts rmsd_time_origin] \
                 -summary_n [dict get $opts summary_n] \
@@ -4435,6 +4480,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
             mask_selection "" \
             write_mask_metadata 1 \
             allow_fully_masked 1 \
+            time_known 0 \
             rmsd_time_step 0.04888821 \
             rmsd_time_origin 0.0 \
             summary_n 3 \
@@ -4540,6 +4586,7 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
                 -write_mask_metadata [dict get $opts write_mask_metadata] \
                 -allow_fully_masked [dict get $opts allow_fully_masked] \
                 -defer_mask_clipping $mask_active \
+                -time_known [dict get $opts time_known] \
                 -rmsd_time_step [dict get $opts rmsd_time_step] \
                 -rmsd_time_origin [dict get $opts rmsd_time_origin] \
                 -summary_n [dict get $opts summary_n] \

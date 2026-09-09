@@ -441,7 +441,7 @@ namespace eval ::RMSXFlipbookTimeline::NeighborhoodFlipbook {
             if {[$sel num] <= 0} {
                 error "Source molecule has no atoms at frame $frame"
             }
-            $sel writepdb $path
+            ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $sel $path
         } on error {message options} {
             if {$path ne ""} {catch {file delete $path}}
             return -options $options $message
@@ -997,7 +997,7 @@ namespace eval ::RMSXFlipbookTimeline::NeighborhoodFlipbook {
                 set frame_column [lindex $frame_columns $frame_i]
                 set path [write_snapshot_pdb $source_molid $frame $dataset $row_index]
                 lappend created_files $path
-                set snapshot_molid [mol new $path type pdb waitfor all]
+                set snapshot_molid [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $path]
                 if {[lsearch -exact [molinfo list] $snapshot_molid] < 0} {error "Could not load neighborhood snapshot"}
                 lappend created_molids $snapshot_molid
                 install_snapshot_identity_map $source_molid $frame [snapshot_selection $dataset $source_molid $frame $row_index] $snapshot_molid

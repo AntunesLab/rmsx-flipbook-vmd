@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import subprocess
+import sys
 import zipfile
 from check_release import main as check_release
 from run_tests import ROOT, PACKAGE
@@ -12,6 +13,8 @@ from release_inventory import release_paths
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "dist")
     parser.add_argument("--allow-dirty", action="store_true", help="Build a clearly marked local review snapshot")
@@ -21,7 +24,7 @@ def main():
     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())
     if dirty and not args.allow_dirty:
         parser.error("Commit the release contents first, or use --allow-dirty for a local review snapshot")
-    version = (PACKAGE / "VERSION").read_text().strip()
+    version = (PACKAGE / "VERSION").read_text(encoding="utf-8").strip()
     paths = release_paths()
     contents = {str(p.relative_to(ROOT)).replace("\\", "/"): p.read_bytes() for p in paths}
     manifest = {"schema": 1, "package": "rmsxflipbooktimeline", "version": version,

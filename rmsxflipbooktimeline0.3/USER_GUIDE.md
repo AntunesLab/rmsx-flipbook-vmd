@@ -99,3 +99,8 @@ selection, relevant input format and expanded diagnostic text. Keep private
 trajectories out of public reports. A small reproducible fixture is preferable.
 See the source archive's docs/SUPPORT.md and docs/METHODS.md for the current
 support matrix and scientific conventions.
+
+The native Tcl API also defaults to unknown physical time. Supply a verified
+`-rmsd_time_step` to produce physical time, or keep `-time_known 0` for frame-only
+output. Existing scripts relying on a historical default timestep must now
+declare that input explicitly; coordinate-based metric values are unchanged.

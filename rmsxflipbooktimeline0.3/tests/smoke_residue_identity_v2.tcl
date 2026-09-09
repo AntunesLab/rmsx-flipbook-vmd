@@ -53,5 +53,41 @@ try {
     ::RMSXFlipbookTimeline::NativeAnalysis::write_simple_csv $quoted {first second} [list [list {A,"B} "line1\nline2"]]
     set again [::RMSXFlipbookTimeline::NativeAnalysis::read_simple_csv $quoted]
     assert {[dict get $again rows] eq [list [list {A,"B} "line1\nline2"]]} "CSV quote/newline round trip failed"
+    set chains {}
+    foreach chain {A B} {
+        set directory [file join $root chain_${chain}_rmsx]
+        file mkdir $directory
+        lappend chains $directory
+        ::RMSXFlipbookTimeline::NativeAnalysis::write_rmsd_csv [file join $directory rmsd.csv] [list [dict create frame 0 time "" rmsd 0.0] [dict create frame 2 time "" rmsd 1.0]] 0
+    }
+    set combined_dir [file join $root combined]
+    file mkdir $combined_dir
+    set combined [::RMSXFlipbookTimeline::NativeAnalysis::combine_rmsd_csvs $chains $combined_dir]
+    set combined_data [::RMSXFlipbookTimeline::NativeAnalysis::read_simple_csv [dict get $combined rmsd_csv]]
+    assert {[dict get $combined_data header] eq {Frame RMSD} && [dict get $combined_data rows] eq {{0 0} {2 1}}} "Combined frame-only RMSD changed schema or values"
+    set original_encoding [encoding system]
+    try {
+        encoding system cp1252
+        set unicode_record [dict replace [lindex $records 0] chain é segid Ség]
+        set unicode_dir [file join $root unicode]
+        file mkdir $unicode_dir
+        set unicode_csv [file join $unicode_dir unicode.csv]
+        ::RMSXFlipbookTimeline::NativeAnalysis::write_csv $unicode_csv [list $unicode_record] {{slice_1.dcd {1}}}
+        set unicode_data [::RMSXFlipbookTimeline::NativeAnalysis::csv_to_records_and_columns [::RMSXFlipbookTimeline::NativeAnalysis::read_simple_csv $unicode_csv]]
+        assert {[::RMSXFlipbookTimeline::ResidueIdentity::key [lindex [dict get $unicode_data residue_records] 0]] eq [::RMSXFlipbookTimeline::ResidueIdentity::key $unicode_record]} "CSV relied on platform system encoding"
+        set unicode_dataset [::RMSXFlipbookTimeline::TimelineIO::read_rmsx_csv $unicode_csv]
+        dict set unicode_dataset unit Å
+        dict set unicode_dataset title {Résumé α}
+        set unicode_tml [file join $root unicode.tml]
+        ::RMSXFlipbookTimeline::TimelineIO::write_tml $unicode_dataset $unicode_tml
+        set unicode_read [::RMSXFlipbookTimeline::TimelineIO::read_tml $unicode_tml]
+        assert {[dict get $unicode_read unit] eq "Å" && [dict get $unicode_read title] eq "Résumé α"} "TML relied on platform system encoding"
+        set metadata_path [file join $root unicode.tcldict]
+        ::RMSXFlipbookTimeline::OutputTxn::write_dict $metadata_path [dict create title {Résumé α} unit Å]
+        assert {[dict get [::RMSXFlipbookTimeline::OutputTxn::read_dict $metadata_path] title] eq "Résumé α"} "Ownership metadata relied on platform system encoding"
+        set input [open $unicode_tml rb]
+        try {set bytes [read $input]} finally {close $input}
+        assert {[string first [encoding convertto utf-8 {Résumé α}] $bytes] >= 0} "TML bytes are not UTF-8"
+    } finally {encoding system $original_encoding}
     puts "RMSX residue identity v2 smoke passed"
 } finally {file delete -force $root}

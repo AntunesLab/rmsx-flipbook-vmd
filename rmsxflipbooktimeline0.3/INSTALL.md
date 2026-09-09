@@ -51,7 +51,8 @@ rmsxflipbooktimeline
 ```
 
 For persistent menu registration, source this package's `register.tcl` from
-your VMD startup file after adding its parent to `auto_path`. The helper uses:
+your VMD startup file with `source -encoding utf-8`, after adding its parent to
+`auto_path`. The helper uses:
 
 ```tcl
 vmd_install_extension rmsxflipbooktimeline rmsxflipbooktimeline \

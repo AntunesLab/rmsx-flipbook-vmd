@@ -189,7 +189,7 @@ namespace eval ::RMSXFlipbookTimeline::Loader {
         set ids {}
         try {
             foreach path $files {
-                set id [mol new $path type pdb waitfor all]
+                set id [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $path]
                 lappend ids $id
                 mol off $id
                 if {[molinfo $id get numatoms] < 1 || [molinfo $id get numframes] < 1} {
@@ -249,7 +249,7 @@ namespace eval ::RMSXFlipbookTimeline::Loader {
             # Validate linked data before touching the existing result. PDB-only
             # flipbooks remain supported; a malformed existing CSV is an error.
             set dataset {}
-            set csvs [glob -nocomplain -directory $source_folder rmsx*.csv shift*.csv lddt*.csv]
+            set csvs [::RMSXFlipbookTimeline::Values::candidate_csv_files $source_folder]
             if {[llength $csvs] && [info commands ::RMSXFlipbookTimeline::TimelineIO::read_rmsx_folder] ne ""} {
                 set dataset [::RMSXFlipbookTimeline::TimelineIO::read_rmsx_folder $source_folder]
                 ::RMSXFlipbookTimeline::Matrix::validate $dataset

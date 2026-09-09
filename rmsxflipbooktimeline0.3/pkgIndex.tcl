@@ -5,5 +5,5 @@ set version [string trim [read $fp]]
 close $fp
 package ifneeded rmsxflipbooktimeline $version [list apply {{dir} {
     set ::env(RMSXFLIPBOOKTIMELINEDIR) $dir
-    source [file join $dir rmsxflipbooktimeline.tcl]
+    source -encoding utf-8 [file join $dir rmsxflipbooktimeline.tcl]
 }} $dir]

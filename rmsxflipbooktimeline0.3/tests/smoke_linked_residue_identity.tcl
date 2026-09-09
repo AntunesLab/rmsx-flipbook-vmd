@@ -4,7 +4,7 @@ lappend auto_path $package_dir
 package require rmsxflipbooktimeline 0.3
 # Exercise the opt-in viewer's identity adapter without requiring a Tk window.
 if {[info commands ::RMSXFlipbookTimeline::ViewerPlot::build_records] eq ""} {
-    source [file join $package_dir visualization viewer_plot.tcl]
+    source -encoding utf-8 [file join $package_dir visualization viewer_plot.tcl]
 }
 proc assert {condition message} {if {![uplevel 1 [list expr $condition]]} {error $message}}
 set fixtures [file join $repo fixtures]
@@ -18,9 +18,6 @@ try {
             set resid [string trim [string range $line 22 25]]
             if {[string is integer -strict $resid] && $resid >= 1 && $resid <= 6} {
                 lassign [lindex $tuples [expr {$resid-1}]] chain segid resid insertion ordinal
-                # VMD's PDB reader substitutes X for blank chain. Construct a
-                # distinct residue, then exercise VMD's actual blank-chain data.
-                if {$chain eq ""} {set chain Y}
                 set line [format %-80s $line]
                 set line [string replace $line 21 26 [format {%1s%4s%1s} $chain $resid $insertion]]
                 set line [string replace $line 72 75 [format %-4s $segid]]
@@ -29,14 +26,28 @@ try {
         puts $output $line
     }
 } finally {close $input; close $output}
-set molid [mol new $fixture type pdb waitfor all]
-set blank [atomselect $molid {residue 4}]
-try {$blank set chain [list ""]} finally {$blank delete}
-set snapshot ""; set path ""
+set molid [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $fixture]
+set snapshot ""; set path ""; set roundtrip ""; set roundtrip_path ""
 try {
     set sel [atomselect $molid all]
     try {set records [lrange [::RMSXFlipbookTimeline::ResidueIdentity::from_selection $sel] 0 5]} finally {$sel delete}
     set portable [lmap record $records {::RMSXFlipbookTimeline::ResidueIdentity::portable $record}]
+    set channel [file tempfile roundtrip_path]
+    close $channel
+    set sel [atomselect $molid all]
+    try {
+        set original_coordinates [$sel get {x y z}]
+        set original_identities [lmap record [::RMSXFlipbookTimeline::ResidueIdentity::from_selection $sel] {::RMSXFlipbookTimeline::ResidueIdentity::key $record}]
+        ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $sel $roundtrip_path
+    } finally {$sel delete}
+    set input [open $roundtrip_path rb]
+    try {assert {[string first "\u0000" [read $input]] < 0} "PDB writer emitted an invalid blank-chain NUL byte"} finally {close $input}
+    set roundtrip [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $roundtrip_path]
+    set sel [atomselect $roundtrip all]
+    try {
+        assert {[$sel get {x y z}] eq $original_coordinates} "Identity restoration changed coordinates"
+        assert {[lmap record [::RMSXFlipbookTimeline::ResidueIdentity::from_selection $sel] {::RMSXFlipbookTimeline::ResidueIdentity::key $record}] eq $original_identities} "PDB round trip merged blank/X, insertion or repeated residues"
+    } finally {$sel delete}
     set n 0
     foreach record $portable tuple $tuples {
         assert {[::RMSXFlipbookTimeline::ResidueIdentity::key $record] eq $tuple} "Fixture identity changed: expected $tuple, found [::RMSXFlipbookTimeline::ResidueIdentity::key $record]"
@@ -72,7 +83,7 @@ try {
     set repeated [lindex $portable 5]
     set dataset [dict create rows [list $repeated]]
     set path [::RMSXFlipbookTimeline::NeighborhoodFlipbook::write_snapshot_pdb $molid 0 $dataset 0]
-    set snapshot [mol new $path type pdb waitfor all]
+    set snapshot [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $path]
     ::RMSXFlipbookTimeline::NeighborhoodFlipbook::install_snapshot_identity_map $molid 0 {residue 5} $snapshot
     set selection [::RMSXFlipbookTimeline::NeighborhoodFlipbook::row_identity_selection $repeated all $snapshot]
     set sel [atomselect $snapshot $selection]
@@ -104,9 +115,18 @@ try {
     set sel [atomselect $molid {residue 0 to 3}]
     try {assert {[dict size $seen] == [$sel num]} "All-chain groups omitted atoms"} finally {$sel delete}
     assert {[catch {::RMSXFlipbookTimeline::NativeAnalysis::append_chain_selection all A $molid}]} "Ambiguous public chain alias guessed a selection"
+    set protected_digest [::RMSXFlipbookTimeline::OutputTxn::digest $roundtrip_path]
+    set sel [atomselect $molid {residue 0}]
+    try {
+        $sel set segid TOOLONG
+        assert {[catch {::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $sel $roundtrip_path}]} "PDB writer silently truncated residue identity"
+    } finally {$sel delete}
+    assert {[::RMSXFlipbookTimeline::OutputTxn::digest $roundtrip_path] eq $protected_digest} "Unrepresentable PDB export changed a prior file"
     puts "RMSX linked residue identity smoke passed"
 } finally {
     if {$snapshot ne ""} {catch {mol delete $snapshot}}
+    if {$roundtrip ne ""} {catch {mol delete $roundtrip}}
+    if {$roundtrip_path ne ""} {catch {file delete $roundtrip_path}}
     if {$path ne ""} {catch {file delete $path}}
     catch {mol delete $molid}
     catch {file delete $fixture}

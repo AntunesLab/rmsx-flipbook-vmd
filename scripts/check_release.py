@@ -8,10 +8,10 @@ from release_inventory import release_paths
 
 
 def main():
-    version = (PACKAGE / "VERSION").read_text().strip()
+    version = (PACKAGE / "VERSION").read_text(encoding="utf-8").strip()
     if PACKAGE.name != "rmsxflipbooktimeline" + version:
         raise SystemExit("Package directory and VERSION disagree")
-    check_manifest(json.loads((ROOT / "scripts/suite.json").read_text())["tests"])
+    check_manifest(json.loads((ROOT / "scripts/suite.json").read_text(encoding="utf-8"))["tests"])
     verify_fixtures()
     release_paths()
     forbidden = re.compile(r"/Users/finn|downloads/vmd/current|VMD2b1\.app|rmsxflipbooktimeline0\.[12]")
@@ -20,7 +20,7 @@ def main():
         for path in directory.rglob("*"):
             if path.suffix not in {".tcl", ".sh", ".py"} or path.name == "check_release.py":
                 continue
-            for number, line in enumerate(path.read_text().splitlines(), 1):
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
                 if forbidden.search(line):
                     failures.append(f"{path.relative_to(ROOT)}:{number}: {line.strip()}")
     required = ["LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "CHANGELOG.md", "docs/SUPPORT.md"]

@@ -37,7 +37,7 @@ proc run_smoke {} {
         return skip
     }
 
-    if {[catch {rmsxflipbooktimeline} err]} {
+    if {[catch {rmsxflipbooktimeline_classic} err]} {
         smoke_fail "rmsxflipbooktimeline callback failed: $err"
     }
 

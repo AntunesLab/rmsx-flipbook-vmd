@@ -150,7 +150,7 @@ if {[info commands ::RMSXFlipbookTimeline::show_dashboard] eq ""} {
 }
 
 set gui_file [file join $plugin_parent rmsxflipbooktimeline0.3 gui main_window.tcl]
-if {[catch {source $gui_file} err]} {
+if {[catch {source -encoding utf-8 $gui_file} err]} {
     smoke_fail "GUI source failed: $err"
 }
 

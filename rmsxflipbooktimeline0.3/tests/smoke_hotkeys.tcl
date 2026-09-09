@@ -52,7 +52,7 @@ if {[catch {
     ::RMSXFlipbookTimeline::load_folder \
         $folder \
         palette viridis \
-        rep NewTube \
+        rep [::RMSXFlipbookTimeline::Style::default_rep] \
         res 16 \
         thick 0.30 \
         spacing 40.0 \
@@ -88,8 +88,8 @@ if {abs([dict get $thick_result thick] - 0.35) > 0.0001} {
     smoke_fail "Expected thickness 0.35 after adjustment, got $thick_result"
 }
 set rep_info [rep_name_and_thickness $first_molid]
-if {[lindex $rep_info 0] ne "NewTube"} {
-    smoke_fail "Expected NewTube rep after thickness adjustment, got $rep_info"
+if {[lindex $rep_info 0] ne [::RMSXFlipbookTimeline::Style::default_rep]} {
+    smoke_fail "Expected [::RMSXFlipbookTimeline::Style::default_rep] rep after thickness adjustment, got $rep_info"
 }
 
 if {[catch {::RMSXFlipbookTimeline::toggle_color_method} color_result]} {

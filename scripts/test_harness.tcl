@@ -1,5 +1,7 @@
 # Each invocation runs in a disposable working directory created by run_tests.py.
 package require Tcl 8.6
+fconfigure stdout -encoding utf-8
+fconfigure stderr -encoding utf-8
 namespace eval ::TestHarness {
     variable finished 0
     # Numerical baseline files predate full residue identity. Project by header
@@ -22,6 +24,7 @@ namespace eval ::TestHarness {
         if {$finished} { return }
         set finished 1
         set fp [open $::env(RMSX_TEST_RESULT) w]
+        fconfigure $fp -encoding utf-8 -translation lf
         puts $fp $status
         puts $fp [dict create detail $detail tcl [info patchlevel] \
             vmd [expr {[info commands vmdinfo] ne "" ? [vmdinfo version] : "none"}]]
@@ -57,7 +60,7 @@ if {[catch {
         package require Tk 8.6
         if {![winfo exists .]} { error "A real Tk display is required" }
     }
-    source $::env(RMSX_TEST_SCRIPT)
+    source -encoding utf-8 $::env(RMSX_TEST_SCRIPT)
 } message options]} {
     ::TestHarness::finish FAIL "$message\n[dict get $options -errorinfo]"
     if {[info commands ::TestHarness::native_quit] ne ""} {

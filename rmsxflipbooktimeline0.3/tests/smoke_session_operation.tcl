@@ -1,5 +1,5 @@
 # Standalone checks for the shared current result and cooperative cancellation.
-source [file join [file dirname [file dirname [info script]]] core session.tcl]
+source -encoding utf-8 [file join [file dirname [file dirname [info script]]] core session.tcl]
 proc expect {expression message} { if {![uplevel 1 [list expr $expression]]} { error $message } }
 set one [::RMSXFlipbookTimeline::Results::publish [dict create kind matrix label First dataset [dict create values {1 2}]]]
 set id [dict get $one id]

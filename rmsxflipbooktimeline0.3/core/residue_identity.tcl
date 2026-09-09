@@ -55,7 +55,9 @@ namespace eval ::RMSXFlipbookTimeline::ResidueIdentity {
             foreach field {chain segid insertion} {
                 set text [value $record $field]
                 if {$field eq "insertion" && $text eq ""} {set text " "}
-                lappend clauses "$field [literal $text]"
+                if {$field eq "chain" && $text eq ""} {
+                    lappend clauses {chain "" " "}
+                } else {lappend clauses "$field [literal $text]"}
             }
         } elseif {[value $record chain] ne ""} {
             set id [literal [value $record chain]]
@@ -117,5 +119,144 @@ namespace eval ::RMSXFlipbookTimeline::ResidueIdentity {
         if {[dict exists $out ordinal] && (![string is integer -strict [dict get $out ordinal]] || [dict get $out ordinal] < 0)} {error "Invalid residue occurrence ordinal in CSV row [expr {$index+1}]"}
         if {[lsearch -exact $header InsertionCode] >= 0 && [lsearch -exact $header SegID] >= 0 && [lsearch -exact $header ResidueOrdinal] >= 0} {dict set out identity_schema 2}
         return $out
+    }
+    proc pdb_atom_records {text} {
+        set records {}; set previous {}; set group -1
+        foreach line [split $text \n] {
+            set kind [string trim [string range $line 0 5]]
+            if {$kind eq "ENDMDL"} {break}
+            if {$kind eq "TER"} {set previous {}; continue}
+            if {$kind ni {ATOM HETATM}} {continue}
+            if {[string length $line] < 27} {error "Truncated PDB atom record"}
+            set resid [string trim [string range $line 22 25]]
+            if {![regexp {^[+-]?[0-9]+$} $resid]} {error "PDB residue number is not supported by VMD identity restoration: $resid"}
+            scan $resid %d resid
+            set record [dict create name [string trim [string range $line 12 15]] resname [string trim [string range $line 17 19]] chain [string trim [string range $line 21 21]] resid $resid insertion [string trim [string range $line 26 26]] segid [string trim [string range $line 72 75]]]
+            set tuple [list [key $record] [dict get $record resname]]
+            if {$tuple ne $previous} {incr group; set previous $tuple}
+            dict set record group $group
+            lappend records $record
+        }
+        if {![llength $records]} {error "PDB contains no atom records"}
+        return $records
+    }
+    proc restore_pdb_identity {molid path} {
+        set input [open $path r]
+        try {set records [pdb_atom_records [read $input]]} finally {close $input}
+        set sel [atomselect $molid all]
+        try {
+            set actual [$sel get {name resname resid insertion residue}]
+            if {[llength $actual] != [llength $records]} {error "PDB atom count changed; residue identity cannot be restored"}
+            set mapping {}; set reverse {}; set chains {}; set segments {}
+            foreach atom $actual record $records {
+                lassign $atom name resname resid insertion residue
+                if {$name ne [dict get $record name] || $resname ne [dict get $record resname] || $resid ne [dict get $record resid] || [string trim $insertion] ne [dict get $record insertion]} {
+                    error "PDB atom order or residue fields changed; residue identity cannot be restored"
+                }
+                set source [dict get $record group]
+                if {([dict exists $mapping $source] && [dict get $mapping $source] != $residue) ||
+                    ([dict exists $reverse $residue] && [dict get $reverse $residue] != $source)} {
+                    error "VMD merged or split PDB residues; reload through ResidueIdentity::load_pdb to preserve identity"
+                }
+                dict set mapping $source $residue
+                dict set reverse $residue $source
+                # VMD stores chain as one character. Empty Tcl strings become
+                # NUL and make its PDB writer emit a corrupt atom record.
+                set chain [dict get $record chain]
+                if {$chain eq ""} {set chain " "}
+                lappend chains $chain
+                lappend segments [dict get $record segid]
+            }
+            # Insertion codes are immutable in VMD; validate their exact value.
+            # Chain and segment are restored only after every atom has passed.
+            set previous_chains [$sel get chain]; set previous_segments [$sel get segid]
+            try {
+                $sel set chain $chains
+                $sel set segid $segments
+            } on error {message options} {
+                catch {$sel set chain $previous_chains}
+                catch {$sel set segid $previous_segments}
+                return -options $options $message
+            }
+        } finally {$sel delete}
+        return $molid
+    }
+    proc vmd_load_pdb {path} {return [mol new $path type pdb waitfor all]}
+    proc write_pdb {selection path} {
+        return [::RMSXFlipbookTimeline::OutputTxn::atomic_write $path [list [namespace current]::write_pdb_body $selection]]
+    }
+    proc write_pdb_body {selection path} {
+        $selection writepdb $path
+        set input [open $path rb]
+        try {set text [read $input]} finally {close $input}
+        set lines {}
+        foreach line [split $text \n] {
+            if {[string trim [string range $line 0 5]] in {ATOM HETATM TER} && [string range $line 21 21] eq "\u0000"} {
+                set line [string replace $line 21 21 " "]
+            }
+            if {[string first "\u0000" $line] >= 0} {error "VMD produced an invalid PDB record containing NUL outside the blank chain field"}
+            lappend lines $line
+        }
+        set text [join $lines \n]
+        set records [pdb_atom_records $text]
+        set fields {name resname resid chain segid insertion}
+        set original [$selection get $fields]
+        if {[llength $original] != [llength $records]} {error "PDB export changed atom count"}
+        set index 0
+        foreach atom $original record $records {
+            set expected {}
+            foreach field $fields item $atom {dict set expected $field $item}
+            foreach field $fields {
+                if {[value $expected $field] ne [value $record $field]} {
+                    error "PDB cannot preserve $field for selected atom $index; choose a structure format that can represent its full residue identity"
+                }
+            }
+            incr index
+        }
+        set output [open $path wb]
+        try {puts -nonewline $output $text} finally {close $output}
+        return $path
+    }
+    proc load_pdb {path {loader_prefix ::RMSXFlipbookTimeline::ResidueIdentity::vmd_load_pdb}} {
+        set path [file normalize $path]
+        set input [open $path r]
+        try {set text [read $input]} finally {close $input}
+        set records [pdb_atom_records $text]
+        set used [lsort -unique [lmap record $records {dict get $record chain}]]
+        set temporary ""; set load_path $path; set molid ""; set prior_top ""
+        catch {set prior_top [molinfo top]}
+        try {
+            if {[lsearch -exact $used ""] >= 0} {
+                set escape ""
+                foreach candidate [split {ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+-=} ""] {
+                    if {[lsearch -exact $used $candidate] < 0} {set escape $candidate; break}
+                }
+                if {$escape eq ""} {error "PDB uses every available chain code; blank-chain identity cannot be encoded safely"}
+                set output [file tempfile temporary rmsx_identity_]
+                try {
+                    foreach line [split $text \n] {
+                        if {[string trim [string range $line 0 5]] in {ATOM HETATM TER} && [string trim [string range $line 21 21]] eq "" && [string length $line] >= 22} {
+                            set line [string replace $line 21 21 $escape]
+                        }
+                        puts $output $line
+                    }
+                } finally {close $output}
+                set load_path $temporary
+            }
+            set molid [uplevel #0 [list {*}$loader_prefix $load_path]]
+            if {![string is integer -strict $molid] || [lsearch -exact [molinfo list] $molid] < 0} {error "VMD could not load PDB: $path"}
+            restore_pdb_identity $molid $path
+            catch {mol rename $molid [file tail $path]}
+            return $molid
+        } on error {message options} {
+            if {$molid ne "" && [lsearch -exact [molinfo list] $molid] >= 0} {
+                set owned_top [expr {[molinfo top] == $molid}]
+                catch {mol delete $molid}
+                if {$owned_top && [lsearch -exact [molinfo list] $prior_top] >= 0} {catch {mol top $prior_top}}
+            }
+            return -options $options $message
+        } finally {
+            if {$temporary ne ""} {catch {file delete $temporary}}
+        }
     }
 }
