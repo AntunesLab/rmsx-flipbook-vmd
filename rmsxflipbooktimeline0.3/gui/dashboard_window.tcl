@@ -1619,7 +1619,6 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         }
         set saved_result {}
         focus_flipbook_scene
-        ensure_default_mouse_rotation
         add_dataset_item $label flipbook $folder
         set_status [format "%s complete: %s" $label $folder]
         refresh_dashboard
@@ -1998,7 +1997,6 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set saved_result {}
         set result [::RMSXFlipbookTimeline::Results::get]
         focus_flipbook_scene
-        ensure_default_mouse_rotation
         add_dataset_item "Flipbook" flipbook $folder
         set_status "Loaded [file tail $folder]."
         refresh_dashboard
@@ -4865,6 +4863,9 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             set result [::RMSXFlipbookTimeline::load_folder $folder palette [::RMSXFlipbookTimeline::state_get palette viridis] activation_callback [list ::RMSXFlipbookTimeline::Dashboard::stage_native_view $metadata]]
             if {$metadata ne {}} {::RMSXFlipbookTimeline::Results::update $metadata}
             activate_native_view
+            # The dashboard can already be mapped when a preview or retry loads
+            # its first result. Acquire the hook after every successful activation.
+            ensure_default_mouse_rotation
             return $result
         } on error {message options} {
             discard_pending_native_view

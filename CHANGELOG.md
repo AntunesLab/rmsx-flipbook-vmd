@@ -2,6 +2,8 @@
 
 ## 0.3 — review build
 
+- Enable per-protein rotation after every successful dashboard result activation, including direct preview loading and saved-display retry. Verify fixed centers after loading, spacing, Reset View, reopen, and retry.
+
 - Align input and slice controls, combine source choice with Inputs, and group analysis and view buttons independently. Reduce panel borders, hide idle progress and unavailable Retry View, and preserve the compact header and linked plots.
 
 - Replace the verbose header with a single dataset/metric/count line. Move reproducibility metadata into collapsible Result Details, separate diagnostics into Log, and add Copy Details and atomic Save Log actions.

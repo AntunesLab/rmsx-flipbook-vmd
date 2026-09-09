@@ -74,3 +74,5 @@ Keep **Compare: RMSD / RMSF** enabled above the heatmap. RMSD shows displacement
 The one-line header identifies the displayed dataset, metric, and slice/frame count. **Details…** expands Result Details for the frame ranges, chain/group, selection, input/output paths, and method. **Copy Details** copies that metadata. **Log…** opens diagnostics; **Save Log…** saves the current result details and diagnostic history together. **Hide** collapses the panel. Opening either panel does not change the current result or the bottom status message.
 
 The main tab groups source choice and file paths under **Inputs**. The first action row runs analysis or opens/exports the result; the second keeps **Spacing − / +**, **Reset View**, and **Remove…** together. **Retry view** appears only when a saved calculation needs display recovery, and the progress bar appears during an operation.
+
+Per-protein rotation is enabled when a dashboard result finishes loading, including preview and Retry View paths. Use normal rotation dragging in VMD’s molecular window: each protein turns around its own center while the slice arrangement stays fixed.

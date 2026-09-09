@@ -1,5 +1,33 @@
 # Full GUI acceptance runs in a clean installed package and disposable VMD.
 proc assert {condition message} {if {![uplevel 1 [list expr $condition]]} {error $message}}
+proc assert_per_protein_rotation {molids} {
+    # The displayed centers and viewing matrices must stay fixed while each protein
+    # turns. A whole-row rotation can preserve distances and still fail this check.
+    set centers {}
+    set atoms {}
+    set views [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
+    foreach id $molids {
+        dict set centers $id [::RMSXFlipbookTimeline::Hotkeys::molecule_center $id]
+        set sel [atomselect $id all]
+        dict set atoms $id [$sel get {x y z}]
+        $sel delete
+    }
+    foreach axis {x y z} {rotate $axis by 7}
+    foreach id $molids {
+        assert {[vecdist [dict get $centers $id] [::RMSXFlipbookTimeline::Hotkeys::molecule_center $id]] < 0.001} "Rotation translated protein $id"
+        set sel [atomselect $id all]
+        assert {[$sel get {x y z}] ne [dict get $atoms $id]} "Rotation left protein $id stationary"
+        $sel delete
+    }
+    set after_views [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
+    foreach before $views after $after_views {
+        foreach key {center_matrix global_matrix scale_matrix rotate_matrix} {
+            foreach row [::RMSXFlipbookTimeline::MouseRotate::normalize_matrix [dict get $before $key]] next [::RMSXFlipbookTimeline::MouseRotate::normalize_matrix [dict get $after $key]] {
+                foreach value $row actual $next {assert {abs($value-$actual) < 0.0001} "Rotation moved the flipbook view: $key"}
+            }
+        }
+    }
+}
 set repo $::env(RMSX_TEST_REPO)
 set install_prefix [file join [pwd] installed]
 set startup [file join [pwd] qa-vmdrc]
@@ -87,10 +115,19 @@ assert {[$w.tabs.easy.content.actions.run cget -state] eq "disabled"} "Run is ac
 # Real folder, keyed matrix navigation, committed source identity, close/reopen.
 set folder [file join $repo fixtures seed_outputs native-rmsx-1ubq-9 chain_7_rmsx]
 set ::RMSXFlipbookTimeline::Dashboard::folder $folder
-::RMSXFlipbookTimeline::Dashboard::load_existing_folder
+# Direct staged loading is also used by the review launcher. There is no new
+# window Map event here, so activation itself must enable per-protein rotation.
+assert {![dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Empty dashboard unexpectedly enabled rotation"
+::RMSXFlipbookTimeline::Dashboard::load_folder_with_view $folder {}
+assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Staged result activation left in-place rotation disabled"
 set result [::RMSXFlipbookTimeline::Results::get]
 set result_id [dict get $result id]
 set molids [::RMSXFlipbookTimeline::state_get molids]
+assert_per_protein_rotation $molids
+::RMSXFlipbookTimeline::Dashboard::nudge_spacing -2.0
+assert_per_protein_rotation $molids
+::RMSXFlipbookTimeline::Dashboard::reset_view
+assert_per_protein_rotation $molids
 set canvas $::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_canvas
 assert {[dict exists $::RMSXFlipbookTimeline::Navigation::views $canvas cells]} "Native heatmap not connected to keyboard navigation"
 ::RMSXFlipbookTimeline::Navigation::key $canvas Return
@@ -107,32 +144,7 @@ menu rmsxflipbooktimeline on
 update idletasks
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] id] == $result_id} "Reopen changed current result identity"
 assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Reopen lost per-protein rotation"
-# The displayed centers and viewing matrices must stay fixed while each protein
-# turns. A whole-row rotation can preserve distances and still fail this check.
-set centers {}
-set atoms {}
-set views [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
-foreach id $molids {
-    dict set centers $id [::RMSXFlipbookTimeline::Hotkeys::molecule_center $id]
-    set sel [atomselect $id all]
-    dict set atoms $id [$sel get {x y z}]
-    $sel delete
-}
-foreach axis {x y z} {rotate $axis by 7}
-foreach id $molids {
-    assert {[vecdist [dict get $centers $id] [::RMSXFlipbookTimeline::Hotkeys::molecule_center $id]] < 0.001} "Reopened rotation translated protein $id"
-    set sel [atomselect $id all]
-    assert {[$sel get {x y z}] ne [dict get $atoms $id]} "Reopened rotation left protein $id stationary"
-    $sel delete
-}
-set after_views [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
-foreach before $views after $after_views {
-    foreach key {center_matrix global_matrix scale_matrix rotate_matrix} {
-        foreach row [::RMSXFlipbookTimeline::MouseRotate::normalize_matrix [dict get $before $key]] next [::RMSXFlipbookTimeline::MouseRotate::normalize_matrix [dict get $after $key]] {
-            foreach value $row actual $next {assert {abs($value-$actual) < 0.0001} "Reopened rotation moved the flipbook view: $key"}
-        }
-    }
-}
+assert_per_protein_rotation $molids
 # Queue a cooperative operation and use the actual Stop control at a checkpoint.
 proc gui_test_work {} {
     assert {[.rmsxflipbooktimeline_dashboard.tabs.easy.content.actions.run cget -state] eq "disabled"} "Busy run button was not disabled"
@@ -182,7 +194,10 @@ rename ::RMSXFlipbookTimeline::PlotWindow::draw_prepared {}
 rename ::RMSXFlipbookTimeline::PlotWindow::qa_real_draw ::RMSXFlipbookTimeline::PlotWindow::draw_prepared
 rename ::RMSXFlipbookTimeline::run_native_analysis ::RMSXFlipbookTimeline::qa_real_run
 proc ::RMSXFlipbookTimeline::run_native_analysis {args} {error "Retry must not recalculate"}
+::RMSXFlipbookTimeline::uninstall_mouse_rotation
 $w.tabs.easy.content.actions.retry invoke
+assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Retry did not restore in-place rotation"
+assert_per_protein_rotation [::RMSXFlipbookTimeline::state_get molids]
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] folder] eq $saved_folder} "Retry did not display exact saved folder"
 assert {$::RMSXFlipbookTimeline::Dashboard::saved_result eq {}} "Successful retry retained stale saved target"
 assert {[$w.tabs.easy.content.actions.retry cget -state] eq "disabled"} "Successful retry remained enabled"
