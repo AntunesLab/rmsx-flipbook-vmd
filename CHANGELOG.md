@@ -2,6 +2,8 @@
 
 ## 0.3 — review build
 
+- Align input and slice controls, combine source choice with Inputs, and group analysis and view buttons independently. Reduce panel borders, hide idle progress and unavailable Retry View, and preserve the compact header and linked plots.
+
 - Replace the verbose header with a single dataset/metric/count line. Move reproducibility metadata into collapsible Result Details, separate diagnostics into Log, and add Copy Details and atomic Save Log actions.
 
 - Restore linked comparison plots: click RMSD to choose a slice and RMSF to choose a residue, with cross-plot selection markers, values in Å, and per-canvas/result guards. Move the comparison toggle above the embedded heatmap and align RMSF samples to heatmap cell centers.

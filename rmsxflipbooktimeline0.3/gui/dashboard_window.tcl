@@ -3194,7 +3194,6 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set save_state [expr {[llength [::RMSXFlipbookTimeline::state_get molids {}]] > 0 ? "normal" : "disabled"}]
         set run_text "Run $native_metric"
         set run_command ::RMSXFlipbookTimeline::Dashboard::run_native_metric
-        set source_title "Source"
 
         switch -- $source_type {
             existing_folder {
@@ -3204,7 +3203,6 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
                 set popout_state $run_state
                 set run_text "Load Folder"
                 set run_command ::RMSXFlipbookTimeline::Dashboard::load_existing_folder
-                set source_title "Source"
             }
             default {
                 foreach row_var {native_topology native_trajectory native_output} {
@@ -3214,10 +3212,6 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
                 set matrix_state [expr {$folder_ready ? "normal" : "disabled"}]
                 set popout_state $matrix_state
             }
-        }
-
-        if {[winfo exists $easy.source]} {
-            $easy.source configure -text $source_title
         }
 
         set_action_button $actions.run $run_text $run_command $run_state
@@ -3243,13 +3237,13 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         }
         if {$native_slicing_mode eq "slice_size"} {
             if {[winfo exists $settings.native_slice_size_label]} {
-                grid $settings.native_slice_size_label -row 1 -column 3 -sticky e -padx {4 2} -pady 1
-                grid $settings.native_slice_size_entry -row 1 -column 4 -sticky w -padx {0 4} -pady 1
+                grid $settings.native_slice_size_label -row 1 -column 2 -sticky w -padx {0 8} -pady 3
+                grid $settings.native_slice_size_entry -row 1 -column 3 -sticky w -pady 3
             }
         } else {
             if {[winfo exists $settings.native_slices_label]} {
-                grid $settings.native_slices_label -row 1 -column 3 -sticky e -padx {4 2} -pady 1
-                grid $settings.native_slices_entry -row 1 -column 4 -sticky w -padx {0 4} -pady 1
+                grid $settings.native_slices_label -row 1 -column 2 -sticky w -padx {0 8} -pady 3
+                grid $settings.native_slices_entry -row 1 -column 3 -sticky w -pady 3
             }
         }
     }
@@ -3278,11 +3272,14 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
                 -foreground "#257a3d" \
                 -width 1
             pack $parent.${variable_name}_label.text -side left
-            pack $parent.${variable_name}_label.status -side left -padx {4 0}
+            place $parent.${variable_name}_label.status -relx 1.0 -rely 0.5 -anchor e
         } else {
             ttk::label $parent.${variable_name}_label -text $label
         }
-        ttk::entry $parent.${variable_name}_entry -textvariable ::RMSXFlipbookTimeline::Dashboard::$variable_name -style RMSX.Path.TEntry
+        if {$variable_name eq "native_output"} {
+            $parent.${variable_name}_label.text configure -width 9
+        } else {$parent.${variable_name}_label configure -width 9}
+        ttk::entry $parent.${variable_name}_entry -width 1 -textvariable ::RMSXFlipbookTimeline::Dashboard::$variable_name -style RMSX.Path.TEntry
         ttk::button $parent.${variable_name}_browse -text "Browse" -width 6 -command [list ::RMSXFlipbookTimeline::Dashboard::browse_path $variable_name $browse_kind]
         bind $parent.${variable_name}_entry <KeyRelease> {after idle ::RMSXFlipbookTimeline::Dashboard::refresh_dashboard}
         bind $parent.${variable_name}_entry <FocusOut> {::RMSXFlipbookTimeline::Dashboard::refresh_dashboard}
@@ -3292,7 +3289,9 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     }
 
     proc build_source_selector {parent} {
-        foreach {col value label} {0 new_analysis New 1 existing_folder Folder} {
+        ttk::label $parent.label -text Source -width 9
+        grid $parent.label -row 0 -column 0 -sticky w -padx {0 8}
+        foreach {col value label} {1 new_analysis {New analysis} 2 existing_folder {Result folder}} {
             ttk::radiobutton $parent.source_$value -text $label -value $value -variable ::RMSXFlipbookTimeline::Dashboard::source_type -command ::RMSXFlipbookTimeline::Dashboard::refresh_dashboard
             grid $parent.source_$value -row 0 -column $col -sticky w -padx {0 14}
         }
@@ -3303,7 +3302,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     proc build_metric_controls {parent {include_advanced_toggle 0}} {
         variable metric_combo_widget
         variable native_metric_combo_widget
-        ttk::label $parent.metric_label -text Metric
+        ttk::label $parent.metric_label -text Metric -width 9
         ttk::combobox $parent.metric_combo -textvariable ::RMSXFlipbookTimeline::Dashboard::native_metric -values [native_metric_values] -state readonly -width 10
         set metric_combo_widget $parent.metric_combo
         set native_metric_combo_widget $parent.metric_combo
@@ -3315,6 +3314,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         foreach {col widget} {0 metric_label 1 metric_combo 2 palette_label 3 palette_combo 4 advanced_check} {
             grid $parent.$widget -row 0 -column $col -sticky w -padx {0 10}
         }
+        grid $parent.metric_label -padx {0 8}
+        grid $parent.advanced_check -sticky e -padx 0
         grid columnconfigure $parent 4 -weight 1
         help_tip $parent.metric_combo "RMSX: local fluctuation. Shift-Map: displacement. 1-lDDT: structural difference; larger values indicate more change."
         help_tip $parent.palette_combo "Color palette for the current result. Numerical values do not change."
@@ -3381,7 +3382,39 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         help_tip $parent.native_slices_entry "Number of slices. The preview reports any unused remainder."
         help_tip $parent.native_time_step_entry "Time interval between saved trajectory frames, in picoseconds. Leave blank when unknown; plots use frames or slices. A value detected from this source can be edited."
         help_tip $parent.native_total_time_ns_entry "Optional trajectory span in nanoseconds; auto uses detected timing."
+        layout_run_settings $parent
         refresh_slicing_mode_controls
+    }
+
+    proc layout_run_settings {parent} {
+        foreach widget [grid slaves $parent] {grid forget $widget}
+        for {set col 0} {$col < 7} {incr col} {grid columnconfigure $parent $col -weight 0}
+        foreach group {chain_group mode_group frame_group} {ttk::frame $parent.$group}
+        grid $parent.native_chain_entry -in $parent.chain_group -row 0 -column 0 -sticky w
+        grid $parent.chains -in $parent.chain_group -row 0 -column 1 -padx {4 0}
+        grid $parent.mode_slices -in $parent.mode_group -row 0 -column 0 -sticky w
+        grid $parent.mode_size -in $parent.mode_group -row 0 -column 1 -sticky w -padx {8 0}
+        foreach {col widget} {0 native_start_entry 1 native_end_label 2 native_end_entry} {
+            grid $parent.$widget -in $parent.frame_group -row 0 -column $col -sticky w -padx [expr {$col == 1 ? 5 : 0}]
+        }
+        foreach {row left field right value} {
+            0 native_chain_label chain_group native_start_label frame_group
+            1 mode_label mode_group native_slices_label native_slices_entry
+            2 native_time_step_label native_time_step_entry native_total_time_ns_label native_total_time_ns_entry
+        } {
+            $parent.$left configure -width 9
+            grid $parent.$left -row $row -column 0 -sticky w -padx {0 8} -pady 3
+            grid $parent.$field -row $row -column 1 -sticky w -padx {0 16} -pady 3
+            grid $parent.$right -row $row -column 2 -sticky w -padx {0 8} -pady 3
+            grid $parent.$value -row $row -column 3 -sticky w -pady 3
+        }
+        grid columnconfigure $parent 1 -weight 1
+        grid columnconfigure $parent 3 -weight 1
+        grid $parent.preview -row 3 -column 0 -columnspan 4 -sticky ew -pady {7 3}
+        grid $parent.preview_text -row 4 -column 0 -columnspan 4 -sticky ew
+        bind $parent.preview_text <Configure> {::RMSXFlipbookTimeline::Dashboard::resize_label_wrap %W %w 100 4}
+        # Widgets managed into a later-created grouping frame must sit above it.
+        foreach widget {native_chain_entry chains mode_slices mode_size native_start_entry native_end_label native_end_entry} {raise $parent.$widget}
     }
 
     proc build_metric_option_panels {parent {include_advanced_toggle 1}} {
@@ -3608,15 +3641,25 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         ttk::button $parent.reset_view -text Reset -command ::RMSXFlipbookTimeline::Dashboard::reset_view
         ttk::button $parent.clear -text "Remove…" -command ::RMSXFlipbookTimeline::Dashboard::clear_scene
         ttk::button $parent.retry -text "Retry view" -command ::RMSXFlipbookTimeline::Dashboard::retry_saved_result -state disabled
-        foreach {col widget} {0 run 1 popout 2 save 3 figure} {
-            grid $parent.$widget -row 0 -column $col -sticky ew -padx {0 6} -pady 2
-        }
+        ttk::frame $parent.analysis
         ttk::frame $parent.view
-        foreach {col widget} {0 spacing 1 spacing_minus 2 spacing_plus 3 reset_view 4 clear} {
-            grid $parent.$widget -row 1 -column $col -sticky w -padx {0 6} -pady {4 0}
+        ttk::separator $parent.separator -orient horizontal
+        grid $parent.analysis -row 0 -column 0 -sticky ew
+        grid $parent.separator -row 1 -column 0 -sticky ew -pady 8
+        grid $parent.view -row 2 -column 0 -sticky ew
+        foreach {col widget} {0 run 1 popout 2 save 3 figure} {
+            grid $parent.$widget -in $parent.analysis -row 0 -column $col -sticky ew -padx [expr {$col == 3 ? "0 0" : "0 8"}]
+            grid columnconfigure $parent.analysis $col -weight 1 -uniform actions
         }
-        grid $parent.retry -row 2 -column 0 -columnspan 4 -sticky w -pady {4 0}
-        grid columnconfigure $parent 3 -weight 1
+        foreach {col widget} {0 spacing 1 spacing_minus 2 spacing_plus 4 reset_view 5 clear} {
+            grid $parent.$widget -in $parent.view -row 0 -column $col -sticky w -padx [expr {$col == 5 ? "8 0" : "0 4"}]
+        }
+        $parent.reset_view configure -text "Reset View"
+        grid columnconfigure $parent.view 3 -weight 1
+        grid $parent.retry -row 3 -column 0 -sticky w -pady {8 0}
+        grid remove $parent.retry
+        grid columnconfigure $parent 0 -weight 1
+        foreach widget {run popout save figure spacing spacing_minus spacing_plus reset_view clear} {raise $parent.$widget}
         help_tip $parent.clear "Remove plugin-owned molecules and the current result. Files are kept."
         help_tip $parent.figure "Export a figure from the committed current result."
         help_tip $parent.retry "Retry the last saved result whose display failed. This opens the saved files and never reruns the analysis."
@@ -3669,7 +3712,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid $parent.summary -row 2 -column 0 -columnspan 2 -sticky ew -pady {3 0}
         grid $parent.context -row 0 -column 0 -sticky w -pady {2 4}
         help_tip $parent.context "Show comparison plots. Click RMSD to select a slice; click RMSF to select a residue. Heatmap selections mark both plots."
-        grid $parent.citation -row 0 -column 1 -sticky ne -padx {14 0} -pady {2 0}
+        # Citation is available in Help without occupying plot toolbar space.
         bind $parent.canvas <Configure> {::RMSXFlipbookTimeline::Dashboard::schedule_embedded_heatmap_resize_redraw %w}
         help_tip $parent.citation $citation_footer_note
         clear_embedded_heatmap
@@ -3789,15 +3832,15 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set content [build_scrollable_easy_content $parent]
         grid columnconfigure $content 0 -weight 1
 
-        set source [ttk::labelframe $content.source -text "Source" -padding 8]
-        set files [ttk::labelframe $content.files -text "Files" -padding 8]
-        set metric [ttk::labelframe $content.metric -text "Analysis" -padding 8]
-        set settings [ttk::labelframe $content.settings -text "Slices" -padding {6 5}]
+        set source [ttk::frame $content.source]
+        set files [ttk::labelframe $content.files -text "Inputs" -padding {8 6}]
+        set metric [ttk::frame $content.metric -padding {8 6}]
+        set settings [ttk::labelframe $content.settings -text "Slices" -padding {8 6}]
         set options [ttk::frame $content.options -padding {0 0}]
-        set actions [ttk::labelframe $content.actions -text "Actions" -padding 6]
+        set actions [ttk::frame $content.actions -padding {8 6}]
         set heatmap [ttk::labelframe $content.heatmap -text "Heatmap" -padding 6]
 
-        grid $source -row 0 -column 0 -sticky ew -pady {0 6}
+        grid $source -in $files -row 0 -column 0 -columnspan 3 -sticky ew -pady {0 5}
         grid $files -row 1 -column 0 -sticky ew -pady {0 6}
         grid $metric -row 2 -column 0 -sticky ew -pady {0 6}
         grid $settings -row 3 -column 0 -sticky ew -pady {0 4}
@@ -3807,13 +3850,14 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
 
         grid columnconfigure $files 1 -weight 1
         build_source_selector $source
-        build_file_row $files 0 "Topology" native_topology file
-        build_file_row $files 1 "Trajectory" native_trajectory file
-        build_file_row $files 2 "Output" native_output directory
+        raise $source
+        build_file_row $files 1 "Topology" native_topology file
+        build_file_row $files 2 "Trajectory" native_trajectory file
+        build_file_row $files 3 "Output" native_output directory
         help_tip $files.native_output_entry "Parent folder for a new, unique run directory. Earlier results are kept."
-        build_file_row $files 3 "RMSX Folder" folder directory
-        build_file_row $files 4 "TML File" timeline_tml_file file
-        build_file_row $files 5 "Collection" timeline_collection_dir directory
+        build_file_row $files 4 "RMSX Folder" folder directory
+        build_file_row $files 5 "TML File" timeline_tml_file file
+        build_file_row $files 6 "Collection" timeline_collection_dir directory
         build_metric_controls $metric 1
         build_run_settings $settings
         build_metric_option_panels $options 0
@@ -4087,9 +4131,20 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         foreach {name base} {RMSX.TButton TButton RMSX.Primary.TButton TButton RMSX.TCheckbutton TCheckbutton RMSX.TRadiobutton TRadiobutton} {
             ttk::style configure $name -font TkDefaultFont -padding {5 3}
         }
+        ttk::style configure RMSX.TButton -width 0 -padding {8 4}
+        ttk::style configure RMSX.Primary.TButton -width 0 -font TkHeadingFont -padding {10 4}
+        ttk::style configure RMSX.TLabelframe -borderwidth 0 -relief flat
+        ttk::style configure RMSX.TLabelframe.Label -font TkHeadingFont
         ttk::style configure RMSX.Title.TLabel -font TkHeadingFont
         ttk::style configure RMSX.Path.TEntry -font TkTextFont
         ttk::style configure RMSX.Citation.TLabel -font TkSmallCaptionFont
+    }
+
+    proc apply_dashboard_styles {parent} {
+        foreach widget [descendant_widgets $parent] {
+            if {[winfo class $widget] eq "TButton" && [$widget cget -style] eq ""} {$widget configure -style RMSX.TButton}
+            if {[winfo class $widget] eq "TLabelframe"} {$widget configure -style RMSX.TLabelframe}
+        }
     }
 
     proc build {} {
@@ -4143,6 +4198,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid $top.footer.stop -row 0 -column 1 -padx 6
         grid $top.footer.details -row 0 -column 2
         grid $top.footer.progress -row 1 -column 0 -columnspan 3 -sticky ew -pady {4 0}
+        grid remove $top.footer.progress
         ttk::frame $top.details
         ttk::frame $top.details.actions
         ttk::label $top.details.actions.title -text "Result Details" -font TkHeadingFont
@@ -4169,6 +4225,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid $top.details.tabs -row 1 -column 0 -sticky nsew
         grid columnconfigure $top.details 0 -weight 1
         set status_widget $top.details.tabs.log.text
+        apply_dashboard_styles $top
         help_tip $top.footer.stop "Request cancellation at the next safe checkpoint. A VMD file read or measurement already in progress must finish first."
         ::RMSXFlipbookTimeline::Operation::set_observer ::RMSXFlipbookTimeline::Dashboard::operation_changed
         set_status "Ready. Choose files or open a result folder."
@@ -4317,6 +4374,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set_busy_controls $busy
         $top.footer.stop configure -state [expr {$busy && ![dict get $operation cancel_requested] ? "normal" : "disabled"}]
         if {$busy} {
+            grid $top.footer.progress
             if {[dict exists $operation event completed] && [dict exists $operation event total] && [dict get $operation event total] > 0} {
                 $top.footer.progress stop
                 $top.footer.progress configure -mode determinate -value [expr {100.0 * [dict get $operation event completed] / [dict get $operation event total]}]
@@ -4329,6 +4387,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             }
         } else {
             $top.footer.progress stop
+            grid remove $top.footer.progress
             $top.footer.progress configure -mode determinate -value [expr {[dict get $operation state] eq "complete" ? 100 : 0}]
         }
     }
@@ -4454,7 +4513,11 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         }
         variable saved_result
         set retry [easy_child actions].retry
-        if {[winfo exists $retry]} {$retry configure -state [expr {$saved_result ne {} && [dict exists $saved_result folder] && [file isdirectory [dict get $saved_result folder]] && !$busy ? "normal" : "disabled"}]}
+        if {[winfo exists $retry]} {
+            set can_retry [expr {$saved_result ne {} && [dict exists $saved_result folder] && [file isdirectory [dict get $saved_result folder]]}]
+            $retry configure -state [expr {$can_retry && !$busy ? "normal" : "disabled"}]
+            if {$can_retry} {grid $retry} else {grid remove $retry}
+        }
         foreach kind {tml svg png} {
             set widget [tab_content export].files.$kind
             if {[winfo exists $widget]} { $widget configure -state [expr {$has_matrix && !$busy ? "normal" : "disabled"}] }

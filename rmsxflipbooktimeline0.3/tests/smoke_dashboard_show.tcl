@@ -27,6 +27,27 @@ foreach tab {easy matrix export advanced help} {
     set body $w.tabs.$tab.content
     assert {[winfo reqwidth $body] <= [winfo width $body]+2} "Tab $tab content is clipped at minimum width: [winfo reqwidth $body]/[winfo width $body]"
 }
+# Grouping frames must not cover their sibling controls. Check actual hit targets,
+# since mapped widgets and requested-width checks alone miss this Tk failure.
+$w.tabs select $w.tabs.easy
+wm geometry $w 600x800
+update idletasks
+set easy $w.tabs.easy.content
+foreach relative {
+    source.source_new_analysis source.source_existing_folder
+    settings.native_chain_entry settings.chains settings.mode_slices settings.mode_size
+    settings.native_start_entry settings.native_end_entry
+    actions.run actions.popout actions.save actions.figure
+    actions.spacing_minus actions.spacing_plus actions.reset_view actions.clear
+} {
+    set widget $easy.$relative
+    set x [expr {[winfo rootx $widget] + [winfo width $widget]/2}]
+    set y [expr {[winfo rooty $widget] + [winfo height $widget]/2}]
+    set hit [winfo containing $x $y]
+    assert {$hit eq $widget || [string match "$widget.*" $hit]} "A grouping frame covers $relative: $hit"
+}
+assert {[winfo manager $easy.actions.retry] eq ""} "Retry takes space without a saved display failure"
+assert {[winfo manager $w.footer.progress] eq ""} "Idle progress takes space"
 set native_combo $w.tabs.easy.content.metric.metric_combo
 assert {[$native_combo cget -values] eq {RMSX Shift-Map 1-lDDT}} "Compact native labels changed"
 set matrix_combo $w.tabs.matrix.content.metric.metric_combo
