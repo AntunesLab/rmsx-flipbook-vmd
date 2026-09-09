@@ -4123,7 +4123,16 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             -justify left \
             -wraplength 520
         grid $cite.text -row 0 -column 0 -sticky ew
+        ttk::button $cite.copy -text "Copy Citation" -command ::RMSXFlipbookTimeline::Dashboard::copy_citation
+        grid $cite.copy -row 1 -column 0 -sticky w -pady {6 0}
         grid columnconfigure $cite 0 -weight 1
+    }
+
+    proc copy_citation {} {
+        variable top
+        variable citation_note
+        clipboard clear -displayof $top
+        clipboard append -displayof $top $citation_note
     }
 
     proc configure_dashboard_styles {} {
@@ -4137,6 +4146,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         ttk::style configure RMSX.Title.TLabel -font TkHeadingFont
         ttk::style configure RMSX.Path.TEntry -font TkTextFont
         ttk::style configure RMSX.Citation.TLabel -font TkSmallCaptionFont
+        ttk::style configure RMSX.FooterCitation.TLabel -font TkSmallCaptionFont -foreground "#59636d"
     }
 
     proc apply_dashboard_styles {parent} {
@@ -4150,6 +4160,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         variable top
         variable status_widget
         variable end_display
+        variable citation_note
+        variable citation_footer_note
         package require Tk
         configure_dashboard_styles
         if {[winfo exists $top]} { wm deiconify $top; raise $top; refresh_dashboard; return $top }
@@ -4225,6 +4237,11 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         }
         grid $top.details.tabs -row 1 -column 0 -sticky nsew
         grid columnconfigure $top.details 0 -weight 1
+        ttk::label $top.citation -text [string map [list \n " · "] $citation_footer_note] \
+            -style RMSX.FooterCitation.TLabel -anchor center -justify center -wraplength 620 -takefocus 1
+        grid $top.citation -row 4 -column 0 -sticky ew -padx 8 -pady {0 6}
+        bind $top.citation <Configure> {::RMSXFlipbookTimeline::Dashboard::resize_label_wrap %W %w 120 4}
+        help_tip $top.citation "$citation_note\n\nUse Help → Copy Citation for the full reference."
         set status_widget $top.details.tabs.log.text
         apply_dashboard_styles $top
         help_tip $top.footer.stop "Request cancellation at the next safe checkpoint. A VMD file read or measurement already in progress must finish first."
