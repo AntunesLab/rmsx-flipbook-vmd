@@ -4113,15 +4113,13 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid columnconfigure $top 0 -weight 1
         grid rowconfigure $top 1 -weight 1
         ttk::frame $top.header -padding {10 8}
-        ttk::label $top.header.title -textvariable ::RMSXFlipbookTimeline::Dashboard::result_title -style RMSX.Title.TLabel
-        ttk::label $top.header.summary -textvariable ::RMSXFlipbookTimeline::Dashboard::result_summary -wraplength 560
-        ttk::button $top.header.details -text Details -command ::RMSXFlipbookTimeline::Dashboard::show_result_details
+        ttk::label $top.header.title -textvariable ::RMSXFlipbookTimeline::Dashboard::result_title -style RMSX.Title.TLabel -width 1 -anchor w
+        ttk::button $top.header.details -text "Details…" -command ::RMSXFlipbookTimeline::Dashboard::show_result_details
         grid $top.header -row 0 -column 0 -sticky ew
-        grid $top.header.title -row 0 -column 0 -sticky w
-        grid $top.header.details -row 0 -column 1 -rowspan 2 -sticky e
-        grid $top.header.summary -row 1 -column 0 -sticky w -pady {3 0}
+        grid $top.header.title -row 0 -column 0 -sticky ew -padx {0 10}
+        grid $top.header.details -row 0 -column 1 -sticky e
         grid columnconfigure $top.header 0 -weight 1
-        bind $top.header.summary <Configure> {::RMSXFlipbookTimeline::Dashboard::resize_label_wrap %W %w 120 4}
+        bind $top.header.title <Configure> {::RMSXFlipbookTimeline::Dashboard::fit_result_title %w}
         set tabs [ttk::notebook $top.tabs]
         grid $tabs -row 1 -column 0 -sticky nsew -padx 8 -pady {0 6}
         foreach {name label} {easy "RMSX / Flipbook" matrix Timeline export Export advanced Advanced help Help} {
@@ -4138,7 +4136,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid columnconfigure $top.footer 0 -weight 1
         ttk::label $top.footer.status -textvariable ::RMSXFlipbookTimeline::Dashboard::status_text -wraplength 380
         ttk::button $top.footer.stop -text Stop -state disabled -command ::RMSXFlipbookTimeline::Operation::request_cancel
-        ttk::checkbutton $top.footer.details -text Details -variable ::RMSXFlipbookTimeline::Dashboard::details_open -command ::RMSXFlipbookTimeline::Dashboard::toggle_details
+        ttk::button $top.footer.details -text "Log…" -command ::RMSXFlipbookTimeline::Dashboard::show_log_details
         ttk::progressbar $top.footer.progress -mode determinate -maximum 100
         grid $top.footer.status -row 0 -column 0 -sticky ew
         bind $top.footer.status <Configure> {::RMSXFlipbookTimeline::Dashboard::resize_label_wrap %W %w 120 4}
@@ -4146,12 +4144,31 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid $top.footer.details -row 0 -column 2
         grid $top.footer.progress -row 1 -column 0 -columnspan 3 -sticky ew -pady {4 0}
         ttk::frame $top.details
-        text $top.details.log -height 6 -wrap word -state disabled -font TkTextFont -yscrollcommand [list $top.details.scroll set]
-        ttk::scrollbar $top.details.scroll -command [list $top.details.log yview]
-        grid $top.details.log -row 0 -column 0 -sticky nsew
-        grid $top.details.scroll -row 0 -column 1 -sticky ns
+        ttk::frame $top.details.actions
+        ttk::label $top.details.actions.title -text "Result Details" -font TkHeadingFont
+        ttk::button $top.details.actions.copy -text "Copy Details" -command ::RMSXFlipbookTimeline::Dashboard::copy_result_details
+        ttk::button $top.details.actions.save -text "Save Log…" -command ::RMSXFlipbookTimeline::Dashboard::save_detail_log
+        ttk::button $top.details.actions.hide -text Hide -command ::RMSXFlipbookTimeline::Dashboard::hide_details
+        grid $top.details.actions.title -row 0 -column 0 -sticky w
+        grid $top.details.actions.copy -row 0 -column 1 -padx 4
+        grid $top.details.actions.save -row 0 -column 2 -padx 4
+        grid $top.details.actions.hide -row 0 -column 3
+        grid columnconfigure $top.details.actions 0 -weight 1
+        grid $top.details.actions -row 0 -column 0 -sticky ew -pady {0 4}
+        ttk::notebook $top.details.tabs
+        foreach {name label} {result Result log Log} {
+            ttk::frame $top.details.tabs.$name
+            text $top.details.tabs.$name.text -height 7 -width 1 -wrap word -state disabled -font TkTextFont -yscrollcommand [list $top.details.tabs.$name.scroll set]
+            ttk::scrollbar $top.details.tabs.$name.scroll -command [list $top.details.tabs.$name.text yview]
+            grid $top.details.tabs.$name.text -row 0 -column 0 -sticky nsew
+            grid $top.details.tabs.$name.scroll -row 0 -column 1 -sticky ns
+            grid columnconfigure $top.details.tabs.$name 0 -weight 1
+            grid rowconfigure $top.details.tabs.$name 0 -weight 1
+            $top.details.tabs add $top.details.tabs.$name -text $label
+        }
+        grid $top.details.tabs -row 1 -column 0 -sticky nsew
         grid columnconfigure $top.details 0 -weight 1
-        set status_widget $top.details.log
+        set status_widget $top.details.tabs.log.text
         help_tip $top.footer.stop "Request cancellation at the next safe checkpoint. A VMD file read or measurement already in progress must finish first."
         ::RMSXFlipbookTimeline::Operation::set_observer ::RMSXFlipbookTimeline::Dashboard::operation_changed
         set_status "Ready. Choose files or open a result folder."
@@ -4180,6 +4197,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
 
 namespace eval ::RMSXFlipbookTimeline::Dashboard {
     variable result_title "No result loaded"
+    variable result_title_full "No result loaded"
     variable result_summary "Run an analysis or open a result folder."
     variable status_text "Ready"
     variable detail_log ""
@@ -4268,7 +4286,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {[info commands winfo] eq "" || ![winfo exists $top]} { return }
         if {$busy && $busy_controls eq {}} {
             foreach widget [descendant_widgets $top] {
-                if {$widget in [list $top.footer.stop $top.footer.details $top.details.log $top.details.scroll]} { continue }
+                if {$widget in [list $top.footer.stop $top.footer.details $top.header.details] || [string match "$top.details.*" $widget]} { continue }
                 if {![catch {$widget cget -state} state]} {
                     dict set busy_controls $widget $state
                     catch {$widget configure -state disabled}
@@ -4315,41 +4333,110 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         }
     }
 
+    proc result_dataset_name {current} {
+        if {[dict exists $current source_paths] && [llength [dict get $current source_paths]]} {
+            return [file rootname [file tail [lindex [dict get $current source_paths] 0]]]
+        }
+        foreach path {{source_name} {dataset title} {folder}} {
+            if {[dict exists $current {*}$path] && [dict get $current {*}$path] ne ""} {
+                return [file rootname [file tail [dict get $current {*}$path]]]
+            }
+        }
+        return Result
+    }
+
     proc refresh_result_header {} {
         variable result_title
         variable result_summary
+        variable result_title_full
+        variable top
         set current [::RMSXFlipbookTimeline::Results::get]
+        set result_summary ""
         if {$current eq {}} {
-            set result_title "No result loaded"
-            set result_summary "Run an analysis or open a result folder."
-            refresh_export_controls
-            return
+            set result_title_full "No result loaded"
+        } else {
+            set metric Result
+            foreach key {metric label} {if {[dict exists $current $key] && [dict get $current $key] ne ""} {set metric [dict get $current $key]}}
+            if {[string equal -nocase $metric lddt]} {set metric 1-lDDT}
+            set parts [list [result_dataset_name $current] $metric]
+            if {[dict exists $current dataset column_count]} {
+                set count [dict get $current dataset column_count]
+                set noun slices
+                if {[dict exists $current dataset column_mode] && [dict get $current dataset column_mode] eq "frame"} {set noun frames}
+                if {$count == 1} {set noun [string trimright $noun s]}
+                lappend parts "$count $noun"
+            }
+            set result_title_full [join $parts " · "]
         }
-        set label "Result"
-        foreach key {metric label} { if {[dict exists $current $key] && [dict get $current $key] ne ""} { set label [dict get $current $key] } }
-        if {[string equal -nocase $label lddt]} { set label 1-lDDT }
-        set units ""
-        if {[dict exists $current units]} {set units [dict get $current units]}
-        if {$units eq "" && [dict exists $current dataset unit]} {set units [dict get $current dataset unit]}
-        set result_title "Current result: $label"
-        if {$units ne ""} {append result_title " ($units)"}
-        set summary {}
-        if {[dict exists $current folder]} { lappend summary [file tail [dict get $current folder]] }
-        if {[dict exists $current chain]} { lappend summary "Chain [dict get $current chain]" }
-        if {[dict exists $current source_molid]} { lappend summary "Molecule [dict get $current source_molid]" }
-        if {[dict exists $current frame_first] && [dict exists $current frame_last]} { lappend summary "Frames [dict get $current frame_first]–[dict get $current frame_last]" }
-        if {[dict exists $current dataset] && [dict get $current dataset] ne {}} {
-            set data [dict get $current dataset]
-            if {[dict exists $data row_count] && [dict exists $data column_count]} { lappend summary "[dict get $data row_count] rows × [dict get $data column_count] columns" }
-        }
-        if {[dict exists $current selection] && [dict get $current selection] ne ""} {
-            set selection [dict get $current selection]
-            if {[string length $selection] > 64} {set selection "[string range $selection 0 60]…"}
-            lappend summary "Selection: $selection"
-        }
-        if {[dict exists $current status]} { lappend summary [string totitle [dict get $current status]] }
-        set result_summary [join $summary " · "]
+        set result_title $result_title_full
+        if {[info commands winfo] ne "" && [winfo exists $top.header.title]} {fit_result_title [winfo width $top.header.title]}
+        refresh_result_details
         refresh_export_controls
+    }
+
+    proc fit_result_title {width} {
+        variable result_title
+        variable result_title_full
+        if {$width < 30 || [info commands font] eq ""} {return}
+        set text $result_title_full
+        if {[font measure TkHeadingFont $text] > $width} {
+            while {[string length $text] && [font measure TkHeadingFont "$text…"] > $width-4} {set text [string range $text 0 end-1]}
+            append text …
+        }
+        if {$result_title ne $text} {set result_title $text}
+    }
+
+    proc result_details_text {} {
+        set current [::RMSXFlipbookTimeline::Results::get]
+        if {$current eq {}} {return "No result loaded. Run an analysis or open a result folder."}
+        set lines [list "Dataset: [result_dataset_name $current]"]
+        foreach {path label} {
+            metric Metric units Units status Status chain Chain/group
+            selection Selection frame_first {First frame} frame_last {Last frame}
+            {dataset row_count} Residues {dataset column_count} Columns
+            {native_result parameters mask_selection} Mask time_known {Physical time known}
+            time_step_ps {Time step (ps)} folder {Output folder} id {Result generation}
+            {native_result run_id} {Run ID} source_molid {Source molecule}
+        } {
+            if {[dict exists $current {*}$path] && [dict get $current {*}$path] ne ""} {lappend lines "$label: [dict get $current {*}$path]"}
+        }
+        if {[dict exists $current source_paths]} {
+            lappend lines "" "Input files:"
+            foreach path [dict get $current source_paths] {lappend lines "  $path"}
+        }
+        if {[dict exists $current dataset columns]} {
+            set mapping {}
+            foreach column [dict get $current dataset columns] {
+                if {[dict exists $column frame_start] && [dict exists $column frame_end]} {
+                    lappend mapping "[expr {[llength $mapping]+1}]: [dict get $column frame_start]–[dict get $column frame_end]"
+                }
+            }
+            if {[llength $mapping]} {lappend lines "" "Slice frame ranges: [join $mapping {; }]"}
+        }
+        set method {}
+        foreach path {{native_result method} {provenance method}} {if {[dict exists $current {*}$path]} {set method [dict get $current {*}$path];break}}
+        if {$method ne {}} {
+            lappend lines "" "Method:"
+            dict for {key value} $method {
+                if {$key eq "parameters"} {
+                    lappend lines "  Parameters:"
+                    dict for {name setting} $value {lappend lines "    $name: $setting"}
+                } else {lappend lines "  $key: $value"}
+            }
+        }
+        return [join $lines "\n"]
+    }
+
+    proc refresh_result_details {} {
+        variable top
+        set widget $top.details.tabs.result.text
+        if {[info commands winfo] eq "" || ![winfo exists $widget]} {return}
+        set text [result_details_text]
+        if {[$widget get 1.0 end-1c] eq $text} {return}
+        $widget configure -state normal
+        $widget delete 1.0 end
+        $widget insert 1.0 $text
+        $widget configure -state disabled
     }
 
     proc refresh_export_controls {} {
@@ -4382,16 +4469,34 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
 
     proc show_result_details {} {
         variable details_open
-        set current [::RMSXFlipbookTimeline::Results::get]
-        set text "Current result"
-        if {$current eq {}} { append text "\nNo result loaded." }
-        dict for {key value} $current {
-            if {$key in {dataset native_result}} { continue }
-            append text "\n$key: $value"
-        }
-        set_status $text
+        variable top
+        refresh_result_details
         set details_open 1
         toggle_details
+        $top.details.tabs select $top.details.tabs.result
+    }
+    proc show_log_details {} {
+        variable top
+        show_result_details
+        $top.details.tabs select $top.details.tabs.log
+    }
+    proc hide_details {} {variable details_open;set details_open 0;toggle_details}
+    proc copy_result_details {} {
+        variable top
+        clipboard clear -displayof $top
+        clipboard append -displayof $top [result_details_text]
+    }
+    proc write_detail_log {text path} {
+        set fp [open $path w]
+        try {fconfigure $fp -encoding utf-8;puts -nonewline $fp $text} finally {close $fp}
+    }
+    proc save_detail_log {{path ""}} {
+        variable top
+        variable detail_log
+        if {$path eq ""} {set path [tk_getSaveFile -parent $top -title "Save diagnostic log" -initialfile rmsx-log.txt -defaultextension .txt -filetypes {{{Text files} {.txt}} {{All files} {*}}}]}
+        if {$path eq ""} {return}
+        ::RMSXFlipbookTimeline::OutputTxn::atomic_write $path [list ::RMSXFlipbookTimeline::Dashboard::write_detail_log "[result_details_text]\n\nDiagnostic log\n$detail_log"]
+        return $path
     }
 
     proc sync_end_display {} {

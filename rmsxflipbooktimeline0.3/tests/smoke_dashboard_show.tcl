@@ -180,8 +180,27 @@ set ::RMSXFlipbookTimeline::Dashboard::timeline_column_mode frames
 set live [::RMSXFlipbookTimeline::Results::get]
 assert {[dict exists $live units] && [dict get $live units] ne ""} "Live publication lost scientific units"
 assert {[dict get $live selection] eq "protein" && [dict get $live frame_first] == 0 && [dict get $live frame_last] == 2} "Live result lost selection or resolved frames"
-assert {[string first [dict get $live units] $::RMSXFlipbookTimeline::Dashboard::result_title] >= 0} "Persistent result title omits units"
-assert {[string first "Selection: protein" $::RMSXFlipbookTimeline::Dashboard::result_summary] >= 0} "Persistent result summary omits selection"
+assert {[string first "Selection:" $::RMSXFlipbookTimeline::Dashboard::result_title] < 0} "Compact header contains verbose metadata"
+assert {![winfo exists $w.header.summary]} "Verbose second header row remains"
+set details [::RMSXFlipbookTimeline::Dashboard::result_details_text]
+assert {[string first "Units: [dict get $live units]" $details] >= 0} "Result Details omits scientific units"
+assert {[string first "Selection: protein" $details] >= 0} "Result Details omits selection"
+set prior_status $::RMSXFlipbookTimeline::Dashboard::status_text
+set prior_log $::RMSXFlipbookTimeline::Dashboard::detail_log
+$w.header.details invoke
+update idletasks
+assert {[$w.details.tabs select] eq "$w.details.tabs.result"} "Details did not open Result panel"
+assert {$::RMSXFlipbookTimeline::Dashboard::status_text eq $prior_status && $::RMSXFlipbookTimeline::Dashboard::detail_log eq $prior_log} "Opening Details overwrote status or duplicated metadata into log"
+set log_path [file join [pwd] details-log.txt]
+::RMSXFlipbookTimeline::Dashboard::save_detail_log $log_path
+set fp [open $log_path];fconfigure $fp -encoding utf-8;set saved_log [read $fp];close $fp
+assert {[string first "Selection: protein" $saved_log] >= 0 && [string first "Diagnostic log" $saved_log] >= 0} "Saved log lost current metadata or diagnostics"
+$w.footer.details invoke
+assert {[$w.details.tabs select] eq "$w.details.tabs.log"} "Log button did not select diagnostics"
+$w.details.actions.hide invoke
+update idletasks
+assert {![winfo ismapped $w.details]} "Hide left Details visible"
+assert {[winfo height $w.header] < 60} "Compact header grew beyond one row"
 # A filtered result must retain the source selection, units, and resolved frames.
 ::RMSXFlipbookTimeline::TimelinePlot::filter_current 0 1000 0 -1 1
 set live [::RMSXFlipbookTimeline::Results::get]
