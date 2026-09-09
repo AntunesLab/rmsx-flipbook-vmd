@@ -6,6 +6,7 @@ set folder [file join $::env(RMSX_TEST_WORKDIR) fixtures upstream test_files 1UB
 set before [::RMSXFlipbookTimeline::Scene::snapshot]
 set path [file join $::env(RMSX_TEST_WORKDIR) outputs figure.svg]
 set result [::RMSXFlipbookTimeline::write_flipbook_figure $path -width 900]
+assert {$::RMSXFlipbookTimeline::Render::active == 0} "Successful export retained refresh guard"
 assert {[file size [dict get $result png]] > 1000} "Missing molecular PNG"
 set fp [open [dict get $result svg] r]; set svg [read $fp]; close $fp
 assert {[string first {data:image/png;base64,} $svg] >= 0} "Figure SVG has an external image dependency"
@@ -15,6 +16,17 @@ set after [::RMSXFlipbookTimeline::Scene::snapshot]
 assert {[dict get $after values] eq [dict get $before values]} "Export changed display properties"
 assert {[dict get $after views] eq [dict get $before views]} "Export changed camera"
 assert {[dict get $after visibility] eq [dict get $before visibility]} "Export changed molecule visibility"
+# An exception after export framing begins must release the refresh guard too.
+rename ::RMSXFlipbookTimeline::Render::render_to_tga ::RMSXFlipbookTimeline::Render::qa_render_to_tga
+proc ::RMSXFlipbookTimeline::Render::render_to_tga {args} {error "Injected renderer failure"}
+try {
+    assert {[catch {::RMSXFlipbookTimeline::write_flipbook_figure [file join $::env(RMSX_TEST_WORKDIR) outputs failed.svg]}]} "Injected renderer failure was swallowed"
+} finally {
+    rename ::RMSXFlipbookTimeline::Render::render_to_tga {}
+    rename ::RMSXFlipbookTimeline::Render::qa_render_to_tga ::RMSXFlipbookTimeline::Render::render_to_tga
+}
+assert {$::RMSXFlipbookTimeline::Render::active == 0} "Failed export retained refresh guard"
+assert {[dict get [::RMSXFlipbookTimeline::Scene::snapshot] views] eq [dict get $before views]} "Failed export retained temporary camera"
 set target [file join $::env(RMSX_TEST_WORKDIR) outputs preserve.png]
 set fp [open $target w]; puts -nonewline $fp ORIGINAL; close $fp
 rename ::RMSXFlipbookTimeline::Render::render_payload ::RMSXFlipbookTimeline::Render::saved_payload

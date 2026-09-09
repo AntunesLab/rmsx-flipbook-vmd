@@ -2,6 +2,8 @@
 
 ## 0.3 — review build
 
+- Recover stale/black OpenGL views with a debounced resize/expose refresh and a 750 ms visible-result redraw pulse. Invalidate the scene by reapplying an unchanged owned viewing matrix; retain positions and orientation, pause during analysis/export, and cancel timers on close.
+
 - Enable per-protein rotation after every successful dashboard result activation, including direct preview loading and saved-display retry. Verify fixed centers after loading, spacing, Reset View, reopen, and retry.
 
 - Align input and slice controls, combine source choice with Inputs, and group analysis and view buttons independently. Reduce panel borders, hide idle progress and unavailable Retry View, and preserve the compact header and linked plots.

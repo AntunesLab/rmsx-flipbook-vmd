@@ -3,6 +3,7 @@
 ################################################################################
 
 namespace eval ::RMSXFlipbookTimeline::Render {
+    variable active 0
     proc truthy {value} {
         set lowered [string tolower [string trim $value]]
         return [expr {$lowered in {1 true yes y on}}]
@@ -382,6 +383,8 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         set snapshot [::RMSXFlipbookTimeline::Scene::snapshot]
         set state_before [::RMSXFlipbookTimeline::state_dict]
         set tga "${path}.tga"; set proof "${path}.proof.tga"
+        variable active
+        incr active
         try {
             foreach id [molinfo list] {molinfo $id set drawn [expr {[lsearch -exact $ids $id] >= 0}]}
             ::RMSXFlipbookTimeline::state_set molids $ids
@@ -427,9 +430,11 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 rendered 1 exists 1 bytes [file size $path] molecules [llength $ids] \
                 converted [expr {$format ne "tga"}] transparent_background [expr {$format eq "png" && [dict get $options transparent_background]}]]
         } finally {
-            catch {file delete $tga}; catch {file delete $proof}
-            ::RMSXFlipbookTimeline::state_replace $state_before
-            ::RMSXFlipbookTimeline::Scene::restore_snapshot $snapshot
+            try {
+                catch {file delete $tga}; catch {file delete $proof}
+                ::RMSXFlipbookTimeline::state_replace $state_before
+                ::RMSXFlipbookTimeline::Scene::restore_snapshot $snapshot
+            } finally {incr active -1}
         }
     }
     proc render_current {args} {

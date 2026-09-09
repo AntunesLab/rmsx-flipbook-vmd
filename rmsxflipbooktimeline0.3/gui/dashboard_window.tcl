@@ -1917,6 +1917,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             return
         }
         hide_tooltip
+        stop_scene_refresh
         foreach name {native_frame_count_after embedded_heatmap_redraw_after} {
             upvar 0 ::RMSXFlipbookTimeline::Dashboard::$name pending
             if {$pending ne ""} { after cancel $pending; set pending "" }
@@ -4163,6 +4164,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         wm minsize $top [expr {min(600,$width)}] [expr {min(540,$height)}]
         wm protocol $top WM_DELETE_WINDOW ::RMSXFlipbookTimeline::Dashboard::close_window
         bind $top <Map> {::RMSXFlipbookTimeline::Dashboard::restore_rotation_on_map %W}
+        bind $top <Configure> {::RMSXFlipbookTimeline::Dashboard::request_scene_refresh %W}
+        bind $top <Expose> {::RMSXFlipbookTimeline::Dashboard::request_scene_refresh %W}
         grid columnconfigure $top 0 -weight 1
         grid rowconfigure $top 1 -weight 1
         ttk::frame $top.header -padding {10 8}
@@ -4235,6 +4238,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     proc restore_rotation_on_map {window} {
         variable top
         if {$window ne $top} {return}
+        request_scene_refresh
         # Close releases the input trace while preserving the displayed result.
         # VMD caches the registered window and may deiconify it without calling
         # show again, so reacquire the hook on the toplevel's Map event too.
@@ -4866,6 +4870,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             # The dashboard can already be mapped when a preview or retry loads
             # its first result. Acquire the hook after every successful activation.
             ensure_default_mouse_rotation
+            request_scene_refresh
             return $result
         } on error {message options} {
             discard_pending_native_view
@@ -4883,5 +4888,72 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         refresh_dashboard
         set_status "Saved result displayed."
         return $result
+    }
+}
+
+# VMD's OpenGL window is not a Tk child, so its resize/expose events do not
+# reliably reach this dashboard. A bounded redraw pulse also covers that window.
+namespace eval ::RMSXFlipbookTimeline::Dashboard {
+    variable scene_refresh_after ""
+    variable scene_refresh_generation 0
+    variable scene_refresh_guard 0
+    variable scene_refresh_count 0
+    variable scene_refresh_error ""
+
+    proc stop_scene_refresh {} {
+        variable scene_refresh_after
+        variable scene_refresh_generation
+        incr scene_refresh_generation
+        if {$scene_refresh_after ne ""} {catch {after cancel $scene_refresh_after}}
+        set scene_refresh_after ""
+    }
+
+    proc request_scene_refresh {{window ""}} {
+        variable top
+        variable scene_refresh_after
+        variable scene_refresh_generation
+        if {$window ne "" && $window ne $top} {return}
+        if {[info commands winfo] eq "" || ![winfo exists $top] || ![winfo ismapped $top]} {return}
+        stop_scene_refresh
+        ::RMSXFlipbookTimeline::Effects::register dashboard_scene_refresh \
+            ::RMSXFlipbookTimeline::Dashboard::stop_scene_refresh window
+        set scene_refresh_after [after 120 [list ::RMSXFlipbookTimeline::Dashboard::refresh_scene_tick $scene_refresh_generation]]
+    }
+
+    proc refresh_scene_tick {generation} {
+        variable top
+        variable scene_refresh_after
+        variable scene_refresh_generation
+        variable scene_refresh_guard
+        variable scene_refresh_count
+        variable scene_refresh_error
+        if {$generation != $scene_refresh_generation} {return}
+        set scene_refresh_after ""
+        if {[info commands winfo] eq "" || ![winfo exists $top] || ![winfo ismapped $top]} {return}
+        # Never redraw a partially loaded or temporarily reframed operation.
+        set exporting [expr {[info exists ::RMSXFlipbookTimeline::Render::active] && $::RMSXFlipbookTimeline::Render::active > 0}]
+        if {!$scene_refresh_guard && !$exporting && ![::RMSXFlipbookTimeline::Operation::running]} {
+            if {[catch {::RMSXFlipbookTimeline::Hotkeys::loaded_molids} ids]} {return}
+            incr scene_refresh_guard
+            try {
+                # VMD can leave a resized OpenGL surface black until the scene
+                # is marked dirty. Reapply one owned molecule's exact matrix;
+                # this invalidates the scene without a geometric nudge.
+                set id [lindex $ids 0]
+                set matrix [::RMSXFlipbookTimeline::Style::normalize_matrix [molinfo $id get rotate_matrix]]
+                ::RMSXFlipbookTimeline::Style::set_molecule_matrix $id rotate_matrix [dict create rotate_matrix $matrix]
+                # Force the paint without changing the update setting, then
+                # service native resize/expose events under the reentrancy guard.
+                display update
+                display update ui
+                incr scene_refresh_count
+                set scene_refresh_error ""
+            } on error {message options} {
+                set scene_refresh_error $message
+            } finally {incr scene_refresh_guard -1}
+        }
+        if {$generation == $scene_refresh_generation && [winfo exists $top] && [winfo ismapped $top]} {
+            set scene_refresh_after [after 750 [list ::RMSXFlipbookTimeline::Dashboard::refresh_scene_tick $generation]]
+        }
     }
 }

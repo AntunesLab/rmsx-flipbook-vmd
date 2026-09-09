@@ -123,6 +123,29 @@ assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Sta
 set result [::RMSXFlipbookTimeline::Results::get]
 set result_id [dict get $result id]
 set molids [::RMSXFlipbookTimeline::state_get molids]
+# Repaint an idle result after resizing without a rotation or spacing nudge.
+set view_before [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
+set refresh_before $::RMSXFlipbookTimeline::Dashboard::scene_refresh_count
+wm geometry $w 620x700
+::RMSXFlipbookTimeline::Dashboard::request_scene_refresh
+set ::qa_redraw_wait 0
+after 1200 {set ::qa_redraw_wait 1}
+vwait ::qa_redraw_wait
+assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_count >= $refresh_before+2} "Resize/periodic scene redraw did not run"
+assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_error eq ""} "Scene redraw failed"
+assert {[::RMSXFlipbookTimeline::Style::capture_view_matrices $molids] eq $view_before} "Refresh moved the viewing matrices"
+# Temporary export views and busy analyses must never be repainted by the pulse.
+foreach guard {export operation} {
+    if {$guard eq "export"} {set ::RMSXFlipbookTimeline::Render::active 1} else {::RMSXFlipbookTimeline::Operation::begin redraw_guard}
+    set refresh_before $::RMSXFlipbookTimeline::Dashboard::scene_refresh_count
+    ::RMSXFlipbookTimeline::Dashboard::request_scene_refresh
+    set ::qa_redraw_wait 0
+    after 220 {set ::qa_redraw_wait 1}
+    vwait ::qa_redraw_wait
+    assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_count == $refresh_before} "Refresh entered $guard"
+    if {$guard eq "export"} {set ::RMSXFlipbookTimeline::Render::active 0} else {::RMSXFlipbookTimeline::Operation::finish complete Complete}
+}
+wm geometry $w 660x800
 assert_per_protein_rotation $molids
 ::RMSXFlipbookTimeline::Dashboard::nudge_spacing -2.0
 assert_per_protein_rotation $molids
@@ -136,7 +159,12 @@ assert {[lindex [dict get [::RMSXFlipbookTimeline::Results::get] selected_cell] 
 assert {[llength [$canvas find withtag keyboard_selection]] == 1} "Keyboard cell focus is not visible"
 set ::RMSXFlipbookTimeline::Dashboard::folder [file join [pwd] different-input]
 assert {[::RMSXFlipbookTimeline::Dashboard::current_native_folder] eq $folder} "Editable source redirected committed result"
+set stale_refresh_generation $::RMSXFlipbookTimeline::Dashboard::scene_refresh_generation
 ::RMSXFlipbookTimeline::Dashboard::close_window
+set refresh_before $::RMSXFlipbookTimeline::Dashboard::scene_refresh_count
+::RMSXFlipbookTimeline::Dashboard::refresh_scene_tick $stale_refresh_generation
+assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_after eq ""} "Close retained the redraw timer"
+assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_count == $refresh_before} "Stale refresh ran after close"
 assert {[wm state $w] eq "withdrawn"} "Close did not hide the window"
 assert {[::RMSXFlipbookTimeline::state_get molids] eq $molids} "Close removed loaded scene"
 assert {![dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Close retained the rotation input hook"
@@ -144,6 +172,7 @@ menu rmsxflipbooktimeline on
 update idletasks
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] id] == $result_id} "Reopen changed current result identity"
 assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Reopen lost per-protein rotation"
+assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_after ne ""} "Reopen did not resume redraws"
 assert_per_protein_rotation $molids
 # Queue a cooperative operation and use the actual Stop control at a checkpoint.
 proc gui_test_work {} {

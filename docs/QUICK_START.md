@@ -76,3 +76,5 @@ The one-line header identifies the displayed dataset, metric, and slice/frame co
 The main tab groups source choice and file paths under **Inputs**. The first action row runs analysis or opens/exports the result; the second keeps **Spacing − / +**, **Reset View**, and **Remove…** together. **Retry view** appears only when a saved calculation needs display recovery, and the progress bar appears during an operation.
 
 Per-protein rotation is enabled when a dashboard result finishes loading, including preview and Retry View paths. Use normal rotation dragging in VMD’s molecular window: each protein turns around its own center while the slice arrangement stays fixed.
+
+The dashboard automatically repaints the molecular viewer after resize/expose and result loading, with a lightweight 750 ms refresh while a result is visible. The refresh marks the scene for repaint without shifting or rotating it. It pauses during analysis and export, stops when the panel closes, and resumes when reopened.
