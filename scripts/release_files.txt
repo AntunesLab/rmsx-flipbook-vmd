@@ -156,6 +156,7 @@ rmsxflipbooktimeline0.3/register.tcl
 rmsxflipbooktimeline0.3/rmsxflipbooktimeline.tcl
 rmsxflipbooktimeline0.3/tests/probe_color_state.tcl
 rmsxflipbooktimeline0.3/tests/smoke_angle_overlay.tcl
+rmsxflipbooktimeline0.3/tests/smoke_comparison_plots.tcl
 rmsxflipbooktimeline0.3/tests/smoke_controls.tcl
 rmsxflipbooktimeline0.3/tests/smoke_core_transactions.tcl
 rmsxflipbooktimeline0.3/tests/smoke_csv_fallback.tcl

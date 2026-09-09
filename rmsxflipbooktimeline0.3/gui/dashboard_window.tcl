@@ -4678,9 +4678,10 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             set embedded_heatmap_canvas $stage
             set ::RMSXFlipbookTimeline::PlotWindow::canvas $stage
             ::RMSXFlipbookTimeline::PlotWindow::install_record_map [dict get $prepared layout records]
-            grid $stage -row 0 -column 0 -columnspan 2 -sticky nsew
+            grid $stage -row 1 -column 0 -columnspan 2 -sticky nsew
             bind $stage <Configure> {::RMSXFlipbookTimeline::Dashboard::schedule_embedded_heatmap_resize_redraw %w}
             ::RMSXFlipbookTimeline::Navigation::attach $stage [dict get $prepared layout records] [list ::RMSXFlipbookTimeline::Dashboard::select_embedded_native $stage] [list ::RMSXFlipbookTimeline::PlotWindow::clear_on_canvas $stage]
+            ::RMSXFlipbookTimeline::PlotWindow::context_attach $stage $prepared
             $stage bind pickable <Motion> {::RMSXFlipbookTimeline::Dashboard::embedded_native_plot_hover_current}
             if {$old ne $stage && [winfo exists $old]} {destroy $old}
             set embedded_heatmap_last_width [winfo width $stage]

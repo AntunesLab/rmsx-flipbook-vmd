@@ -69,10 +69,11 @@ assert {[llength [.comparison.c find withtag comparison_marker]] == 0} "Escape l
 destroy .comparison
 assert {![dict exists $::RMSXFlipbookTimeline::PlotWindow::context_views .comparison.c]} "Destroyed canvas retained comparison state"
 ::RMSXFlipbookTimeline::show_dashboard
-::RMSXFlipbookTimeline::Dashboard::draw_embedded_native_plot $folder {} RMSX
+::RMSXFlipbookTimeline::Dashboard::load_folder_with_view $folder {}
 update
 set embedded $::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_canvas
 assert {[llength [regexp -all -inline context_event [bind $embedded <Button-1>]]] == 1} "Dashboard navigation replaced comparison click handler"
+assert {[dict get [grid info $embedded] -row] == 1} "Activated canvas overlaps comparison controls"
 set ev [dict get $::RMSXFlipbookTimeline::PlotWindow::context_views $embedded]
 set ez [lindex [dict get $ev zones] 3]
 set ep [lindex [dict get $ev layout panels] 1]
