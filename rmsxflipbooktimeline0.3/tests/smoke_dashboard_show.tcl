@@ -81,8 +81,37 @@ assert {[::RMSXFlipbookTimeline::Dashboard::current_native_folder] eq $folder} "
 ::RMSXFlipbookTimeline::Dashboard::close_window
 assert {[wm state $w] eq "withdrawn"} "Close did not hide the window"
 assert {[::RMSXFlipbookTimeline::state_get molids] eq $molids} "Close removed loaded scene"
+assert {![dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Close retained the rotation input hook"
 menu rmsxflipbooktimeline on
+update idletasks
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] id] == $result_id} "Reopen changed current result identity"
+assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Reopen lost per-protein rotation"
+# The displayed centers and viewing matrices must stay fixed while each protein
+# turns. A whole-row rotation can preserve distances and still fail this check.
+set centers {}
+set atoms {}
+set views [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
+foreach id $molids {
+    dict set centers $id [::RMSXFlipbookTimeline::Hotkeys::molecule_center $id]
+    set sel [atomselect $id all]
+    dict set atoms $id [$sel get {x y z}]
+    $sel delete
+}
+foreach axis {x y z} {rotate $axis by 7}
+foreach id $molids {
+    assert {[vecdist [dict get $centers $id] [::RMSXFlipbookTimeline::Hotkeys::molecule_center $id]] < 0.001} "Reopened rotation translated protein $id"
+    set sel [atomselect $id all]
+    assert {[$sel get {x y z}] ne [dict get $atoms $id]} "Reopened rotation left protein $id stationary"
+    $sel delete
+}
+set after_views [::RMSXFlipbookTimeline::Style::capture_view_matrices $molids]
+foreach before $views after $after_views {
+    foreach key {center_matrix global_matrix scale_matrix rotate_matrix} {
+        foreach row [::RMSXFlipbookTimeline::MouseRotate::normalize_matrix [dict get $before $key]] next [::RMSXFlipbookTimeline::MouseRotate::normalize_matrix [dict get $after $key]] {
+            foreach value $row actual $next {assert {abs($value-$actual) < 0.0001} "Reopened rotation moved the flipbook view: $key"}
+        }
+    }
+}
 # Queue a cooperative operation and use the actual Stop control at a checkpoint.
 proc gui_test_work {} {
     assert {[.rmsxflipbooktimeline_dashboard.tabs.easy.content.actions.run cget -state] eq "disabled"} "Busy run button was not disabled"

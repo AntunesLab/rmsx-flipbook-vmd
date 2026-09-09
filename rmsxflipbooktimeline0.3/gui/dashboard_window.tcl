@@ -4107,6 +4107,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         wm geometry $top ${width}x${height}
         wm minsize $top [expr {min(600,$width)}] [expr {min(540,$height)}]
         wm protocol $top WM_DELETE_WINDOW ::RMSXFlipbookTimeline::Dashboard::close_window
+        bind $top <Map> {::RMSXFlipbookTimeline::Dashboard::restore_rotation_on_map %W}
         grid columnconfigure $top 0 -weight 1
         grid rowconfigure $top 1 -weight 1
         ttk::frame $top.header -padding {10 8}
@@ -4157,8 +4158,21 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         return $top
     }
 
+    proc restore_rotation_on_map {window} {
+        variable top
+        if {$window ne $top} {return}
+        # Close releases the input trace while preserving the displayed result.
+        # VMD caches the registered window and may deiconify it without calling
+        # show again, so reacquire the hook on the toplevel's Map event too.
+        if {![dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} {
+            ensure_default_mouse_rotation
+        }
+    }
+
     proc show {} {
-        return [build]
+        set window [build]
+        restore_rotation_on_map $window
+        return $window
     }
 }
 
