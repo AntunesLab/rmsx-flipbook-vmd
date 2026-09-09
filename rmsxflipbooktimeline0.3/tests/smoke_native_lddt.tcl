@@ -203,7 +203,7 @@ proc validate_lddt_result {result topology trajectory output_dir} {
     if {![file exists [dict get $report_result svg]]} {
         smoke_fail "lDDT report SVG was not written"
     }
-    if {[dict get $report_result metric_label] ne "1 - lDDT"} {
+    if {[dict get $report_result metric_label] ne "1-lDDT"} {
         smoke_fail "Expected lDDT report metric label, got [dict get $report_result metric_label]"
     }
 

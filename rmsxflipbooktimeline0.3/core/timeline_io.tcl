@@ -570,7 +570,10 @@ namespace eval ::RMSXFlipbookTimeline::TimelineIO {
         set opts [::RMSXFlipbookTimeline::parse_kv_options $defaults {*}$args]
         set directory [file normalize $directory]
         set datasets {}
-        foreach filename [lsort -dictionary [glob -nocomplain -directory $directory *.tml *.TML]] {
+        # Multiple case variants of one glob pattern return duplicate matches
+        # on Windows. Enumerate once, then compare the extension explicitly.
+        foreach filename [lsort -dictionary [glob -nocomplain -types f -directory $directory *]] {
+            if {![string equal -nocase [file extension $filename] .tml]} {continue}
             lappend datasets [read_tml $filename molid [dict get $opts molid]]
         }
         return $datasets

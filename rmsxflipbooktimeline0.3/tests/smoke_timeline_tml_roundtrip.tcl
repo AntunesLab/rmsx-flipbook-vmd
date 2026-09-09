@@ -82,7 +82,7 @@ set free_dataset [::RMSXFlipbookTimeline::Matrix::create \
     columns $columns \
     values $free_values]
 
-set free_tml [file join $tmp_dir free.tml]
+set free_tml [file join $tmp_dir free.TmL]
 ::RMSXFlipbookTimeline::write_timeline_tml $free_dataset $free_tml
 set free_read [::RMSXFlipbookTimeline::read_timeline_tml $free_tml]
 
@@ -94,6 +94,7 @@ assert_equal [::RMSXFlipbookTimeline::Matrix::cell_value $free_read 0 2] 1 "free
 
 set collection [::RMSXFlipbookTimeline::load_timeline_collection $tmp_dir]
 assert_equal [llength $collection] 2 "collection dataset count"
+assert_equal [llength [lsort -unique [lmap dataset $collection {dict get $dataset provenance file}]]] 2 "collection distinct files"
 
 set legacy_tml [file join $tmp_dir legacy_free_selection.tml]
 set fp [open $legacy_tml w]

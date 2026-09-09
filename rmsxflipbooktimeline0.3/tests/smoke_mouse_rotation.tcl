@@ -97,7 +97,7 @@ if {[catch {
     ::RMSXFlipbookTimeline::load_folder \
         $folder \
         palette viridis \
-        rep NewTube \
+        rep [::RMSXFlipbookTimeline::Style::default_rep] \
         res 16 \
         thick 0.30 \
         spacing 40.0 \

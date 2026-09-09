@@ -1194,6 +1194,9 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
             set current_scale_min $scale_min
             set current_scale_max $scale_max
             set current_palette $palette
+            # Preserve the user's neighborhood preference through activation.
+            # Selection later persists these controls back into shared state.
+            sync_neighborhood_controls_from_state
             if {[dict get $opts draw]} {
                 package require Tk
                 set controls [dict get $opts controls]
