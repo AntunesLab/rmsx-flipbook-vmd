@@ -11,6 +11,12 @@
   artifact-specific qualification guidance. Public distribution remains pending.
 - Preserve the Tcl/Tk extension and existing Analysis-menu category; retain
   public launch callbacks and VMD’s own Timeline entry.
+- Fit wide nine-slice exports using the final image aspect ratio, including
+  spacing after in-place rotation; refine very small proof images once.
+- Use reproducible, curated synthetic trajectories for native regression tests,
+  avoiding a confirmed VMD 2.0.1a1 frame-duplication crash in fixture generation.
+  Reject native crash diagnostics even when a launcher returns zero after a
+  test has written its completion receipt.
 
 ## 0.3 — review build
 

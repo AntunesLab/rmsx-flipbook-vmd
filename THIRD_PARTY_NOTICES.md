@@ -15,7 +15,7 @@ preview outputs, generated with the 0.3.1 review source from the licensed bundle
 protease inputs. These new outputs are not attributed to the historical generator.
 
 `fixtures/provenance.json` records source, applicable notice and SHA-256 for
-all 129 data files. The 49 upstream-derived fixtures are pinned to upstream
+all 132 data files. The 49 original upstream-derived fixtures are pinned to upstream
 commit `dbd394198a6eeba257339fd630a4038eba424afe`; 48 are byte-identical to
 committed files. The retained upstream MIT license matches that commit.
 The historical native outputs are tied to their first tracked fixture import;
@@ -24,6 +24,9 @@ the original generator-run metadata was not retained. See
 The protease trajectory contains only its first 27 original frames; it was
 rewritten with MDAnalysis 2.7.0 with coordinates unchanged. The complete 1UBQ
 trajectory is retained because the numerical reference covers frames 0–314.
+The two `fixtures/generated/two_chain_1ubq` files are synthetic MIT-licensed
+test inputs derived from that same ubiquitin topology/trajectory. Their exact
+historical helper recipe and input hashes are recorded in provenance.
 
 ## VMD plugin reference material
 
@@ -34,7 +37,9 @@ No VMD executable or shared library is distributed here.
 
 The small `fixtures/dna/bdna.pdb` fixture comes from the VMD plugin
 `vmdlite1.1/sandboxMolecules`. Its UIUC Open Source License is retained in
-`fixtures/dna/LICENSE`. VMD plugins are generally covered by that license
+`fixtures/dna/LICENSE`. The synthetic `fixtures/generated/bdna_synthetic.dcd`
+derives from those coordinates and retains that notice; its generator is an
+original MIT-licensed contribution. VMD plugins are generally covered by that license
 except where a file is specifically marked otherwise:
 https://www.ks.uiuc.edu/Research/vmd/plugins/pluginlicense.html
 

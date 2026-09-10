@@ -156,6 +156,23 @@ def startup_identity(output):
             if match else {})
 
 
+def native_crash_diagnostic(output):
+    """Recognize native shell crash reports, not mentions in assertions/paths.
+
+    Some VMD launchers exit zero after their executable crashes. A completion
+    receipt written before shutdown cannot make that process a passing test.
+    """
+    signal = r"(?:(?:Segmentation fault|Bus error|Abort trap|Floating point exception)(?::\s*\d+)?(?:\s+\(core dumped\))?|Aborted\s+\(core dumped\))"
+    bare = re.compile(r"^\s*" + signal + r"\s*$", re.I)
+    launcher = r"(?:(?:[A-Za-z]:[\\/]|[.\\/])[^\r\n]*|[^\s:]+)"
+    shell = re.compile(r"^\s*" + launcher + r":\s+(?:line\s+)?\d+:\s+(?:\d+\s+)?"
+                       + signal + r"(?:\s+.*)?$", re.I)
+    for line in output.splitlines():
+        if bare.fullmatch(line) or shell.fullmatch(line):
+            return line.strip()
+    return None
+
+
 def run_one(entry, args, artifact_root):
     work = artifact_root / entry["id"]
     work.mkdir()
@@ -205,6 +222,9 @@ def run_one(entry, args, artifact_root):
         if (entry.get("optional") and code == 0 and receipt.startswith("PASS\n")
                 and "skipped" in output.lower() and "failed" not in output.lower()):
             status, reason = "SKIP", "Optional experimental capability unavailable; inspect log"
+        crash = native_crash_diagnostic(output)
+        if crash:
+            status, reason = "FAIL", "Native runtime crash: " + crash
     except subprocess.TimeoutExpired as exc:
         output = exc.stdout or ""
         if isinstance(output, bytes):

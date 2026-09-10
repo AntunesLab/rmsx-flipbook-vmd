@@ -340,6 +340,14 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             set matrix [::RMSXFlipbookTimeline::Style::normalize_matrix [molinfo $id get scale_matrix]]
             set transformed [transmult [list [list $factor 0 0 0] [list 0 $factor 0 0] [list 0 0 $factor 0] {0 0 0 1}] $matrix]
             ::RMSXFlipbookTimeline::Style::set_molecule_matrix $id scale_matrix [dict create scale_matrix $transformed]
+            # VMD's global_matrix setter accepts translation, not scaling.
+            # Scale those translations too, so in-place rotation pivots and
+            # inter-slice spacing follow the same scene-wide fit as the atoms.
+            set global [::RMSXFlipbookTimeline::Style::normalize_matrix [molinfo $id get global_matrix]]
+            for {set axis 0} {$axis < 3} {incr axis} {
+                lset global $axis 3 [expr {$factor*[lindex $global $axis 3]}]
+            }
+            ::RMSXFlipbookTimeline::Style::set_molecule_matrix $id global_matrix [dict create global_matrix $global]
         }
         center_projected $ids
     }
@@ -407,11 +415,22 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             if {$height > 8192} {set width [expr {max(160,int($width*8192.0/$height))}]; set height 8192}
             if {[dict get $options framing] eq "fit"} {
                 set bounds [center_projected $ids]
-                set proof_width [expr {min(640,$width)}]
-                set proof_height [expr {max(80,int(round($height*double($proof_width)/$width)))}]
-                set pixels [render_to_tga $options $proof $proof_width $proof_height]
-                set factor [expr {min(0.90*$proof_width/([dict get $pixels x1]-[dict get $pixels x0]+1.0),0.90*$proof_height/([dict get $pixels y1]-[dict get $pixels y0]+1.0))}]
-                scale_projected $ids $factor
+                # Fit with the final aspect ratio. A height-only minimum makes
+                # wide flipbooks shrink when the proof is scaled to the export.
+                set proof_scale [expr {min(1.0,max(min(640,$width)/double($width),min(80,$height)/double($height)))}]
+                set proof_width [expr {max(1,int(round($width*$proof_scale)))}]
+                set proof_height [expr {max(1,int(round($height*$proof_scale)))}]
+                for {set attempt 0} {$attempt < 2} {incr attempt} {
+                    set pixels [render_to_tga $options $proof $proof_width $proof_height]
+                    set content_width [expr {[dict get $pixels x1]-[dict get $pixels x0]+1.0}]
+                    set content_height [expr {[dict get $pixels y1]-[dict get $pixels y0]+1.0}]
+                    set factor [expr {min(0.90*$proof_width/$content_width,0.90*$proof_height/$content_height)}]
+                    scale_projected $ids $factor
+                    # A newly loaded result can begin only a few pixels tall.
+                    # Refine once after enlarging it, instead of preserving
+                    # that initial silhouette's large quantization error.
+                    if {$content_width >= 200 && $content_height >= 20} {break}
+                }
                 set bounds [projected_bounds $ids]
             }
             set pixels [render_to_tga $options $tga $width $height]

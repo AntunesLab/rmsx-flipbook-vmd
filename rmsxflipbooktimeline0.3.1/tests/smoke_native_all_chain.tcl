@@ -34,85 +34,6 @@ proc count_masked_rows {mask_path} {
     return $count
 }
 
-proc duplicate_pdb_for_chains {in_path out_path} {
-    set in [open $in_path r]
-    set out [open $out_path w]
-    set serial 1
-    try {
-        puts $out "REMARK synthetic two-chain 1UBQ fixture for RMSX Flipbook Timeline smoke testing"
-        set atoms {}
-        while {[gets $in line] >= 0} {
-            if {[string match "ATOM*" $line] || [string match "HETATM*" $line]} {
-                lappend atoms $line
-            }
-        }
-        foreach chain {A B} {
-            foreach line $atoms {
-                set newline $line
-                set newline [string replace $newline 6 10 [format "%5d" $serial]]
-                set newline [string replace $newline 21 21 $chain]
-                set padded [format "%-80s" $newline]
-                set padded [string replace $padded 72 75 [format "%-4s" $chain]]
-                puts $out $padded
-                incr serial
-            }
-        }
-        puts $out "END"
-    } finally {
-        catch {close $in}
-        catch {close $out}
-    }
-}
-
-proc write_two_chain_fixture {source_topology source_trajectory out_pdb out_dcd {frames 10}} {
-    duplicate_pdb_for_chains $source_topology $out_pdb
-
-    mol new $source_topology type pdb waitfor all
-    set source [molinfo top get id]
-    mol addfile $source_trajectory type dcd waitfor all molid $source
-
-    mol new $out_pdb type pdb waitfor all
-    set target [molinfo top get id]
-
-    set src_sel [atomselect $source "all"]
-    set a_sel [atomselect $target "segid A"]
-    set b_sel [atomselect $target "segid B"]
-    set all_sel [atomselect $target "all"]
-
-    try {
-        for {set frame 1} {$frame < $frames} {incr frame} {
-            animate dup frame 0 $target
-        }
-
-        for {set frame 0} {$frame < $frames} {incr frame} {
-            $src_sel frame [expr {$frame + 1}]
-            $a_sel frame $frame
-            $b_sel frame $frame
-            set coords [$src_sel get {x y z}]
-            $a_sel set {x y z} $coords
-
-            set shifted {}
-            foreach xyz $coords {
-                lappend shifted [list [expr {[lindex $xyz 0] + 18.0}] [lindex $xyz 1] [lindex $xyz 2]]
-            }
-            $b_sel set {x y z} $shifted
-        }
-
-        animate write dcd $out_dcd beg 0 end [expr {$frames - 1}] sel $all_sel waitfor all
-    } finally {
-        catch {$src_sel delete}
-        catch {$a_sel delete}
-        catch {$b_sel delete}
-        catch {$all_sel delete}
-        catch {mol delete $source}
-        catch {mol delete $target}
-    }
-
-    if {![file exists $out_dcd]} {
-        smoke_fail "Synthetic two-chain DCD was not written: $out_dcd"
-    }
-}
-
 set script_name [info script]
 if {$script_name ne "" && [file exists $script_name]} {
     set script_path [file normalize $script_name]
@@ -130,13 +51,14 @@ if {[catch {package require rmsxflipbooktimeline 0.3} err]} {
     smoke_fail "package require failed: $err"
 }
 
-set source_topology [file join $workspace_root fixtures upstream test_files 1UBQ.pdb]
-set source_trajectory [file join $workspace_root fixtures upstream test_files mon_sys.dcd]
-set fixture_dir [file join $workspace_root outputs native-rmsx-all-chain-fixture]
-file mkdir $fixture_dir
+# Curated bytes are verified by run_tests.py before this process starts.
+# Regenerate only with scripts/generate_native_test_fixtures.tcl.
+set fixture_dir [file join $workspace_root fixtures generated]
 set topology [file join $fixture_dir two_chain_1ubq.pdb]
 set trajectory [file join $fixture_dir two_chain_1ubq.dcd]
-write_two_chain_fixture $source_topology $source_trajectory $topology $trajectory 10
+foreach input [list $topology $trajectory] {
+    if {![file isfile $input]} { smoke_fail "Required curated fixture is missing: $input" }
+}
 
 set output_base [file join $workspace_root outputs native-rmsx-all-chain]
 if {[catch {

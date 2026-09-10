@@ -18,6 +18,7 @@ import zlib
 
 import build_demo
 from demo_tooling_tests import PACKAGE, VERSION, test_package
+from run_tests import native_crash_diagnostic
 import vmd_process
 
 
@@ -56,6 +57,7 @@ set ::rmsx_play_started [clock milliseconds]
 set ::rmsx_play_receipt {tcl_path(receipt)}
 proc ::rmsx_play_finish {{status message}} {{
     set channel [open $::rmsx_play_receipt w]
+    fconfigure $channel -encoding utf-8 -translation lf
     puts $channel "status=$status"
     puts $channel "message=$message"
     puts $channel "milliseconds=[expr {{[clock milliseconds]-$::rmsx_play_started}}]"
@@ -98,14 +100,17 @@ play {tcl_path(artifact)}
         result = vmd_process.run([args.vmd, "-dispdev", "text", "-e", str(driver)],
                                  cwd=unrelated, timeout=args.timeout)
         (directory / "vmd.log").write_text(result.stdout, encoding="utf-8")
+        crash = native_crash_diagnostic(result.stdout)
+        if crash:
+            failure = "Native runtime crash: " + crash
     except Exception as error:
         failure = str(error)
         output = getattr(error, "output", "") or ""
         if isinstance(output, bytes):
             output = output.decode(errors="replace")
         (directory / "vmd.log").write_text(output + "\n" + failure, encoding="utf-8")
-    evidence = dict(line.split("=", 1) for line in receipt.read_text().splitlines() if "=" in line) if receipt.exists() else {}
-    passed = (result is not None and result.returncode == 0 and evidence.get("status") == "PASS"
+    evidence = dict(line.split("=", 1) for line in receipt.read_text(encoding="utf-8").splitlines() if "=" in line) if receipt.exists() else {}
+    passed = (failure is None and result is not None and result.returncode == 0 and evidence.get("status") == "PASS"
               and float(evidence.get("milliseconds", "inf")) < args.timeout * 1000)
     summary = {"schema": 1, "status": "PASS" if passed else "FAIL", "scope": "native VMD play parser and synthetic extraction only",
                "artifact_bytes": len(demo.data), "payload_decoded_bytes": sum(map(len, demo.files.values())),

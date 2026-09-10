@@ -420,6 +420,11 @@
       "id": "reviewer_preview_frames",
       "script": "smoke_reviewer_preview_frames.tcl",
       "capability": "vmd"
+    },
+    {
+      "id": "render_nine_slice_framing",
+      "script": "smoke_render_nine_slice_framing.tcl",
+      "capability": "render"
     }
   ]
 }
