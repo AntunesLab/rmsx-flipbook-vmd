@@ -70,7 +70,14 @@ class BootstrapTests(unittest.TestCase):
             directory.mkdir()
             path = directory / "renamed review.vmd"
             path.write_bytes(build.data if hasattr(build, "data") else build)
-            command = [self.tclsh, str(HARNESS), scenario, str(path)]
+            # Tcl and Python can select different ANSI/UTF-8 defaults on
+            # Windows. Keep the diagnostic path transport explicitly UTF-8;
+            # the tested artifact and workspace still contain real Unicode.
+            driver = directory / "utf8-bootstrap-harness.tcl"
+            driver.write_text("fconfigure stdout -encoding utf-8 -translation lf\n"
+                              "fconfigure stderr -encoding utf-8 -translation lf\n"
+                              + HARNESS.read_text(encoding="utf-8"), encoding="utf-8")
+            command = [self.tclsh, str(driver), scenario, str(path)]
             if other is not None:
                 second = directory / "another.vmd"
                 second.write_bytes(other.data)
@@ -78,14 +85,15 @@ class BootstrapTests(unittest.TestCase):
             temporary = directory / "temporary"
             temporary.mkdir()
             env = {**os.environ, "TMPDIR": str(temporary), "TMP": str(temporary), "TEMP": str(temporary)}
-            result = subprocess.run(command, cwd=temporary, env=env, text=True, capture_output=True, timeout=30)
+            result = subprocess.run(command, cwd=temporary, env=env, text=True,
+                                    encoding="utf-8", capture_output=True, timeout=30)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn("BOOTSTRAP_TEST_PASS", result.stdout)
             match = re.search(r"^WORKSPACE=(.+)$", result.stdout, re.M)
             extracted = {}
             if match:
                 workspace = Path(match.group(1))
-                self.assertTrue(workspace.is_dir())
+                self.assertTrue(workspace.is_dir(), f"Missing workspace {workspace!s}; Tcl receipt: {result.stdout!r}")
                 self.assertTrue((workspace / ".rmsx_review_owner").is_file())
                 extracted = {p.relative_to(workspace).as_posix(): p.read_bytes()
                              for p in workspace.rglob("*") if p.is_file() and p.name != ".rmsx_review_owner"}
