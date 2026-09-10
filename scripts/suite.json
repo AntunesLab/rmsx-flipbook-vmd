@@ -399,6 +399,27 @@
       "id": "live_thresholds_gui",
       "script": "smoke_live_thresholds.tcl",
       "capability": "gui"
+    },
+    {
+      "id": "build_identity",
+      "script": "smoke_build_identity.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "reviewer_runtime",
+      "script": "smoke_reviewer_runtime.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "reviewer_gui",
+      "script": "smoke_reviewer_gui.tcl",
+      "capability": "render",
+      "async": true
+    },
+    {
+      "id": "reviewer_preview_frames",
+      "script": "smoke_reviewer_preview_frames.tcl",
+      "capability": "vmd"
     }
   ]
 }

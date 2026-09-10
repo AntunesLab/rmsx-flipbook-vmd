@@ -4,572 +4,2525 @@
     {
       "file": "upstream/test_files/1UBQ.pdb",
       "source": "AntunesLab/rmsx:test_files/1UBQ.pdb",
-      "sha256": "3a9efa1922fb8c0b4967bcc29ce574780eb885f3c3b8c5b977f88fa1b06e7e25"
+      "sha256": "3a9efa1922fb8c0b4967bcc29ce574780eb885f3c3b8c5b977f88fa1b06e7e25",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/1UBQ.pdb",
+      "source_sha256": "3a9efa1922fb8c0b4967bcc29ce574780eb885f3c3b8c5b977f88fa1b06e7e25",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/mon_sys.dcd",
       "source": "AntunesLab/rmsx:test_files/mon_sys.dcd",
-      "sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154"
+      "sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/mon_sys.dcd",
+      "source_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/protease_backbone.pdb",
       "source": "AntunesLab/rmsx:test_files/protease_backbone.pdb",
-      "sha256": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe"
+      "sha256": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/protease_backbone.pdb",
+      "source_sha256": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_2_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_2_first_frame.pdb",
-      "sha256": "74f444b2bfe3972e066df0dd226103f3f06524db4bfaeddae2259552064cc467"
+      "sha256": "74f444b2bfe3972e066df0dd226103f3f06524db4bfaeddae2259552064cc467",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_2_first_frame.pdb",
+      "source_sha256": "74f444b2bfe3972e066df0dd226103f3f06524db4bfaeddae2259552064cc467",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_5_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_5_first_frame.pdb",
-      "sha256": "905485ff0fd40a74f19e41890029329f81e2b4529ad3b557f50da0f21e3af0d4"
+      "sha256": "905485ff0fd40a74f19e41890029329f81e2b4529ad3b557f50da0f21e3af0d4",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_5_first_frame.pdb",
+      "source_sha256": "905485ff0fd40a74f19e41890029329f81e2b4529ad3b557f50da0f21e3af0d4",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/rmsx_mon_sys_0.015_ns.csv",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/rmsx_mon_sys_0.015_ns.csv",
-      "sha256": "bcf2aaabe44578c503a10d0af019b43d2f2f6436189ba4a17eaf5ef5d519e53c"
+      "sha256": "bcf2aaabe44578c503a10d0af019b43d2f2f6436189ba4a17eaf5ef5d519e53c",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/rmsx_mon_sys_0.015_ns.csv",
+      "source_sha256": "bcf2aaabe44578c503a10d0af019b43d2f2f6436189ba4a17eaf5ef5d519e53c",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_4_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_4_first_frame.pdb",
-      "sha256": "3967f68b19750bb69c59dfe8c23adb26f70a6cb3ce9c0d1d372ef3be0f3bf0c0"
+      "sha256": "3967f68b19750bb69c59dfe8c23adb26f70a6cb3ce9c0d1d372ef3be0f3bf0c0",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_4_first_frame.pdb",
+      "source_sha256": "3967f68b19750bb69c59dfe8c23adb26f70a6cb3ce9c0d1d372ef3be0f3bf0c0",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_3_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_3_first_frame.pdb",
-      "sha256": "0f45d40954d6b2165ebbff50858c71ae0bcf9c86839e0f18b831536b268f51fa"
+      "sha256": "0f45d40954d6b2165ebbff50858c71ae0bcf9c86839e0f18b831536b268f51fa",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_3_first_frame.pdb",
+      "source_sha256": "0f45d40954d6b2165ebbff50858c71ae0bcf9c86839e0f18b831536b268f51fa",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_9_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_9_first_frame.pdb",
-      "sha256": "cbcdf8f8776649b7f114c810f8c2cb71bea9f14dc87bfb900be98b69a56f9551"
+      "sha256": "cbcdf8f8776649b7f114c810f8c2cb71bea9f14dc87bfb900be98b69a56f9551",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_9_first_frame.pdb",
+      "source_sha256": "cbcdf8f8776649b7f114c810f8c2cb71bea9f14dc87bfb900be98b69a56f9551",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_6_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_6_first_frame.pdb",
-      "sha256": "e36ad4cc92268780759048092fda3667bdd25d68e3b7e4feae51af4c4877be48"
+      "sha256": "e36ad4cc92268780759048092fda3667bdd25d68e3b7e4feae51af4c4877be48",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_6_first_frame.pdb",
+      "source_sha256": "e36ad4cc92268780759048092fda3667bdd25d68e3b7e4feae51af4c4877be48",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_1_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_1_first_frame.pdb",
-      "sha256": "872128849634a449305f6457ca70ad933631d3b8f2dada20ad6f7e20f042274a"
+      "sha256": "872128849634a449305f6457ca70ad933631d3b8f2dada20ad6f7e20f042274a",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_1_first_frame.pdb",
+      "source_sha256": "872128849634a449305f6457ca70ad933631d3b8f2dada20ad6f7e20f042274a",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/rmsd.csv",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/rmsd.csv",
-      "sha256": "ba64057d95e6b1eb0cbfaa21897dad9ba3558dd8f096470c50cb8eb3a785f024"
+      "sha256": "ba64057d95e6b1eb0cbfaa21897dad9ba3558dd8f096470c50cb8eb3a785f024",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/rmsd.csv",
+      "source_sha256": "ba64057d95e6b1eb0cbfaa21897dad9ba3558dd8f096470c50cb8eb3a785f024",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_8_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_8_first_frame.pdb",
-      "sha256": "72e8830dc73473f94de344dff5277becac539125897b2f6f5c2b24ae5b2c4e8e"
+      "sha256": "72e8830dc73473f94de344dff5277becac539125897b2f6f5c2b24ae5b2c4e8e",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_8_first_frame.pdb",
+      "source_sha256": "72e8830dc73473f94de344dff5277becac539125897b2f6f5c2b24ae5b2c4e8e",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/slice_7_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/slice_7_first_frame.pdb",
-      "sha256": "6211204b203de553bd8751abe4e14a5a649dcc83c5989f0e285303bb2a907a67"
+      "sha256": "6211204b203de553bd8751abe4e14a5a649dcc83c5989f0e285303bb2a907a67",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/slice_7_first_frame.pdb",
+      "source_sha256": "6211204b203de553bd8751abe4e14a5a649dcc83c5989f0e285303bb2a907a67",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/example1/chain_7_rmsx/rmsf.csv",
       "source": "AntunesLab/rmsx:test_files/example1/chain_7_rmsx/rmsf.csv",
-      "sha256": "f98d8029ae6b12cf85e89b32b82ef81fcf5339beb37b8def7358702520bbb9a3"
+      "sha256": "f98d8029ae6b12cf85e89b32b82ef81fcf5339beb37b8def7358702520bbb9a3",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/example1/chain_7_rmsx/rmsf.csv",
+      "source_sha256": "f98d8029ae6b12cf85e89b32b82ef81fcf5339beb37b8def7358702520bbb9a3",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/1UBQ_rmsx/chain_7_rmsx/slice_2_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/1UBQ_rmsx/chain_7_rmsx/slice_2_first_frame.pdb",
-      "sha256": "eda4a4cad1cafe5ab5949179baa8414fc574caaec81ca1c2f1f8b5361b7b9500"
+      "sha256": "eda4a4cad1cafe5ab5949179baa8414fc574caaec81ca1c2f1f8b5361b7b9500",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/1UBQ_rmsx/chain_7_rmsx/slice_2_first_frame.pdb",
+      "source_sha256": "eda4a4cad1cafe5ab5949179baa8414fc574caaec81ca1c2f1f8b5361b7b9500",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/1UBQ_rmsx/chain_7_rmsx/rmsx_mon_sys_0.015_ns.csv",
       "source": "AntunesLab/rmsx:test_files/1UBQ_rmsx/chain_7_rmsx/rmsx_mon_sys_0.015_ns.csv",
-      "sha256": "3cf418c7f8079e40347d2909f3640ba63c2d781b3818b69fb0ac4bc0220feae0"
+      "sha256": "3cf418c7f8079e40347d2909f3640ba63c2d781b3818b69fb0ac4bc0220feae0",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/1UBQ_rmsx/chain_7_rmsx/rmsx_mon_sys_0.015_ns.csv",
+      "source_sha256": "3cf418c7f8079e40347d2909f3640ba63c2d781b3818b69fb0ac4bc0220feae0",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/1UBQ_rmsx/chain_7_rmsx/slice_3_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/1UBQ_rmsx/chain_7_rmsx/slice_3_first_frame.pdb",
-      "sha256": "eb547abd52259d02dcfb6275ca1dd2160e98ad84b55ab1eb6558ab698095f17f"
+      "sha256": "eb547abd52259d02dcfb6275ca1dd2160e98ad84b55ab1eb6558ab698095f17f",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/1UBQ_rmsx/chain_7_rmsx/slice_3_first_frame.pdb",
+      "source_sha256": "eb547abd52259d02dcfb6275ca1dd2160e98ad84b55ab1eb6558ab698095f17f",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/1UBQ_rmsx/chain_7_rmsx/slice_1_first_frame.pdb",
       "source": "AntunesLab/rmsx:test_files/1UBQ_rmsx/chain_7_rmsx/slice_1_first_frame.pdb",
-      "sha256": "ff60f4af02071f415fda45325a2f5fc302b3f64e9f5f82ac2ba316dfc0685d8d"
+      "sha256": "ff60f4af02071f415fda45325a2f5fc302b3f64e9f5f82ac2ba316dfc0685d8d",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/1UBQ_rmsx/chain_7_rmsx/slice_1_first_frame.pdb",
+      "source_sha256": "ff60f4af02071f415fda45325a2f5fc302b3f64e9f5f82ac2ba316dfc0685d8d",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_2_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_2_first_frame.pdb",
-      "sha256": "53215e432a36c78d649326d9e2544a025625c92e1eb36e0596bfda4922df181f"
+      "sha256": "53215e432a36c78d649326d9e2544a025625c92e1eb36e0596bfda4922df181f",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_2_first_frame.pdb",
+      "source_sha256": "53215e432a36c78d649326d9e2544a025625c92e1eb36e0596bfda4922df181f",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_5_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_5_first_frame.pdb",
-      "sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1"
+      "sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_5_first_frame.pdb",
+      "source_sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_4_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_4_first_frame.pdb",
-      "sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d"
+      "sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_4_first_frame.pdb",
+      "source_sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_3_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_3_first_frame.pdb",
-      "sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e"
+      "sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_3_first_frame.pdb",
+      "source_sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_9_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_9_first_frame.pdb",
-      "sha256": "4d5f24fb25fc2cc6b9e92ecbd2c9dbed158d32d41502b643f126525f2608ca4c"
+      "sha256": "4d5f24fb25fc2cc6b9e92ecbd2c9dbed158d32d41502b643f126525f2608ca4c",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_9_first_frame.pdb",
+      "source_sha256": "4d5f24fb25fc2cc6b9e92ecbd2c9dbed158d32d41502b643f126525f2608ca4c",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_6_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_6_first_frame.pdb",
-      "sha256": "3d238ea141cc34df65dafa79ebc59da87693b899d38227c9805abf49b30b0cbb"
+      "sha256": "3d238ea141cc34df65dafa79ebc59da87693b899d38227c9805abf49b30b0cbb",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_6_first_frame.pdb",
+      "source_sha256": "3d238ea141cc34df65dafa79ebc59da87693b899d38227c9805abf49b30b0cbb",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_1_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_1_first_frame.pdb",
-      "sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9"
+      "sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_1_first_frame.pdb",
+      "source_sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_8_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_8_first_frame.pdb",
-      "sha256": "6b0768146e10109e167b65a1abef2a05f7098b35b6ea17330ff672d5d61c6b83"
+      "sha256": "6b0768146e10109e167b65a1abef2a05f7098b35b6ea17330ff672d5d61c6b83",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_8_first_frame.pdb",
+      "source_sha256": "6b0768146e10109e167b65a1abef2a05f7098b35b6ea17330ff672d5d61c6b83",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease/combined/slice_7_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease/combined/slice_7_first_frame.pdb",
-      "sha256": "5fb35f93564bffc0020a48987444f532c9df8bb08c7d0c835275b00800635a44"
+      "sha256": "5fb35f93564bffc0020a48987444f532c9df8bb08c7d0c835275b00800635a44",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease/combined/slice_7_first_frame.pdb",
+      "source_sha256": "5fb35f93564bffc0020a48987444f532c9df8bb08c7d0c835275b00800635a44",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_2_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_2_first_frame.pdb",
-      "sha256": "6fa56915046a4c7bbde871f3717a17624f5ea4c2c7cf559faf3021f8cd89d08b"
+      "sha256": "6fa56915046a4c7bbde871f3717a17624f5ea4c2c7cf559faf3021f8cd89d08b",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_2_first_frame.pdb",
+      "source_sha256": "6fa56915046a4c7bbde871f3717a17624f5ea4c2c7cf559faf3021f8cd89d08b",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_5_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_5_first_frame.pdb",
-      "sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1"
+      "sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_5_first_frame.pdb",
+      "source_sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_4_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_4_first_frame.pdb",
-      "sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d"
+      "sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_4_first_frame.pdb",
+      "source_sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_3_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_3_first_frame.pdb",
-      "sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e"
+      "sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_3_first_frame.pdb",
+      "source_sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_9_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_9_first_frame.pdb",
-      "sha256": "4681b7d3a0f2f0e6d2b339d012fa63bda44a26894b637b4ebedb41a353f3f7a4"
+      "sha256": "4681b7d3a0f2f0e6d2b339d012fa63bda44a26894b637b4ebedb41a353f3f7a4",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_9_first_frame.pdb",
+      "source_sha256": "4681b7d3a0f2f0e6d2b339d012fa63bda44a26894b637b4ebedb41a353f3f7a4",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_6_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_6_first_frame.pdb",
-      "sha256": "f7176bb44853b257fd4217938b7427c80e3691601f3266b3f7102926ac85cfb8"
+      "sha256": "f7176bb44853b257fd4217938b7427c80e3691601f3266b3f7102926ac85cfb8",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_6_first_frame.pdb",
+      "source_sha256": "f7176bb44853b257fd4217938b7427c80e3691601f3266b3f7102926ac85cfb8",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_1_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_1_first_frame.pdb",
-      "sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9"
+      "sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_1_first_frame.pdb",
+      "source_sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_8_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_8_first_frame.pdb",
-      "sha256": "3c4d9f99f83ab4a4338a4d3dc6f9131326031710bc740abaac4373348b766f61"
+      "sha256": "3c4d9f99f83ab4a4338a4d3dc6f9131326031710bc740abaac4373348b766f61",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_8_first_frame.pdb",
+      "source_sha256": "3c4d9f99f83ab4a4338a4d3dc6f9131326031710bc740abaac4373348b766f61",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/masked_residues.csv",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/masked_residues.csv",
-      "sha256": "77ec168074691fa95631633bb1b0aa271b0d2a0ef5d54f66da017069c3a84b24"
+      "sha256": "77ec168074691fa95631633bb1b0aa271b0d2a0ef5d54f66da017069c3a84b24",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/masked_residues.csv",
+      "source_sha256": "77ec168074691fa95631633bb1b0aa271b0d2a0ef5d54f66da017069c3a84b24",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/protease_mask_example/combined/slice_7_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/protease_mask_example/combined/slice_7_first_frame.pdb",
-      "sha256": "faf0ed218726f92563c36623ae9e25d168c956c13587793ddd8274310f74174d"
+      "sha256": "faf0ed218726f92563c36623ae9e25d168c956c13587793ddd8274310f74174d",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/protease_mask_example/combined/slice_7_first_frame.pdb",
+      "source_sha256": "faf0ed218726f92563c36623ae9e25d168c956c13587793ddd8274310f74174d",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_2_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_2_first_frame.pdb",
-      "sha256": "6fa56915046a4c7bbde871f3717a17624f5ea4c2c7cf559faf3021f8cd89d08b"
+      "sha256": "6fa56915046a4c7bbde871f3717a17624f5ea4c2c7cf559faf3021f8cd89d08b",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_2_first_frame.pdb",
+      "source_sha256": "6fa56915046a4c7bbde871f3717a17624f5ea4c2c7cf559faf3021f8cd89d08b",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_5_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_5_first_frame.pdb",
-      "sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1"
+      "sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_5_first_frame.pdb",
+      "source_sha256": "c7d4f449aa42f46ecf1b520908a422f315b492434c9722149c52f48c34b170e1",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_4_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_4_first_frame.pdb",
-      "sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d"
+      "sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_4_first_frame.pdb",
+      "source_sha256": "8fead03bb78457d1f2e0e43f434c0aeadc170c506b0b311b7a19eb19fd6d2a5d",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_3_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_3_first_frame.pdb",
-      "sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e"
+      "sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_3_first_frame.pdb",
+      "source_sha256": "6222bc0728fc263669be092086a987a8194cfa6a892ef561869ddcc9e507321e",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_9_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_9_first_frame.pdb",
-      "sha256": "4681b7d3a0f2f0e6d2b339d012fa63bda44a26894b637b4ebedb41a353f3f7a4"
+      "sha256": "4681b7d3a0f2f0e6d2b339d012fa63bda44a26894b637b4ebedb41a353f3f7a4",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_9_first_frame.pdb",
+      "source_sha256": "4681b7d3a0f2f0e6d2b339d012fa63bda44a26894b637b4ebedb41a353f3f7a4",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_6_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_6_first_frame.pdb",
-      "sha256": "f7176bb44853b257fd4217938b7427c80e3691601f3266b3f7102926ac85cfb8"
+      "sha256": "f7176bb44853b257fd4217938b7427c80e3691601f3266b3f7102926ac85cfb8",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_6_first_frame.pdb",
+      "source_sha256": "f7176bb44853b257fd4217938b7427c80e3691601f3266b3f7102926ac85cfb8",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_1_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_1_first_frame.pdb",
-      "sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9"
+      "sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_1_first_frame.pdb",
+      "source_sha256": "eec1cdf174f977e2cbd954db62b90798752a40fd917ccbc3999256cf35c518b9",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_8_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_8_first_frame.pdb",
-      "sha256": "3c4d9f99f83ab4a4338a4d3dc6f9131326031710bc740abaac4373348b766f61"
+      "sha256": "3c4d9f99f83ab4a4338a4d3dc6f9131326031710bc740abaac4373348b766f61",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_8_first_frame.pdb",
+      "source_sha256": "3c4d9f99f83ab4a4338a4d3dc6f9131326031710bc740abaac4373348b766f61",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/masked_residues.csv",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/masked_residues.csv",
-      "sha256": "77ec168074691fa95631633bb1b0aa271b0d2a0ef5d54f66da017069c3a84b24"
+      "sha256": "77ec168074691fa95631633bb1b0aa271b0d2a0ef5d54f66da017069c3a84b24",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/masked_residues.csv",
+      "source_sha256": "77ec168074691fa95631633bb1b0aa271b0d2a0ef5d54f66da017069c3a84b24",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/rmsx_demo_outputs/mask_multi_chain/combined/slice_7_first_frame.pdb",
       "source": "AntunesLab/rmsx:rmsx_demo_outputs/mask_multi_chain/combined/slice_7_first_frame.pdb",
-      "sha256": "faf0ed218726f92563c36623ae9e25d168c956c13587793ddd8274310f74174d"
+      "sha256": "faf0ed218726f92563c36623ae9e25d168c956c13587793ddd8274310f74174d",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "rmsx_demo_outputs/mask_multi_chain/combined/slice_7_first_frame.pdb",
+      "source_sha256": "faf0ed218726f92563c36623ae9e25d168c956c13587793ddd8274310f74174d",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "verification": {
+        "method": "SHA-256 of committed upstream blob matches fixture bytes",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_2_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_2_first_frame.pdb",
-      "sha256": "762c22513d964cdadef09f93818761b6730f749d8249e7c40571aae446e792e2"
+      "sha256": "762c22513d964cdadef09f93818761b6730f749d8249e7c40571aae446e792e2",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_2_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 35,
+          "frame_end": 69,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_5_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_5_first_frame.pdb",
-      "sha256": "56f87d477958dd562d62c21f964c5ee4c204ff3b1c4f97b3c413aa2c7c2c00fd"
+      "sha256": "56f87d477958dd562d62c21f964c5ee4c204ff3b1c4f97b3c413aa2c7c2c00fd",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_5_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 140,
+          "frame_end": 174,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_4_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_4_first_frame.pdb",
-      "sha256": "b2ed00dbf04636c1c034b2d68b103a00a10f95c599f561b3592270ca3afff643"
+      "sha256": "b2ed00dbf04636c1c034b2d68b103a00a10f95c599f561b3592270ca3afff643",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_4_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 105,
+          "frame_end": 139,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_3_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_3_first_frame.pdb",
-      "sha256": "98b621436ebee448c87270f9e5ddb979c042972dfbce97a09e8e8370c1f382f5"
+      "sha256": "98b621436ebee448c87270f9e5ddb979c042972dfbce97a09e8e8370c1f382f5",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_3_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 70,
+          "frame_end": 104,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsx_vmd_native.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsx_vmd_native.csv",
-      "sha256": "4dd8d3aee1ef3c23f8257b49cf313cf0ee018994d5e53784dbe0053224ad4789"
+      "sha256": "4dd8d3aee1ef3c23f8257b49cf313cf0ee018994d5e53784dbe0053224ad4789",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsx_vmd_native.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_9_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_9_first_frame.pdb",
-      "sha256": "b4e4f78bf3399ffd56476c7b35d22bad5de3950edebd8e5975a5283f212426d2"
+      "sha256": "b4e4f78bf3399ffd56476c7b35d22bad5de3950edebd8e5975a5283f212426d2",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_9_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 280,
+          "frame_end": 314,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_6_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_6_first_frame.pdb",
-      "sha256": "ffb8b63504b0d53ad02afbb2c6b34a311e4f393df2162f78cd2ecd2b42ff6b0b"
+      "sha256": "ffb8b63504b0d53ad02afbb2c6b34a311e4f393df2162f78cd2ecd2b42ff6b0b",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_6_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 175,
+          "frame_end": 209,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_1_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_1_first_frame.pdb",
-      "sha256": "d316b0b970c79b65f1822f7fc2e845dbbef81edec43b35b7fd7cfe0dd378b2a1"
+      "sha256": "d316b0b970c79b65f1822f7fc2e845dbbef81edec43b35b7fd7cfe0dd378b2a1",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_1_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 0,
+          "frame_end": 34,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsd.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsd.csv",
-      "sha256": "24964b844def9a25a79bf5f5e3b7cda5aa87ff0f393de9e22d7dafedbf38153e"
+      "sha256": "24964b844def9a25a79bf5f5e3b7cda5aa87ff0f393de9e22d7dafedbf38153e",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsd.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_8_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_8_first_frame.pdb",
-      "sha256": "b775e5595c694f6160d5fc6c9bc0fd1009595c461d47ab0df878613661fc9676"
+      "sha256": "b775e5595c694f6160d5fc6c9bc0fd1009595c461d47ab0df878613661fc9676",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_8_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 245,
+          "frame_end": 279,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsx_summary.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsx_summary.csv",
-      "sha256": "a9e8bce50603ffd22e5cb4f8e2171098905e28e1e33d3954d6c7523c8ac82b54"
+      "sha256": "a9e8bce50603ffd22e5cb4f8e2171098905e28e1e33d3954d6c7523c8ac82b54",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsx_summary.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_7_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_7_first_frame.pdb",
-      "sha256": "d64f15853425224cc57aac1f704008a659d64f18846dc724037143b8502de058"
+      "sha256": "d64f15853425224cc57aac1f704008a659d64f18846dc724037143b8502de058",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/slice_7_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10",
+        "reviewer_frame_mapping": {
+          "trajectory": "upstream/test_files/mon_sys.dcd",
+          "trajectory_sha256": "040099c1725214333e899f742b93c507304c946ee0fc7e95808058f719ae4154",
+          "frame_start": 210,
+          "frame_end": 244,
+          "source_frame_count": 316,
+          "test": "smoke_reviewer_preview_frames.tcl",
+          "method": "Exact 305 backbone atom identities; alignment-invariant RMSD against bundled DCD frame",
+          "maximum_fitted_rmsd_angstrom": 0.000501533,
+          "date": "2026-09-10"
+        }
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsf.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsf.csv",
-      "sha256": "ff89fe415eb72fcbb409edb49a38de8ec2ae4b408fafd0d51f3f79e594857b44"
+      "sha256": "ff89fe415eb72fcbb409edb49a38de8ec2ae4b408fafd0d51f3f79e594857b44",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-1ubq-9/chain_7_rmsx/rmsf.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_2_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_2_first_frame.pdb",
-      "sha256": "32ae9bede94e3dcbd3a1a89358f7bfac05d1c6ecafc49cbed1b44b79fc351538"
+      "sha256": "32ae9bede94e3dcbd3a1a89358f7bfac05d1c6ecafc49cbed1b44b79fc351538",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_2_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_3_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_3_first_frame.pdb",
-      "sha256": "cadc858541ffa4dc9b9a212b422fa41feb2bf6f71dc4fc93c9ffd8d6b8f065c1"
+      "sha256": "cadc858541ffa4dc9b9a212b422fa41feb2bf6f71dc4fc93c9ffd8d6b8f065c1",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_3_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsx_vmd_native.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsx_vmd_native.csv",
-      "sha256": "d5e478d706aaa117f102ec61e08227cf0c666fd561da89cd84d081fc00e34a3b"
+      "sha256": "d5e478d706aaa117f102ec61e08227cf0c666fd561da89cd84d081fc00e34a3b",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsx_vmd_native.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_1_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_1_first_frame.pdb",
-      "sha256": "8b2cd9c4b04376c89d895db54f8d0f988cf8a84b07bafc2c64c1031aa7889e24"
+      "sha256": "8b2cd9c4b04376c89d895db54f8d0f988cf8a84b07bafc2c64c1031aa7889e24",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/slice_1_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsd.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsd.csv",
-      "sha256": "24964b844def9a25a79bf5f5e3b7cda5aa87ff0f393de9e22d7dafedbf38153e"
+      "sha256": "24964b844def9a25a79bf5f5e3b7cda5aa87ff0f393de9e22d7dafedbf38153e",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsd.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsx_summary.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsx_summary.csv",
-      "sha256": "3dbcc73f8c412fd2c7ddce801ab17d3ac51e5dacdc1cd69e2339568f523d232a"
+      "sha256": "3dbcc73f8c412fd2c7ddce801ab17d3ac51e5dacdc1cd69e2339568f523d232a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsx_summary.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsf.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsf.csv",
-      "sha256": "ff89fe415eb72fcbb409edb49a38de8ec2ae4b408fafd0d51f3f79e594857b44"
+      "sha256": "ff89fe415eb72fcbb409edb49a38de8ec2ae4b408fafd0d51f3f79e594857b44",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-slice-size-smoke/chain_7_rmsx/rmsf.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/.rmsx_timeline_output_dir",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/.rmsx_timeline_output_dir",
-      "sha256": "6bc11615bc0d9c91d681a69026bf8d244cc3e62e2fcc85bbc0ea074aea20f5f9"
+      "sha256": "6bc11615bc0d9c91d681a69026bf8d244cc3e62e2fcc85bbc0ea074aea20f5f9",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/.rmsx_timeline_output_dir",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_2_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_2_first_frame.pdb",
-      "sha256": "da2be89aa024b57dd48b4fc9a567114361af70ae650ea1acbdfae4486555b06f"
+      "sha256": "da2be89aa024b57dd48b4fc9a567114361af70ae650ea1acbdfae4486555b06f",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_2_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_5_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_5_first_frame.pdb",
-      "sha256": "2c439323ef43b880892491eff26fa10fb75b4803ab9cf72c2ca62388af9031d3"
+      "sha256": "2c439323ef43b880892491eff26fa10fb75b4803ab9cf72c2ca62388af9031d3",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_5_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_4_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_4_first_frame.pdb",
-      "sha256": "c602db31919a662411105982f9ec46117d6d845dc292a1ad3b4e4dd6db2ab30e"
+      "sha256": "c602db31919a662411105982f9ec46117d6d845dc292a1ad3b4e4dd6db2ab30e",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_4_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_3_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_3_first_frame.pdb",
-      "sha256": "8ae2c2d2f5004b60a58f67381ad38fd544684e4fe8cec238a36ea4cfe4a0e3b3"
+      "sha256": "8ae2c2d2f5004b60a58f67381ad38fd544684e4fe8cec238a36ea4cfe4a0e3b3",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_3_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsx_vmd_native.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsx_vmd_native.csv",
-      "sha256": "8f9ca27c74b5329d32b59984f1ea62258808159eb8f2fa8a8464aab3a8154a97"
+      "sha256": "8f9ca27c74b5329d32b59984f1ea62258808159eb8f2fa8a8464aab3a8154a97",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsx_vmd_native.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_9_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_9_first_frame.pdb",
-      "sha256": "9f32632ed81cefe9521c9a32eeab38590cfe88193a393d7899efabb89b0bd687"
+      "sha256": "9f32632ed81cefe9521c9a32eeab38590cfe88193a393d7899efabb89b0bd687",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_9_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_6_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_6_first_frame.pdb",
-      "sha256": "d988258ab44073ea815abdfe470272724a94a9048ce30bf65f64015bd275b7d5"
+      "sha256": "d988258ab44073ea815abdfe470272724a94a9048ce30bf65f64015bd275b7d5",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_6_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_1_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_1_first_frame.pdb",
-      "sha256": "86b3f59e22eb4537e4a23ede0ef35560c5387ecfe6f4cf218b3c8594ad74a246"
+      "sha256": "86b3f59e22eb4537e4a23ede0ef35560c5387ecfe6f4cf218b3c8594ad74a246",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_1_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsd.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsd.csv",
-      "sha256": "f836a979f1ece7adf43d534c300ba755d596b29280fa5d538932f1f29e5e6dea"
+      "sha256": "f836a979f1ece7adf43d534c300ba755d596b29280fa5d538932f1f29e5e6dea",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsd.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_8_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_8_first_frame.pdb",
-      "sha256": "85b367885a67ff3241b18e8273fb89ac43c02262255b7324437d29a2ecd06a9a"
+      "sha256": "85b367885a67ff3241b18e8273fb89ac43c02262255b7324437d29a2ecd06a9a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_8_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/masked_residues.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/masked_residues.csv",
-      "sha256": "324b33f00b2ff7f4b289dd8bd6858752970c7781b87c6ef5691e64d9a3886692"
+      "sha256": "324b33f00b2ff7f4b289dd8bd6858752970c7781b87c6ef5691e64d9a3886692",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/masked_residues.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsx_summary.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsx_summary.csv",
-      "sha256": "dd09e3fcfd826bce58ff32e6435d529690e8e66b50d506efce260b4110b4782a"
+      "sha256": "dd09e3fcfd826bce58ff32e6435d529690e8e66b50d506efce260b4110b4782a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsx_summary.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_7_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_7_first_frame.pdb",
-      "sha256": "3dc65e5158a84ec65d2c3c585774d4061db614d80dccdd1479d19591790f23c4"
+      "sha256": "3dc65e5158a84ec65d2c3c585774d4061db614d80dccdd1479d19591790f23c4",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/slice_7_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsf.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsf.csv",
-      "sha256": "b1eb8949e78893db46538c60c3f6c4cd2af42e196a525caf6e04553915cb6d23"
+      "sha256": "b1eb8949e78893db46538c60c3f6c4cd2af42e196a525caf6e04553915cb6d23",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_B_rmsx/rmsf.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_2_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_2_first_frame.pdb",
-      "sha256": "3d6f239e56023b010dd7fcfe5db492d411a4d61e6f7d40843f6bf11ef3fc5efb"
+      "sha256": "3d6f239e56023b010dd7fcfe5db492d411a4d61e6f7d40843f6bf11ef3fc5efb",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_2_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_5_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_5_first_frame.pdb",
-      "sha256": "ab6e64ac98796adc71ed32ed9a57cdc04a291c8eebb0e95bef9616619552f4cb"
+      "sha256": "ab6e64ac98796adc71ed32ed9a57cdc04a291c8eebb0e95bef9616619552f4cb",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_5_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_4_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_4_first_frame.pdb",
-      "sha256": "ea203b1b27a0247a536f848d2e0948aa8a90e6bbe713ea113b564773854be9e2"
+      "sha256": "ea203b1b27a0247a536f848d2e0948aa8a90e6bbe713ea113b564773854be9e2",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_4_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_3_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_3_first_frame.pdb",
-      "sha256": "c7a578da9b570d3832ea08d02e3f69de9e89f2f5572efc4ddc90d0c0987782c8"
+      "sha256": "c7a578da9b570d3832ea08d02e3f69de9e89f2f5572efc4ddc90d0c0987782c8",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_3_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsx_vmd_native.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsx_vmd_native.csv",
-      "sha256": "1e61cb59079faaeae5bce66860c21d9d3cf9f4b3819c478f6837c6799d5b5c7e"
+      "sha256": "1e61cb59079faaeae5bce66860c21d9d3cf9f4b3819c478f6837c6799d5b5c7e",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsx_vmd_native.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_9_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_9_first_frame.pdb",
-      "sha256": "7200940e7cd86a409f3655b4cb0a432f851d132ef5a716fb5957f3ad40b2f106"
+      "sha256": "7200940e7cd86a409f3655b4cb0a432f851d132ef5a716fb5957f3ad40b2f106",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_9_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_6_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_6_first_frame.pdb",
-      "sha256": "8c08feb2ba0602a71ff23a1af98723d244790e068b075799b3d15e5e3deed9ab"
+      "sha256": "8c08feb2ba0602a71ff23a1af98723d244790e068b075799b3d15e5e3deed9ab",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_6_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_1_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_1_first_frame.pdb",
-      "sha256": "2e966e8d1cb70c56c71a890ce0edd2ad4fa16bb8768ed4b5b80dd5187733fc65"
+      "sha256": "2e966e8d1cb70c56c71a890ce0edd2ad4fa16bb8768ed4b5b80dd5187733fc65",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_1_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsd.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsd.csv",
-      "sha256": "792650833b2cfb80e57fba16e9877b2c07f169b9bb7dbf2207646815aa3c1ef6"
+      "sha256": "792650833b2cfb80e57fba16e9877b2c07f169b9bb7dbf2207646815aa3c1ef6",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsd.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_8_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_8_first_frame.pdb",
-      "sha256": "682d4fdefb66937292b8f75985b73e724d7aedda75cf719c2c2da1e9b9aac593"
+      "sha256": "682d4fdefb66937292b8f75985b73e724d7aedda75cf719c2c2da1e9b9aac593",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_8_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/masked_residues.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/masked_residues.csv",
-      "sha256": "8a057b9b4bc1554267ba6e9dd161639158990737979cbf7e35c3bab8d8ae838a"
+      "sha256": "8a057b9b4bc1554267ba6e9dd161639158990737979cbf7e35c3bab8d8ae838a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/masked_residues.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsx_summary.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsx_summary.csv",
-      "sha256": "cd738b6ba2b3bf95efe2cc70bf936f23cb81bb25047e7ce15f1df7004699e913"
+      "sha256": "cd738b6ba2b3bf95efe2cc70bf936f23cb81bb25047e7ce15f1df7004699e913",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsx_summary.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_7_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_7_first_frame.pdb",
-      "sha256": "e753d0439c812221c50ea710dedbd2ebb11f8305706d7a98fa6882863a7e3bbe"
+      "sha256": "e753d0439c812221c50ea710dedbd2ebb11f8305706d7a98fa6882863a7e3bbe",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/slice_7_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsf.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsf.csv",
-      "sha256": "4fefcdb355653afe2e058718dc4e79d5db5f6a6bb59f14bec025de3702cedd8a"
+      "sha256": "4fefcdb355653afe2e058718dc4e79d5db5f6a6bb59f14bec025de3702cedd8a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/chain_A_rmsx/rmsf.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_2_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_2_first_frame.pdb",
-      "sha256": "8b6a96534304d1b0ee46376e1c5c2ff6ef17b0971872b17c96ca04ae5c7a9edd"
+      "sha256": "8b6a96534304d1b0ee46376e1c5c2ff6ef17b0971872b17c96ca04ae5c7a9edd",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_2_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_5_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_5_first_frame.pdb",
-      "sha256": "d33639daa914e082efb8e9903f4dc777940c183d6e6f9227366e9189b4cc1cd2"
+      "sha256": "d33639daa914e082efb8e9903f4dc777940c183d6e6f9227366e9189b4cc1cd2",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_5_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_4_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_4_first_frame.pdb",
-      "sha256": "dab880816bb96365d3317d654ff832dcc5b550d2ade90396ac438305b21f1b19"
+      "sha256": "dab880816bb96365d3317d654ff832dcc5b550d2ade90396ac438305b21f1b19",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_4_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/rmsd_by_chain.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/rmsd_by_chain.csv",
-      "sha256": "50fc206a3d18cdf61b5f56838022a887377dca7ed31383ef12cb2e942784e1b3"
+      "sha256": "50fc206a3d18cdf61b5f56838022a887377dca7ed31383ef12cb2e942784e1b3",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/rmsd_by_chain.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_3_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_3_first_frame.pdb",
-      "sha256": "d5c2168ff4fca7dd08fdc491d68cb3a1cb01a2343437f1fefe8b3d5fd53db2ea"
+      "sha256": "d5c2168ff4fca7dd08fdc491d68cb3a1cb01a2343437f1fefe8b3d5fd53db2ea",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_3_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/rmsx_vmd_native.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/rmsx_vmd_native.csv",
-      "sha256": "c9a59e242302becedb22f8b7bfd39879653a36bf5c9a82e6361024336fe71db9"
+      "sha256": "c9a59e242302becedb22f8b7bfd39879653a36bf5c9a82e6361024336fe71db9",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/rmsx_vmd_native.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_9_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_9_first_frame.pdb",
-      "sha256": "dfff294e0dc0e29f5c2601ab261a23ae7938d0490d0385855083b4f81bc83c65"
+      "sha256": "dfff294e0dc0e29f5c2601ab261a23ae7938d0490d0385855083b4f81bc83c65",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_9_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_6_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_6_first_frame.pdb",
-      "sha256": "9948df250b9fcd87fed914a3a946922600d9f522549be62009bf694dba9bfa2f"
+      "sha256": "9948df250b9fcd87fed914a3a946922600d9f522549be62009bf694dba9bfa2f",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_6_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_1_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_1_first_frame.pdb",
-      "sha256": "0f3fb9c33e66886221889e51f0f6d2c555a7e87dcafc23d83e26be7367edbb5b"
+      "sha256": "0f3fb9c33e66886221889e51f0f6d2c555a7e87dcafc23d83e26be7367edbb5b",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_1_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/rmsd.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/rmsd.csv",
-      "sha256": "67430c6e5d3e308a9713cfe6403fba23df68fcc03a749a58c9423bf6a49d8424"
+      "sha256": "67430c6e5d3e308a9713cfe6403fba23df68fcc03a749a58c9423bf6a49d8424",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/rmsd.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_8_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_8_first_frame.pdb",
-      "sha256": "62d5a3a42f3fed4e1ef44606c5b6c81ab298292f2f7386755f6ff84ce9707944"
+      "sha256": "62d5a3a42f3fed4e1ef44606c5b6c81ab298292f2f7386755f6ff84ce9707944",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_8_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/masked_residues.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/masked_residues.csv",
-      "sha256": "66db73cefdb0fac18f31ea4900d9d6c668db0027fbbb3f29edba48ae36c3d05e"
+      "sha256": "66db73cefdb0fac18f31ea4900d9d6c668db0027fbbb3f29edba48ae36c3d05e",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/masked_residues.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/rmsx_summary.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/rmsx_summary.csv",
-      "sha256": "beda1e7861556eaeb17ee1781e205e2aeeb8ef036cae110aabb43747f6af4a87"
+      "sha256": "beda1e7861556eaeb17ee1781e205e2aeeb8ef036cae110aabb43747f6af4a87",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/rmsx_summary.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/slice_7_first_frame.pdb",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/slice_7_first_frame.pdb",
-      "sha256": "d109bf277376e64470793d2d86e8df7003c58f0717acd440cd89838d098319ac"
+      "sha256": "d109bf277376e64470793d2d86e8df7003c58f0717acd440cd89838d098319ac",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/slice_7_first_frame.pdb",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "seed_outputs/native-rmsx-real-multichain-protease/combined/rmsf.csv",
       "source": "RMSX/Flipbook native VMD baseline 0.2:outputs/native-rmsx-real-multichain-protease/combined/rmsf.csv",
-      "sha256": "5ec8601527153ab81aa913bf1b93a213ce04776dddd4e6c4bd10603dbcf5b617"
+      "sha256": "5ec8601527153ab81aa913bf1b93a213ce04776dddd4e6c4bd10603dbcf5b617",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "import_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+      "import_revision": "750b551c320a138a94b4d6b3f7565303a3333229",
+      "import_path": "fixtures/seed_outputs/native-rmsx-real-multichain-protease/combined/rmsf.csv",
+      "verification": {
+        "method": "fixture bytes match first tracked regression-data import; original generator run metadata was not retained",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "dna/bdna.pdb",
       "source": "VMD plugin vmdlite1.1/sandboxMolecules/bdna.pdb (UIUC Open Source License)",
-      "sha256": "b1b730697d077ee8c153d8039b51c1faf0d93fe47882c1097bfef0a3853b0987"
+      "sha256": "b1b730697d077ee8c153d8039b51c1faf0d93fe47882c1097bfef0a3853b0987",
+      "license": "NCSA",
+      "license_name": "University of Illinois/NCSA Open Source License",
+      "license_file": "dna/LICENSE",
+      "source_package": "VMD vmdlite1.1/sandboxMolecules/bdna.pdb",
+      "source_distribution": "VMD 2.0b1 macOS ARM64 (February 18, 2026)",
+      "source_sha256": "b1b730697d077ee8c153d8039b51c1faf0d93fe47882c1097bfef0a3853b0987",
+      "verification": {
+        "method": "SHA-256 matches the fixture in the retained VMD distribution",
+        "date": "2026-09-10"
+      }
     },
     {
       "file": "upstream/test_files/short_protease_backbone.dcd",
       "source": "AntunesLab/rmsx:test_files/short_protease_backbone.dcd; first 27 frames, coordinates unchanged, DCD written by MDAnalysis 2.7.0",
-      "sha256": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+      "sha256": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78",
+      "source_repository": "https://github.com/AntunesLab/rmsx",
+      "source_revision": "dbd394198a6eeba257339fd630a4038eba424afe",
+      "source_path": "test_files/short_protease_backbone.dcd",
+      "source_sha256": "bd6207f770e8362725f2bfcf41039af5a7864871c4f6e6bd48b8eb1f2d7a4bc3",
+      "license": "MIT",
+      "license_file": "upstream/LICENSE",
+      "transformation": {
+        "operation": "retain trajectory frames 0 through 26 inclusive",
+        "writer": "MDAnalysis 2.7.0",
+        "source_frame_count": 5001,
+        "fixture_frame_count": 27,
+        "physical_time_policy": "not established for plugin examples"
+      },
+      "verification": {
+        "method": "all 27 decoded coordinate arrays bitwise equal to committed source frames 0 through 26",
+        "reader": "MDAnalysis 2.7.0",
+        "atom_count": 790,
+        "maximum_coordinate_difference_A": 0.0,
+        "date": "2026-09-10"
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/masked_residues.csv",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "40d213bdcb074bc9d922747cb21d826b122eafe726690e34a6ffd97ce110a3e5",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/rmsd.csv",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "819cc1fc135c6a682e689417d6b7d88e8429934f1e1a4103084dfd6ce6b3d846",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/rmsd_by_chain.csv",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "4e6bf033a62e4b1ce99486e5a9dc188fcd74954487751ce00c56fcec31d3b64a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/rmsf.csv",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "d5a32d508a5e2c200e22fd680f423506c64c70dd22ba7a978c38022047767bbd",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/rmsx_summary.csv",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "219eaa54197b4261ae624efb5db1655d4c2574e052901400f38303ded94c0f3b",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/rmsx_vmd_native.csv",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "0a86976975fa93568018e824c350fc8b5262ce08737d673cdd7adf485b5b6b36",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_1_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "cbaf59155f0636c5edc961425d1cff576173a0c1f50e9c2a80a0c4aa5166e9fd",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 0,
+        "frame_end": 2
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_2_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "97e45caaf81a6497069590d7adec721ec3e0e8d193cb0d7bd2bd4569bc3cbd83",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 3,
+        "frame_end": 5
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_3_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "db4d05a8f1831fbcbad2ace49da56021f9e4276d0b952e041843517a86abd4cf",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 6,
+        "frame_end": 8
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_4_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "d0a1ad1a580b3f456162fb5a3a21d2a40a4c72c7becd0c354c109fba5406eb69",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 9,
+        "frame_end": 11
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_5_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "4fb2ccaf0af71caa661bbf3f26050fdc93f33a7e0cf47ac2c9e5d47e9a173627",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 12,
+        "frame_end": 14
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_6_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "37ee5eaa3f0435795e9179d0a5b64e6a267b0318691f5fddf2099617886b6b7a",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 15,
+        "frame_end": 17
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_7_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "0b467d07cd79cb233983728ed2514b1329b4c78fd44d3dc467575a3597b42ed6",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 18,
+        "frame_end": 20
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_8_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "d618af6fe983c96904ef037a879a4cc081f6174f884a69e2d634ae6108da0e24",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 21,
+        "frame_end": 23
+      }
+    },
+    {
+      "file": "seed_outputs/reviewer-protease-9/combined/slice_9_first_frame.pdb",
+      "source": "RMSX/Flipbook 0.3.1 native calculation from the exact bundled short protease trajectory",
+      "sha256": "441801bd1cb47771116fe92a0f452c53c71b8b469680b151295221ad1341fa93",
+      "license": "MIT",
+      "license_file": "../LICENSE",
+      "generation": {
+        "package_version": "0.3.1",
+        "vmd_version": "2.0b1",
+        "vmd_arch": "MACOSXARM64",
+        "tcl_version": "8.6.16",
+        "source_repository": "https://github.com/AntunesLab/rmsx-flipbook-vmd",
+        "source_revision": "4027f9a0ab26b50a66e533c164e8e9da7aaa11f4",
+        "dirty_review_snapshot": true,
+        "method_sources_sha256": {
+          "core/native_analysis.tcl": "a3032f919a56f88c21ea06ef8a351f47c65a6ca1abc0a4ff5eceacbb872a4d20",
+          "core/residue_identity.tcl": "152da752b47c6c08d64014714ff42f87fd763440fc1e4d5a85eafb421b0d6a9a"
+        },
+        "command": "::RMSXFlipbookTimeline::run_native_all_chain_analysis $topology $trajectory $output -num_slices 9 -start_frame 0 -end_frame 26 -time_known 0 -mask_selection {resid 25:26} -verbose 0 -cleanup 1",
+        "parameters": {
+          "analysis_type": "protein",
+          "representative_selection": "protein and name CA",
+          "structure_selection": "protein and backbone",
+          "chains": "all",
+          "start_frame": 0,
+          "end_frame": 26,
+          "num_slices": 9,
+          "slice_size": 3,
+          "mask_selection": "resid 25:26",
+          "time_known": false,
+          "alignment": "none",
+          "log_transform": false,
+          "metric": "RMSX",
+          "unit": "Angstrom"
+        },
+        "input_sha256": {
+          "upstream/test_files/protease_backbone.pdb": "45f98d39a5507cdf8b86a19b05147d053c054cb88f0f04b054c57aa322feddfe",
+          "upstream/test_files/short_protease_backbone.dcd": "2aa10ca44846b05c0074ac6090d0c3e5a0cf6b4d1309e1512b533c5fd43b1f78"
+        },
+        "residue_count": 196,
+        "masked_residue_count": 4,
+        "representative_note": "The topology contains 198 CA atoms. Terminal PHE99 in chains A/B lacks O and is excluded by VMD protein selection; the unchanged protein/name CA method analyzes 196 residues."
+      },
+      "verification": {
+        "date": "2026-09-10",
+        "method": "Fresh native VMD analysis; all nine PDB first-frame coordinates verified against bundled DCD by exact atom identities and fitted RMSD <= 0.002 Angstrom",
+        "test": "smoke_reviewer_preview_frames.tcl",
+        "maximum_first_frame_fitted_rmsd_angstrom": 5.482e-06,
+        "frame_start": 24,
+        "frame_end": 26
+      }
     }
   ]
 }

@@ -8,11 +8,19 @@ Original RMSX/Flipbook VMD extension contributions are MIT licensed, copyright
 The upstream project is https://github.com/AntunesLab/rmsx, copyright 2024
 Finn2400, MIT licensed. The curated numerical/structure fixtures under
 `fixtures/upstream` come from that project's test and demo files. Its complete
-notice is retained in `fixtures/upstream/LICENSE`. Native VMD baseline fixtures
-in `fixtures/seed_outputs` were generated in the RMSX/Flipbook 0.2 workspace.
-They are retained as regression data, not current analysis results.
+notice is retained in `fixtures/upstream/LICENSE`. The 64 historical native VMD baseline fixtures under `fixtures/seed_outputs`
+originated in the RMSX/Flipbook 0.2 workspace. They remain regression data.
+A separate `reviewer-protease-9` folder contains 15 new original MIT-licensed
+preview outputs, generated with the 0.3.1 review source from the licensed bundled
+protease inputs. These new outputs are not attributed to the historical generator.
 
-`fixtures/provenance.json` records the source and SHA-256 of each data file.
+`fixtures/provenance.json` records source, applicable notice and SHA-256 for
+all 129 data files. The 49 upstream-derived fixtures are pinned to upstream
+commit `dbd394198a6eeba257339fd630a4038eba424afe`; 48 are byte-identical to
+committed files. The retained upstream MIT license matches that commit.
+The historical native outputs are tied to their first tracked fixture import;
+the original generator-run metadata was not retained. See
+`docs/PUBLICATION_AUDIT.md` for the verification scope.
 The protease trajectory contains only its first 27 original frames; it was
 rewritten with MDAnalysis 2.7.0 with coordinates unchanged. The complete 1UBQ
 trajectory is retained because the numerical reference covers frames 0–314.

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.1 — private review candidate
+
+- Add a generated single-file reviewer route through VMD’s File → Load
+  Visualization State menu, with labeled precomputed single/multichain previews,
+  fresh calculation and a bounded Quick Check/report workflow.
+- Bind the reviewer launcher and companion source archive to a shared BUILD_ID
+  and file checksums; keep generated artifacts separate from maintained source.
+- Add explicit private handoff, maintenance ownership, publication audit and
+  artifact-specific qualification guidance. Public distribution remains pending.
+- Preserve the Tcl/Tk extension and existing Analysis-menu category; retain
+  public launch callbacks and VMD’s own Timeline entry.
+
 ## 0.3 — review build
 
 - Restore shared heatmap exploration: Shift-drag events, Ctrl+Shift row addition,

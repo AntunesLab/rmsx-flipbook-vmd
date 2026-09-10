@@ -13,31 +13,33 @@ PNG/SVG matrix export and VMD molecular-scene rendering are different paths.
 A working Tk PNG exporter does not establish that a scene renderer produces a
 meaningful molecular image. The release profile exercises real scene rendering.
 
-## Qualification matrix
+## Qualification matrix for the final 0.3.1 artifact
 
-| Environment | Available environment | Qualification status |
+The [qualification template](qualification-template.json) names five build
+checks across four platform families. Every row is **PENDING for 0.3.1** until
+its final artifact has complete matching receipts; an installed application or
+an older successful test run is not a pass for this artifact.
+
+| Gate target | Required VMD distribution | Current evidence boundary |
 |---|---|---|
-| Apple Silicon, VMD2.0b1 | Primary local runtime | Current review target; retain complete release receipt for the final source revision |
-| Apple Silicon, VMD2.0.0a7 | Additional installed local app | Compatibility checks pending unless a corresponding receipt is attached |
-| Apple Silicon, VMD1.9.4a57 | Additional installed local app | Compatibility checks pending unless a corresponding receipt is attached |
-| Linux, Carya VMD1.9.4a57 | Historical accepted CPU runtime profile | Plugin qualification pending; that build lacks TachyonInternal and has a working POV-Ray path |
-| Linux VMD2.x graphical | A binary archive is retained outside this repository | Running/display environment not established here |
-| Intel macOS | No established graphical runner | Pending external access |
-| Windows VMD | No established graphical runner | Pending external access |
-| Stable non-beta VMD | Target build to be agreed with maintainer | Pending build access and qualification |
+| `macos-arm64-2.0b1` | Apple Silicon 2.0b1 | Earlier 0.3 has full local evidence; new artifact pending |
+| `macos-arm64-2.0.0a7-pre2` | Apple Silicon 2.0.0a7-pre2 | Earlier ARM compatibility evidence; new artifact pending |
+| `macos-intel-1.9.4a57` | Intel macOS 1.9.4a57 | Licensed graphical runner and artifact qualification pending |
+| `windows-x64-2.0.0a6` | Windows x64 2.0.0a6 | Real VMD GUI/renderer qualification pending |
+| `linux-x64-2.0.1a1` | Linux x64 2.0.1a1 | Graphical VMD environment and artifact qualification pending |
 
-A passing portable Tcl job on Windows/Linux/macOS qualifies data/API tests in
-that Tcl runtime only. It does not certify the corresponding VMD graphics,
-mouse, renderer, loader or lifecycle behavior. Keep actual test receipts,
-source revision, VMD architecture and Tcl/Tk versions with every support claim.
+Historical ARM 1.9.4a57 backend checks and Carya Linux backend checks remain
+useful regression evidence, but do not substitute for these target builds.
+Read-only Linux host discovery does not establish a working VMD display or
+renderer. A maintainer-approved stable VMD target and long-term support policy
+must still be agreed before claiming compatibility beyond this matrix.
 
-The local compatibility diagnostics exercised the full backend on the three
-installed ARM builds, including numerical parity, loaders and cleanup. They
-identified VMD1.9.4's absent `NewTube` representation; the plugin now chooses
-`Tube` there and checks actual applied representation state. Those development
-runs do not replace the final source-revision receipt. See
-[VMD interoperability](VMD_INTEROP.md) for the observed console, key-binding,
-PDB identity and display behavior, and how the extension handles it.
+A portable Tcl job on Windows/Linux/macOS qualifies data/API tests in that Tcl
+runtime only. It does not certify VMD graphics, mouse behavior, loading, rendering
+or lifecycle. Keep the exact source hash, artifact hash, BUILD_ID, VMD/Tcl/Tk
+versions, OS, architecture and graphics configuration with every support claim.
+See [verification](VERIFICATION.md) for the retained historical receipts and
+[VMD interoperability](VMD_INTEROP.md) for observed platform-specific behavior.
 
 ## CI activation
 
@@ -53,16 +55,17 @@ configuration if required). The workflow does not download or redistribute VMD.
 Do not run untrusted pull-request code automatically on personal VMD machines.
 
 Pending runners remain pending; no placeholder workflow is counted as a pass.
-The only optional test skip is experimental MDFF when its capability is absent.
-Required stable calculations, GUI and rendering must all pass in release mode.
+The handoff gate checks the actual required suite inventory. Missing required
+calculations, GUI, rendering or completion receipts are failures; follow the
+current gate’s explicit policy for any experimental capability.
 
 A complete `--profile release` run is a gate for that local runtime only. Its
 summary records `complete_local_release_profile`, the exact source checksum,
 revision, architecture and per-test runtime versions. It never sets global
-`release_qualified` true: Intel macOS, graphical Linux, Windows, and the agreed
-stable VMD build still need corresponding evidence. Changing source files while
+`release_qualified` true: the other build targets still need corresponding evidence. Changing source files while
 a suite runs invalidates that qualification even when every case passes.
-The archive remains named `0.3-review` whether its source is committed or dirty.
+The artifacts remain labeled as private review builds until the final handoff
+gate passes. A dirty snapshot cannot qualify as the clean final source.
 
 ## Diagnostics
 

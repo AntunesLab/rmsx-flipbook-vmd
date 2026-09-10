@@ -1,5 +1,13 @@
 # Maintainer meeting walkthrough
 
+Start with the [three-step private reviewer route](HANDOFF.md) using
+`TRY_RMSX_0.3.1.vmd` through **File → Load Visualization State…**. The initial
+nine-window result is labeled **Precomputed preview**; select **Run** to
+show a calculation. Retain the artifact hash, BUILD_ID and Quick Check report.
+The reviewer build and any upstream integration remain private/pending until
+[qualification](VERIFICATION.md) and [publication audit](PUBLICATION_AUDIT.md) pass.
+
+
 Aim for a short demonstration of one coherent workflow, followed by the
 implementation and scientific questions that require maintainer input. Use a
 single source revision and a known VMD build; retain the validation receipt.
@@ -20,7 +28,7 @@ single source revision and a known VMD build; retain the validation receipt.
 
 1. Open the plugin from the VMD menu. Identify the source and active-result
    header; show that repeated opening reuses the existing window.
-2. Load the precomputed 1UBQ example, inspect the legend/units and select a
+2. Load the labeled precomputed nine-window 1UBQ example, inspect the legend/units and select a
    heatmap cell. Show linked residue/time structure context and keyboard access.
 3. Run a small new RMSX calculation into its own result directory. Point out
    slice planning, progress and the distinction between a completed result and

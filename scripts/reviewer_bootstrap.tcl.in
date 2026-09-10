@@ -1,0 +1,394 @@
+# RMSX/Flipbook reviewer bootstrap. Generated payload follows the readable code.
+# This file is evaluated by VMD play: it never uses cwd or info script to locate data.
+# Compression and binary decoding use Tcl 8.6 core commands only.
+namespace eval ::RMSXReviewBootstrap {
+    variable last_workspace
+    variable last_error
+    variable pending_workspaces
+    if {![info exists last_workspace]} {set last_workspace ""}
+    if {![info exists last_error]} {set last_error ""}
+    if {![info exists pending_workspaces]} {set pending_workspaces {}}
+
+    proc integer {value minimum maximum description} {
+        if {![string is integer -strict $value] || $value < $minimum || $value > $maximum} {
+            error "Invalid $description in reviewer payload"
+        }
+        return $value
+    }
+    proc decode64 {encoded maximum} {
+        regsub -all {\s+} $encoded "" encoded
+        if {[string length $encoded] > $maximum || ![regexp {^[A-Za-z0-9+/]*={0,2}$} $encoded]} {
+            error "Invalid or oversized base64 data in reviewer payload"
+        }
+        return [binary decode base64 -strict $encoded]
+    }
+    proc relative_path {encoded} {
+        set path [encoding convertfrom utf-8 [decode64 $encoded 2048]]
+        if {$path eq "" || [string length $path] > 1024 || [file pathtype $path] ne "relative" ||
+            [regexp {[:\\\x00-\x1f\x7f]} $path]} {error "Unsafe reviewer payload path"}
+        foreach component [split $path /] {
+            if {$component in {"" . ..} || [string trimright $component " ."] ne $component ||
+                [regexp -nocase {^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$} $component]} {
+                error "Unsafe reviewer payload path component"
+            }
+        }
+        return $path
+    }
+    proc decode_chunk {record} {
+        if {[llength $record] != 5} {error "Malformed reviewer payload chunk"}
+        lassign $record size crc compressed_size compressed_crc encoded
+        integer $size 1 8192 {chunk size}
+        integer $compressed_size 1 9216 {compressed chunk size}
+        integer $crc 0 4294967295 {chunk checksum}
+        integer $compressed_crc 0 4294967295 {compressed checksum}
+        set compressed [decode64 $encoded 12288]
+        if {[string length $compressed] != $compressed_size || [zlib crc32 $compressed] != $compressed_crc} {
+            error "Reviewer payload compressed checksum mismatch"
+        }
+        set stream [zlib stream decompress]
+        try {
+            $stream put $compressed
+            # Bound the amount requested even for a corrupt expansion length.
+            set bytes [$stream get [expr {$size+1}]]
+            if {[string length $bytes] != $size || ![$stream eof] || [$stream get 1] ne ""} {
+                error "Reviewer payload decompressed size mismatch"
+            }
+        } finally {$stream close}
+        if {[zlib crc32 $bytes] != $crc} {error "Reviewer payload chunk checksum mismatch"}
+        return $bytes
+    }
+    proc validate_metadata {metadata} {
+        foreach key {schema build_id version package_dir file_count total_bytes} {
+            if {![dict exists $metadata $key]} {error "Incomplete reviewer build metadata"}
+        }
+        if {[dict get $metadata schema] != 1 || ![regexp {^[0-9a-f]{64}$} [dict get $metadata build_id]]} {
+            error "Invalid reviewer build identity"
+        }
+        if {![regexp {^[0-9]+\.[0-9]+(\.[0-9]+)?$} [dict get $metadata version]] ||
+            [dict get $metadata package_dir] ne "rmsxflipbooktimeline[dict get $metadata version]"} {
+            error "Invalid reviewer package metadata"
+        }
+        integer [dict get $metadata file_count] 1 512 {file count}
+        integer [dict get $metadata total_bytes] 1 100663296 {total size}
+    }
+    proc validate_records {metadata records} {
+        validate_metadata $metadata
+        if {[llength $records] != [dict get $metadata file_count]} {error "Reviewer payload file count mismatch"}
+        set names {}; set total 0
+        foreach record $records {
+            if {[llength $record] != 4} {error "Malformed reviewer payload file"}
+            lassign $record encoded size crc chunks
+            set path [relative_path $encoded]
+            if {[dict exists $names [string tolower $path]]} {error "Duplicate reviewer payload path"}
+            dict set names [string tolower $path] 1
+            integer $size 0 16777216 {file size}
+            integer $crc 0 4294967295 {file checksum}
+            if {[llength $chunks] > 2048} {error "Too many reviewer payload chunks"}
+            set declared 0
+            foreach chunk $chunks {
+                if {[llength $chunk] != 5} {error "Malformed reviewer payload chunk"}
+                incr declared [integer [lindex $chunk 0] 1 8192 {chunk size}]
+            }
+            if {$declared != $size} {error "Reviewer payload chunk lengths do not match file size"}
+            incr total $size
+        }
+        if {$total != [dict get $metadata total_bytes]} {error "Reviewer payload total size mismatch"}
+        foreach required [list BUILD_ID VERSION rmsxflipbooktimeline.tcl pkgIndex.tcl gui/reviewer.tcl] {
+            if {![dict exists $names [string tolower "[dict get $metadata package_dir]/$required"]]} {
+                error "Reviewer payload is missing required package file: $required"
+            }
+        }
+    }
+    proc finish_staged_file {} {
+        variable staging
+        if {$staging(current) eq ""} {return}
+        lassign $staging(current) encoded size crc chunks
+        if {$staging(size) != $size || $staging(crc) != $crc} {
+            error "Reviewer staged file checksum or size mismatch"
+        }
+        lappend staging(records) $staging(current)
+        incr staging(total) $size
+        if {[llength $staging(records)] > [dict get $staging(metadata) file_count] ||
+            $staging(total) > [dict get $staging(metadata) total_bytes]} {
+            error "Reviewer staged payload exceeds its declared bounds"
+        }
+        set staging(current) ""
+    }
+    proc stage_step {operation data} {
+        variable staging
+        switch -- $operation {
+            begin {
+                # This guard deliberately uses only Tcl 8.5-era commands: an
+                # unsupported VMD must fail clearly before invoking try/zlib.
+                if {[catch {package require Tcl 8.6}] ||
+                    [lindex [split [info patchlevel] .] 0] != 8 || [info commands zlib] eq ""} {
+                    error "This reviewer build requires VMD with Tcl/Tk 8.6."
+                }
+                validate_metadata $data
+                set staging(metadata) $data
+            }
+            file {
+                finish_staged_file
+                if {[llength $data] != 3} {error "Malformed staged reviewer file"}
+                lassign $data encoded size crc
+                set path [relative_path $encoded]
+                if {[dict exists $staging(names) [string tolower $path]]} {error "Duplicate reviewer payload path"}
+                dict set staging(names) [string tolower $path] 1
+                integer $size 0 16777216 {file size}
+                integer $crc 0 4294967295 {file checksum}
+                set staging(current) [list $encoded $size $crc {}]
+                set staging(size) 0
+                set staging(crc) 0
+            }
+            chunk {
+                if {$staging(current) eq ""} {error "Reviewer chunk has no file header"}
+                set bytes [decode_chunk $data]
+                incr staging(size) [string length $bytes]
+                if {$staging(size) > [lindex $staging(current) 1]} {error "Reviewer chunks exceed declared file size"}
+                set staging(crc) [zlib crc32 $bytes $staging(crc)]
+                set chunks [lindex $staging(current) 3]
+                if {[llength $chunks] >= 2048} {error "Too many reviewer payload chunks"}
+                lappend chunks $data
+                lset staging(current) 3 $chunks
+            }
+            commit {
+                if {$data ne ""} {error "Unexpected reviewer commit data"}
+                finish_staged_file
+                validate_records $staging(metadata) $staging(records)
+                set staging(committed) 1
+                return [run $staging(metadata) $staging(records)]
+            }
+            default {error "Unknown reviewer payload operation"}
+        }
+    }
+    proc stage {args} {
+        variable staging
+        variable last_error
+        variable stage_serial
+        set operation [lindex $args 0]
+        set data [lindex $args 1]
+        if {$operation eq "begin"} {
+            if {[info exists staging(timer)] && $staging(timer) ne ""} {catch {after cancel $staging(timer)}}
+            if {![info exists stage_serial]} {set stage_serial 0}
+            array unset staging
+            array set staging {metadata {} records {} names {} current {} total 0 error {} committed 0 timer {}}
+            set staging(token) [incr stage_serial]
+            set last_error ""
+        }
+        if {![info exists staging(error)]} {
+            array set staging {error {Reviewer payload has no begin command} committed 0}
+        }
+        if {$operation eq "commit" && [info exists staging(timer)] && $staging(timer) ne ""} {
+            catch {after cancel $staging(timer)}
+            set staging(timer) ""
+        }
+        if {$staging(error) eq ""} {
+            if {($operation eq "commit" && [llength $args] != 1) ||
+                ($operation ne "commit" && [llength $args] != 2)} {
+                set staging(error) "Malformed reviewer payload operation arguments"
+            } elseif {$staging(committed)} {
+                set staging(error) "Reviewer payload was already committed"
+            } elseif {[catch {stage_step $operation $data} result options]} {
+                set staging(error) $result
+            }
+        }
+        # VMD play may continue after Tcl errors. Latch the first failure and
+        # refuse activation, even if later file/chunk commands are well formed.
+        if {$staging(error) ne ""} {
+            set last_error $staging(error)
+            set staging(records) {}
+            set staging(current) ""
+            if {$operation eq "commit"} {
+                if {!$staging(committed) && [info commands tk_messageBox] ne ""} {
+                    catch {tk_messageBox -icon error -type ok -title {RMSX reviewer build} -message $last_error}
+                }
+                error $last_error
+            }
+            return ""
+        }
+        if {$operation eq "commit"} {
+            set staging(records) {}
+            return $result
+        }
+        if {$operation eq "begin"} {
+            set staging(timer) [after 30000 [list ::RMSXReviewBootstrap::stage_timeout $staging(token)]]
+        }
+        return ""
+    }
+    proc stage_timeout {token} {
+        variable staging
+        variable last_error
+        if {![info exists staging(token)] || $staging(token) != $token || $staging(committed)} {return}
+        if {$staging(timer) ne ""} {catch {after cancel $staging(timer)}; set staging(timer) ""}
+        if {$staging(error) eq ""} {set staging(error) "Incomplete reviewer file: no final commit within 30 seconds. Download or copy the complete file and try again."}
+        set last_error $staging(error)
+        set staging(records) {}
+        set staging(current) ""
+        if {[info commands tk_messageBox] ne ""} {
+            catch {tk_messageBox -icon error -type ok -title {RMSX reviewer build} -message $last_error}
+        }
+    }
+    proc create_workspace {build_id} {
+        variable pending_workspaces
+        set channel [file tempfile anchor rmsx-review-]
+        close $channel
+        set root "${anchor}.workspace"
+        set token [file tail $anchor]
+        set made_directory 0
+        set made_marker 0
+        try {
+            if {[file exists $root]} {error "Reviewer workspace already exists"}
+            file mkdir $root
+            set made_directory 1
+            catch {file attributes $root -permissions 0700}
+            set channel [open [file join $root .rmsx_review_owner] {WRONLY CREAT EXCL} 0600]
+            set made_marker 1
+            try {puts $channel [list owner rmsxflipbooktimeline build_id $build_id token $token]} finally {close $channel}
+        } on error {message options} {
+            catch {file delete $anchor}
+            # Remove only the entries this call created, without recursive deletion.
+            if {$made_marker} {catch {file delete [file join $root .rmsx_review_owner]}}
+            if {$made_directory} {catch {file delete $root}}
+            return -options $options $message
+        }
+        file delete $anchor
+        dict set pending_workspaces $root [list $token $build_id]
+        return [list $root $token]
+    }
+    proc cleanup_workspace {root token build_id} {
+        variable pending_workspaces
+        # Rollback applies only until successful package activation. A reviewer
+        # workspace may later contain user results and is never eligible here.
+        if {![dict exists $pending_workspaces $root] ||
+            [dict get $pending_workspaces $root] ne [list $token $build_id]} {return 0}
+        set marker [file join $root .rmsx_review_owner]
+        if {![file exists $marker] || [file type $root] ne "directory" || [file type $marker] ne "file"} {return 0}
+        set channel [open $marker r]
+        try {set owner [read $channel 4096]} finally {close $channel}
+        if {$owner ne "[list owner rmsxflipbooktimeline build_id $build_id token $token]\n"} {return 0}
+        file delete -force $root
+        dict unset pending_workspaces $root
+        return 1
+    }
+    proc output_path {root path} {
+        set destination $root
+        set parts [split $path /]
+        foreach part [lrange $parts 0 end-1] {
+            set destination [file join $destination $part]
+            if {![file exists $destination]} {file mkdir $destination}
+            if {[file type $destination] ne "directory"} {error "Reviewer extraction encountered a non-directory"}
+        }
+        return [file join $destination [lindex $parts end]]
+    }
+    proc extract {root records} {
+        foreach record $records {
+            lassign $record encoded expected_size expected_crc chunks
+            set path [output_path $root [relative_path $encoded]]
+            set channel [open $path {WRONLY CREAT EXCL} 0600]
+            set size 0; set crc 0
+            try {
+                fconfigure $channel -translation binary -encoding binary
+                foreach chunk $chunks {
+                    set bytes [decode_chunk $chunk]
+                    puts -nonewline $channel $bytes
+                    incr size [string length $bytes]
+                    set crc [zlib crc32 $bytes $crc]
+                }
+            } finally {close $channel}
+            if {$size != $expected_size || $crc != $expected_crc} {error "Reviewer payload file checksum mismatch"}
+        }
+    }
+    proc loaded_build {build_id} {
+        if {[package provide rmsxflipbooktimeline] eq "" && ![namespace exists ::RMSXFlipbookTimeline]} {return 0}
+        if {[info commands ::RMSXFlipbookTimeline::build_id] eq "" ||
+            [::RMSXFlipbookTimeline::build_id] ne $build_id ||
+            [info commands ::RMSXFlipbookTimeline::Reviewer::reopen] eq ""} {
+            error "Another RMSX/Flipbook build is already loaded. Start a fresh VMD session to try this review file."
+        }
+        return 1
+    }
+    proc run {metadata records} {
+        variable last_workspace
+        variable last_error
+        variable pending_workspaces
+        set last_error ""
+        try {
+            package require Tcl 8.6
+            if {[lindex [split [info patchlevel] .] 0] != 8 || [info commands zlib] eq ""} {
+                error "This reviewer build requires VMD with Tcl/Tk 8.6."
+            }
+            if {[info commands vmdinfo] eq ""} {error "Open this file in graphical VMD using File > Load Visualization State."}
+            validate_records $metadata $records
+            set build_id [dict get $metadata build_id]
+            if {[loaded_build $build_id]} {
+                set last_workspace $::RMSXFlipbookTimeline::Reviewer::workspace
+                return [::RMSXFlipbookTimeline::Reviewer::reopen $build_id]
+            }
+            foreach command {rmsxflipbooktimeline rmsxflipbooktimeline_dashboard rmsxflipbooktimeline_classic rmsxflipbooktimeline_about rmsxflipbooktimeline_citation} {
+                if {[info commands ::$command] ne ""} {error "An existing RMSX command conflicts with this review build. Start a fresh VMD session."}
+            }
+            lassign [create_workspace $build_id] root token
+            set last_workspace $root
+            set previous_path $::auto_path
+            set previous_indexes {}
+            foreach version [package versions rmsxflipbooktimeline] {
+                dict set previous_indexes $version [package ifneeded rmsxflipbooktimeline $version]
+            }
+            set env_existed [info exists ::env(RMSXFLIPBOOKTIMELINEDIR)]
+            if {$env_existed} {set previous_env $::env(RMSXFLIPBOOKTIMELINEDIR)}
+            set package_loaded 0
+            try {
+                extract $root $records
+                set package_root [file join $root [dict get $metadata package_dir]]
+                # Register only this exact package index; existing package paths
+                # must not redirect package require to another copy of the version.
+                set ::RMSXReviewBootstrap::dir $package_root
+                try {
+                    namespace eval ::RMSXReviewBootstrap [list source -encoding utf-8 [file join $package_root pkgIndex.tcl]]
+                } finally {unset ::RMSXReviewBootstrap::dir}
+                lappend ::auto_path $root
+                package require -exact rmsxflipbooktimeline [dict get $metadata version]
+                if {[::RMSXFlipbookTimeline::build_id] ne $build_id ||
+                    [file normalize [::RMSXFlipbookTimeline::package_root]] ne [file normalize $package_root]} {
+                    error "The loaded package does not match the reviewer payload."
+                }
+                set package_loaded 1
+                dict unset pending_workspaces $root
+                if {[info commands ::RMSXFlipbookTimeline::Reviewer::launch] eq ""} {
+                    source -encoding utf-8 [file join $package_root gui reviewer.tcl]
+                }
+                return [::RMSXFlipbookTimeline::Reviewer::launch $root $build_id]
+            } on error {message options} {
+                if {!$package_loaded} {
+                    if {[info commands ::RMSXFlipbookTimeline::cleanup_side_effects] ne ""} {catch {::RMSXFlipbookTimeline::cleanup_side_effects 1}}
+                    foreach command {rmsxflipbooktimeline rmsxflipbooktimeline_dashboard rmsxflipbooktimeline_classic rmsxflipbooktimeline_about rmsxflipbooktimeline_citation} {catch {rename ::$command {}}}
+                    catch {namespace delete ::RMSXFlipbookTimeline}
+                    catch {package forget rmsxflipbooktimeline}
+                    dict for {version script} $previous_indexes {
+                        package ifneeded rmsxflipbooktimeline $version $script
+                    }
+                    set ::auto_path $previous_path
+                    if {$env_existed} {set ::env(RMSXFLIPBOOKTIMELINEDIR) $previous_env} else {unset -nocomplain ::env(RMSXFLIPBOOKTIMELINEDIR)}
+                    cleanup_workspace $root $token $build_id
+                    set last_workspace ""
+                } else {
+                    append message "\nExtracted runtime retained for retry and diagnostics: $root"
+                }
+                return -options $options $message
+            }
+        } on error {message options} {
+            set last_error $message
+            if {[info commands tk_messageBox] ne ""} {
+                catch {tk_messageBox -icon error -type ok -title {RMSX reviewer build} -message $message}
+            }
+            return -options $options $message
+        }
+    }
+}
+
+# Each payload command carries at most 8 KiB of decoded bytes. VMD play checks
+# command completeness incrementally, so no command contains the whole payload.
+# The sticky stage error prevents activation if play continues after a failure.
+::RMSXReviewBootstrap::stage begin {@METADATA@}
+@PAYLOAD@
+::RMSXReviewBootstrap::stage commit

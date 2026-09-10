@@ -14,7 +14,7 @@ def main():
     check_manifest(json.loads((ROOT / "scripts/suite.json").read_text(encoding="utf-8"))["tests"])
     verify_fixtures()
     release_paths()
-    forbidden = re.compile(r"/Users/finn|downloads/vmd/current|VMD2b1\.app|rmsxflipbooktimeline0\.[12]")
+    forbidden = re.compile(r"/Users/[^/\s]+/|downloads/vmd/current|VMD2b1\.app|rmsxflipbooktimeline0\.[12]")
     failures = []
     for directory in [PACKAGE, ROOT / "scripts"]:
         for path in directory.rglob("*"):

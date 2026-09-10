@@ -1,47 +1,58 @@
-# A first RMSX/Flipbook session
+# A first RMSX/Flipbook session — 0.3.1
 
-Install the 0.3 review archive using the [installation guide](../rmsxflipbooktimeline0.3/INSTALL.md),
-then choose **Extensions → Analysis → RMSX and Flipbook Timeline**. The dashboard
-keeps five native Tk tabs. Its header always describes the current result;
-editing the input fields prepares another calculation without changing it.
+This is the private reviewer route. Obtain the generated packet from the
+maintainer; a public download is not yet available.
 
-## Single-chain example
+1. Save the maintainer-provided `TRY_RMSX_0.3.1.vmd` file.
+2. Open a graphical VMD session.
+3. Choose **File → Load Visualization State…** and select
+   **`TRY_RMSX_0.3.1.vmd`**. The **Precomputed preview** opens automatically.
 
-From a clean checkout, launch the disposable ubiquitin demonstration:
+Use the ordinary **Run** button when you want to calculate a new result.
+**Quick Check** runs a bounded fresh check; **Save report…** saves diagnostics.
 
-```sh
-python3 scripts/launch.py --vmd /path/to/vmd --demo single
-```
 
-For the figure below, use RMSX, chain `7`, frames `0–26`, and three slices.
-Leave time unspecified: this fixture has no established physical frame interval.
-The nine-frame slices are labeled by frame bounds. The Output field is a parent
-directory; each successful calculation is published in its own run folder.
-Run starts checkpoint progress; Stop requests cancellation after the current
-VMD calculation returns.
+A fresh launch opens the nine-window Single preview after the dashboard paints.
+Reopening the same build reuses it. Another already-loaded build requires a
+fresh VMD session. No Python or permanent installation is needed for this route.
 
-![Three slices of ubiquitin with the actual RMSX display scale](figures/ubiquitin.png)
+## Two reproducible examples
 
-The clean molecular image and its editable, self-contained
-[SVG figure](figures/ubiquitin.svg) come from the native export path. The legend
-reports the applied display range in ångströms. PNG export uses VMD rendering
-and the extension's Tcl conversion code.
+| Reviewer button | Inputs and selection | Frames and windows | Mask |
+|---|---|---|---|
+| Single | `1UBQ.pdb` + `mon_sys.dcd`; group `7` | 0–314; nine 35-frame windows | None |
+| Multi | `protease_backbone.pdb` + `short_protease_backbone.dcd`; all chains | 0–26; nine three-frame windows | `resid 25:26` |
 
-## Multichain example with a mask
+Leave physical time unspecified; these examples use frame/window labels.
 
-```sh
-python3 scripts/launch.py --vmd /path/to/vmd --demo multi
-```
+The Multi precomputed preview was freshly generated from these same 27 input
+frames for the 0.3.1 review build. Earlier multichain seed results are retained
+for regression tests and are not relabeled as this example.
 
-Use RMSX, all chains, frames `0–26`, three slices, and mask selection
-`resid 25:26`. Chain and segment identity remain distinct throughout analysis,
-loading and selection. Masks retain their identity through CSV/PDB interchange.
+Run uses the normal pipeline and publishes into a unique output folder.
+A displayed precomputed preview establishes loading, not calculation success.
+Quick Check uses a separate bounded three-slice sample for the chosen example.
+The bundled inputs remain unchanged. These compact examples demonstrate the
+workflow; they do not establish equilibrium sampling.
 
-![Three masked two-chain protease structures](figures/protease.png)
+The header describes the current result. Editing setup fields prepares another
+calculation without changing that result’s export target. Stop requests
+cancellation after the current VMD calculation returns.
 
-[Open the editable protease SVG](figures/protease.svg). Masked residues use the
-plugin's translucent representation and bright marker. These small examples
-demonstrate the interface; they are not claims about equilibrium sampling.
+## Earlier scientific export examples
+
+The following three-window figures were generated with the earlier 0.3 native
+export path. They illustrate output appearance and scientific labels; they are
+not screenshots or qualification evidence for the 0.3.1 reviewer launcher.
+
+![Earlier three-window ubiquitin export with its actual RMSX scale](figures/ubiquitin.png)
+
+[Editable ubiquitin SVG](figures/ubiquitin.svg).
+
+![Earlier three-window masked two-chain protease export](figures/protease.png)
+
+[Editable protease SVG](figures/protease.svg). The legend reports the applied
+range in ångströms. Masked residues retain their distinct treatment.
 
 ## Select, export and clean up
 
@@ -51,7 +62,7 @@ demonstrate the interface; they are not claims about equilibrium sampling.
 2. Use **3D Image**, **Figure**, or **Matrix** for the current result. Default
    3D framing fits the owned structures with a small margin while keeping their
    orientation. Current view and the RMSX preset are explicit alternatives.
-3. Close the panel to keep the displayed scene. Reopen it from Extensions.
+3. Close the panel to keep the displayed scene. Reopen it through the existing Analysis extension entry.
    Use **Remove** to delete the plugin's result resources and restore settings
    still equal to the plugin's last applied values.
 4. If calculation is saved but display activation fails, retain the output
@@ -78,3 +89,19 @@ The main tab groups source choice and file paths under **Inputs**. The first act
 Per-protein rotation is enabled when a dashboard result finishes loading, including preview and Retry View paths. Use normal rotation dragging in VMD’s molecular window: each protein turns around its own center while the slice arrangement stays fixed.
 
 The dashboard automatically repaints the molecular viewer after resize/expose and result loading, with a lightweight 750 ms refresh while a result is visible. The refresh marks the scene for repaint without shifting or rotating it. It pauses during analysis and export, stops when the panel closes, and resumes when reopened.
+
+## Explore an event
+
+Shift-drag across rows and columns to select an event. Ctrl+Shift adds rows.
+Pin rows highlights the same selections across loaded structures; Unpin rows
+removes those pins. Play windows steps through saved native snapshots; Play
+event uses a verified live trajectory mapping when available. Stop ends replay
+and restores frames that have not been independently changed. Escape clears
+the exploration selection.
+
+Tools provides separate time/row zoom, Fit all, Every residue, and threshold
+controls. Right-drag zooms a rectangle. Threshold bounds are inclusive; masked,
+missing and nonfinite values are excluded. Minimum passing columns describes
+persistence across the selected columns, not consecutive dwell or physical time.
+Saved TML collections provide dataset switching with selection retained only
+when source, residue identity and frame/window mappings resolve uniquely.
