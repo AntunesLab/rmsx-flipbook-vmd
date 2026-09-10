@@ -1294,6 +1294,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             $dataset
         ::RMSXFlipbookTimeline::Navigation::attach $embedded_heatmap_canvas $records [list ::RMSXFlipbookTimeline::Dashboard::select_embedded_timeline $embedded_heatmap_canvas $dataset] [list ::RMSXFlipbookTimeline::TimelinePlot::clear_on_canvas $embedded_heatmap_canvas]
         $embedded_heatmap_canvas bind embedded_pickable <Motion> {::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_hover_current}
+        mount_heatmap_tools $embedded_heatmap_canvas $dataset
 
         set embedded_heatmap_status_var [format {%s: %d residues x %d slices} \
             [dict get $dataset title] \
@@ -1404,6 +1405,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             ::RMSXFlipbookTimeline::PlotWindow::context_attach $embedded_heatmap_canvas $prepared
             $embedded_heatmap_canvas bind pickable <Motion> {::RMSXFlipbookTimeline::Dashboard::embedded_native_plot_hover_current}
             $embedded_heatmap_canvas bind pickable <Leave> {}
+            mount_heatmap_tools $embedded_heatmap_canvas [::RMSXFlipbookTimeline::PlotWindow::exploration_dataset $prepared]
         }
         if {[dict get $result flanking_plots]} {
             set embedded_heatmap_status_var [format {%s plot: %d residues x %d slices, RMSD %d points, RMSF %d residues.} \
@@ -2362,22 +2364,14 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         variable timeline_collection_dir
         variable timeline_collection
         variable timeline_collection_index
-        if {$timeline_collection_dir eq "" || ![file isdirectory $timeline_collection_dir]} {
-            set_status "Choose a collection directory first."
-            return
-        }
-        if {[catch {::RMSXFlipbookTimeline::load_timeline_collection $timeline_collection_dir} collection]} {
-            set_status "Collection load failed:\n$collection"
-            return
-        }
-        set timeline_collection $collection
-        set timeline_collection_index 0
+        if {[string trim $timeline_collection_dir] eq ""} {set_status "Choose a collection directory first."; return}
+        ::RMSXFlipbookTimeline::Collections::set_status_command ::RMSXFlipbookTimeline::Dashboard::set_status
+        if {[catch {::RMSXFlipbookTimeline::Collections::load $timeline_collection_dir "" {*}[timeline_plot_options]} result]} {set_status "Collection load failed: $result"; return}
+        set timeline_collection [::RMSXFlipbookTimeline::Collections::datasets]
+        set timeline_collection_index [::RMSXFlipbookTimeline::Collections::index]
         add_dataset_item "TML Collection" collection $timeline_collection_dir
-        set_status "Loaded [llength $collection] collection datasets."
-        if {[llength $collection] > 0} {
-            return [::RMSXFlipbookTimeline::show_timeline_dataset [lindex $collection 0] {*}[timeline_plot_options]]
-        }
-        return $collection
+        set_status "Loaded [llength $timeline_collection] datasets. Use Saved data to switch."
+        return $result
     }
 
     proc apply_filter {} {
@@ -3707,8 +3701,8 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             -justify right \
             -wraplength 320
         set embedded_heatmap_canvas $parent.canvas
-        grid $parent.canvas -row 1 -column 0 -columnspan 2 -sticky nsew
-        grid $parent.summary -row 2 -column 0 -columnspan 2 -sticky ew -pady {3 0}
+        grid $parent.canvas -row 2 -column 0 -columnspan 2 -sticky nsew
+        grid $parent.summary -row 4 -column 0 -columnspan 2 -sticky ew -pady {3 0}
         grid $parent.context -row 0 -column 0 -sticky w -pady {2 4}
         help_tip $parent.context "Show comparison plots. Click RMSD to select a slice; click RMSF to select a residue. Heatmap selections mark both plots."
         # Citation is available in Help without occupying plot toolbar space.
@@ -3932,6 +3926,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         ttk::button $import.load_collection -text "Load Collection" -command ::RMSXFlipbookTimeline::Dashboard::load_collection
         grid $import.load_tml -row 0 -column 3 -sticky ew -pady 3
         grid $import.load_collection -row 1 -column 3 -sticky ew -pady 3
+        grid [::RMSXFlipbookTimeline::Collections::build_controls $import.saved] -row 2 -column 0 -columnspan 4 -sticky ew -pady {3 0}
 
         foreach {row col label var width} {
             0 0 Scale timeline_scale_mode 12
@@ -4865,7 +4860,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             set embedded_heatmap_canvas $stage
             set ::RMSXFlipbookTimeline::PlotWindow::canvas $stage
             ::RMSXFlipbookTimeline::PlotWindow::install_record_map [dict get $prepared layout records]
-            grid $stage -row 1 -column 0 -columnspan 2 -sticky nsew
+            grid $stage -row 2 -column 0 -columnspan 2 -sticky nsew
             bind $stage <Configure> {::RMSXFlipbookTimeline::Dashboard::schedule_embedded_heatmap_resize_redraw %w}
             ::RMSXFlipbookTimeline::Navigation::attach $stage [dict get $prepared layout records] [list ::RMSXFlipbookTimeline::Dashboard::select_embedded_native $stage] [list ::RMSXFlipbookTimeline::PlotWindow::clear_on_canvas $stage]
             ::RMSXFlipbookTimeline::PlotWindow::context_attach $stage $prepared
@@ -4873,6 +4868,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             if {$old ne $stage && [winfo exists $old]} {destroy $old}
             set embedded_heatmap_last_width [winfo width $stage]
             ::RMSXFlipbookTimeline::PlotWindow::install_pick_trace
+            mount_heatmap_tools $stage [dict get [::RMSXFlipbookTimeline::Results::get] dataset]
         }
         set embedded_heatmap_mode native
         set embedded_heatmap_status_var "[dict get $prepared metric_label]: [dict get $prepared layout rows] rows × [dict get $prepared layout columns] slices"
@@ -4972,5 +4968,25 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {$generation == $scene_refresh_generation && [winfo exists $top] && [winfo ismapped $top]} {
             set scene_refresh_after [after 750 [list ::RMSXFlipbookTimeline::Dashboard::refresh_scene_tick $generation]]
         }
+    }
+}
+
+# One control panel for either embedded plot implementation.
+namespace eval ::RMSXFlipbookTimeline::Dashboard {
+    proc mount_heatmap_tools {canvas dataset} {
+        if {$dataset eq {} || ![winfo exists $canvas]} {return}
+        ::RMSXFlipbookTimeline::HeatmapTools::attach $canvas $dataset
+        ::RMSXFlipbookTimeline::HeatmapTools::activate $canvas
+        set parent [winfo parent $canvas]
+        grid [::RMSXFlipbookTimeline::HeatmapTools::mount $parent $canvas] -row 1 -column 0 -columnspan 3 -sticky ew -pady {2 4}
+        if {![winfo exists $parent.xbar]} {
+            ttk::scrollbar $parent.xbar -orient horizontal
+            ttk::scrollbar $parent.ybar -orient vertical
+        }
+        $parent.xbar configure -command [list $canvas xview]
+        $parent.ybar configure -command [list $canvas yview]
+        $canvas configure -xscrollcommand [list $parent.xbar set] -yscrollcommand [list $parent.ybar set]
+        grid $parent.xbar -row 3 -column 0 -columnspan 2 -sticky ew
+        grid $parent.ybar -row 2 -column 2 -sticky ns
     }
 }

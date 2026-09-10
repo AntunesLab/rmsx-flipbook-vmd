@@ -4,6 +4,7 @@ namespace eval ::RMSXFlipbookTimeline::Results {
     variable serial 0
     proc get {} { variable current; return $current }
     proc notify {} {
+        if {[info commands ::RMSXFlipbookTimeline::HeatmapTools::result_changed] ne ""} {::RMSXFlipbookTimeline::HeatmapTools::result_changed}
         if {[info commands ::RMSXFlipbookTimeline::Dashboard::refresh_result_header] ne ""} {
             if {[catch {::RMSXFlipbookTimeline::Dashboard::refresh_result_header} message]} {
                 variable current
@@ -78,6 +79,7 @@ namespace eval ::RMSXFlipbookTimeline::Operation {
         variable serial
         variable last_service
         if {[running]} { error "An operation is already running" }
+        if {[info commands ::RMSXFlipbookTimeline::HeatmapTools::stop_all] ne ""} {::RMSXFlipbookTimeline::HeatmapTools::stop_all}
         set last_service 0
         set current [dict merge $details [dict create id [incr serial] kind $kind state running phase preparing cancel_requested 0 started_ms [clock milliseconds] message "Preparing $kind…"]]
         notify

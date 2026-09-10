@@ -16,6 +16,7 @@ toplevel .comparison
 canvas .comparison.c -width 950 -height 800
 pack .comparison.c
 ::RMSXFlipbookTimeline::PlotWindow::draw_prepared .comparison.c $prepared
+::RMSXFlipbookTimeline::HeatmapTools::activate .comparison.c
 update
 set view [dict get $::RMSXFlipbookTimeline::PlotWindow::context_views .comparison.c]
 assert {[llength [dict get $view zones]] == 4} "Both chains need RMSD and RMSF zones"
@@ -39,7 +40,9 @@ event generate .comparison.c <Button-1> -x [expr {int($x)}] -y [expr {int($y)}]
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] selected_cell] eq [list $target_row 4]} "Chart click did not update current result"
 set reps $::RMSXFlipbookTimeline::PlotWindow::highlight_reps
 assert {[llength $reps] == 1} "Chart click should highlight one slice"
-lassign [lindex $reps 0] molid rep
+lassign [lindex $reps 0] molid repname
+set rep [mol repindex $molid $repname]
+assert {$rep >= 0} "Chart highlight representation no longer exists"
 set picked [atomselect $molid [lindex [molinfo $molid get [list "selection $rep"]] 0]]
 assert {[lsort -unique [$picked get chain]] eq {B}} "RMSF selected wrong chain"
 assert {[lsort -unique [$picked get resid]] eq {48}} "RMSF selected wrong residue"
@@ -60,7 +63,9 @@ assert {[dict get [::RMSXFlipbookTimeline::Results::get] selected_cell] eq {0 0}
 # A second canvas must retain independent geometry and not accumulate bindings.
 canvas .comparison.second -width 950 -height 800
 ::RMSXFlipbookTimeline::PlotWindow::draw_prepared .comparison.second $prepared
+::RMSXFlipbookTimeline::HeatmapTools::activate .comparison.second
 ::RMSXFlipbookTimeline::PlotWindow::draw_prepared .comparison.c $prepared
+::RMSXFlipbookTimeline::HeatmapTools::activate .comparison.c
 assert {[llength [regexp -all -inline context_event [bind .comparison.c <Button-1>]]] == 1} "Redraw duplicated chart click bindings"
 ::RMSXFlipbookTimeline::Navigation::choose .comparison.c [list $target_row 4]
 assert {[llength [.comparison.c find withtag comparison_marker]] == 3} "Popout stole embedded geometry"
@@ -73,7 +78,7 @@ assert {![dict exists $::RMSXFlipbookTimeline::PlotWindow::context_views .compar
 update
 set embedded $::RMSXFlipbookTimeline::Dashboard::embedded_heatmap_canvas
 assert {[llength [regexp -all -inline context_event [bind $embedded <Button-1>]]] == 1} "Dashboard navigation replaced comparison click handler"
-assert {[dict get [grid info $embedded] -row] == 1} "Activated canvas overlaps comparison controls"
+assert {[dict get [grid info $embedded] -row] == 2} "Activated canvas overlaps comparison controls"
 set ev [dict get $::RMSXFlipbookTimeline::PlotWindow::context_views $embedded]
 set ez [lindex [dict get $ev zones] 3]
 set ep [lindex [dict get $ev layout panels] 1]

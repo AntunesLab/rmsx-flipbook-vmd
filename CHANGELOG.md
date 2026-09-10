@@ -2,6 +2,18 @@
 
 ## 0.3 — review build
 
+- Restore shared heatmap exploration: Shift-drag events, Ctrl+Shift row addition,
+  persistent row pins, and playback of verified live frames or loaded native
+  snapshot windows, with owned representation/timer cleanup.
+- Add independent row/time zoom, rectangle zoom and an every-residue view, with
+  linked picking and overlays following the canvas transform.
+- Add live inclusive threshold bounds, categorical toggles, clickable per-column
+  counts and minimum-passing-column highlights. Exclude masked, missing and
+  nonfinite values; persistence counts columns rather than consecutive dwell.
+- Add saved TML collection switching with unique residue/frame selection mapping;
+  unify live residue rows with canonical identity, preserving literal chains,
+  insertion codes and full-molecule occurrence ordinals.
+
 - Recover stale/black OpenGL views with a debounced resize/expose refresh and a 750 ms visible-result redraw pulse. Invalidate the scene by reapplying an unchanged owned viewing matrix; retain positions and orientation, pause during analysis/export, and cancel timers on close.
 
 - Enable per-protein rotation after every successful dashboard result activation, including direct preview loading and saved-display retry. Verify fixed centers after loading, spacing, Reset View, reopen, and retry.

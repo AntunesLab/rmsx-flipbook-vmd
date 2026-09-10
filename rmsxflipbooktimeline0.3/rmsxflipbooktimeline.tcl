@@ -262,6 +262,9 @@ namespace eval ::RMSXFlipbookTimeline {
     source -encoding utf-8 [file join $basedir core timeline_analysis.tcl]
     source -encoding utf-8 [file join $basedir visualization timeline_plot.tcl]
     source -encoding utf-8 [file join $basedir visualization neighborhood_flipbook.tcl]
+    source -encoding utf-8 [file join $basedir visualization threshold_controls.tcl]
+    source -encoding utf-8 [file join $basedir visualization heatmap_tools.tcl]
+    source -encoding utf-8 [file join $basedir core collections.tcl]
     if {[experimental_enabled]} {
         source -encoding utf-8 [file join $basedir visualization viewer_plot.tcl]
         source -encoding utf-8 [file join $basedir visualization angle_overlay.tcl]

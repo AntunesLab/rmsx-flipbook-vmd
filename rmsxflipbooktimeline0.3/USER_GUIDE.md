@@ -67,6 +67,59 @@ TML and RMSX CSV/folders can be imported. TML data remains separate from VMD's
 existing Timeline namespace. Do not use arbitrary Tcl residue functions with
 untrusted input; those functions are experimental and hidden by default.
 
+## Exploring a heatmap
+
+Shift-drag across rows and time columns to select an event. Ctrl+Shift-drag adds
+rows to that selection, using the time range of the latest drag. **Pin rows**
+keeps the selected rows highlighted in the heatmap and linked structures while
+you inspect other cells; click **Unpin rows** to remove those highlights.
+**Clear** or Escape clears the event and pins and stops playback.
+
+**Play event** replays verified source frames for the selected columns of a
+linked live trajectory. For saved native flipbooks, the button reads **Play
+windows** and steps through the loaded snapshot structures. Those snapshots
+do not contain the original within-window trajectory. **Stop** ends playback;
+the plugin restores the preceding source frame unless it was changed
+independently. Playback also stops when its result or source is no longer
+available. Imported matrices need a verified source association for playback
+and structural pinning.
+
+Open **Tools…** for **Fit all**, **Every residue**, and independent **Time** and
+**Rows** zoom controls. Right-drag zooms to a rectangle; the mouse wheel scrolls
+rows, and Shift-wheel scrolls time. Cell picking, event selection and threshold
+outlines follow the zoomed view.
+
+Expand **Thresholds and persistence** to adjust inclusive minimum/maximum bounds
+with sliders or entries. Categorical data uses category checkboxes. The count
+chart shows passing rows for every column; click a bar to select that column
+while retaining the selected row. The summary reports the current column's
+passing and eligible counts and the peak passing count across the dataset.
+Masked, missing and nonfinite values are excluded.
+
+**Min passing columns** outlines rows that pass in at least that many columns.
+Optionally set **First** and **Last** column indices, starting at zero; leave Last
+blank to include the remaining columns. Passing columns need not be consecutive:
+this is a count filter, not a dwell-time measurement. A column may represent one
+frame or an aggregated window. The full count chart stays visible when limiting
+the persistence range. **Clear highlight** removes the outlines; **Reset**
+restores the initial bounds, category choices and range. These controls leave
+the matrix values and rows unchanged.
+
+## Saved Timeline collections
+
+Use **Load Collection** for a directory of `.tml` files, then switch with the
+**Saved data** selector or **Prev**/**Next**. Switching updates the current result
+used for viewing and export. A previous cell selection is retained only when
+its residue identity and frame/window have a unique compatible match; otherwise
+the selection clears and the status explains why.
+
+Dashboard collection imports start without a live-molecule association. An
+explicit molecule can be supplied through the collection Tcl API when verified
+structure linking is needed. Saved molecule IDs are not reused as proof of an
+association. Live residue rows preserve segment, literal chain identifier,
+insertion code and repeated-residue occurrence, including when a selection
+contains only part of a molecule.
+
 ## Export and cleanup
 
 Use Export for the **current result**. Include the metric, units, color scale,

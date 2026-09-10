@@ -45,6 +45,45 @@ Operation/result state drives current-result UI and exports. A failed or
 canceled operation does not publish a replacement result. Treat analysis,
 loading and rendering as distinct outcomes, and expose full diagnostics.
 
+## Heatmap exploration and collections
+
+`Navigation` owns each canvas's model-coordinate cell records and zoom transform.
+Use `to_canvas`/`to_model` for overlays and input coordinates; selection callbacks
+receive model records. Route picking and count-bar selection through `choose`.
+The `HeatmapTools` selection/geometry hooks refresh related controls. Its
+`allowed` guard requires the displayed result generation and an idle operation;
+replay, pin representations and timers must be released on replacement or close.
+Replay distinguishes verified live-frame intervals from saved `slice_molid`
+windows, whose original trajectory frames are unavailable.
+
+`ThresholdControls::attach parent canvas dataset` returns a frame for the host
+to place. `update_dataset` resets the previous filter and pending callback;
+`detach` cancels timers and removes its overlays. `set_range canvas min max` and
+`set_options canvas dict` debounce computation. Options include `categories`,
+`min_frames`, `first_column`, `last_column` and `enabled`; `min_frames` counts
+passing **columns**, not consecutive frames or physical dwell. Bounds are
+inclusive, with masks and missing/nonfinite values excluded. `analyze` and
+`selected_rows` are pure helpers; `refresh` follows geometry changes and
+`sync_selection` updates current-column counts. The dataset remains immutable.
+
+`Collections::load directory ?molid? ?plot-options...?` loads and activates a
+saved TML collection; `Collections::select index ?plot-options...?` switches by
+zero-based index. Omitting `molid` leaves imported data unbound. Explicit binding
+resolves canonical residue identities and discards serialized molecule IDs and
+atom indices, and validates frame bounds and nonempty free selections before
+activation. Selection mapping requires verified common source information,
+a unique residue match in both directions and a compatible frame/window;
+unknown or conflicting sources clear the selection. Labels and row positions
+are not identity. Keep live rows on `ResidueIdentity` schema 2, deriving occurrence
+ordinals from the complete molecule before applying a residue selection.
+Retain one row per representative atom, including alternate-location atoms,
+to preserve the established row/value ordering.
+
+The threshold smoke has portable pure-data/timer assertions and a separate
+real-Tk branch when run by the GUI harness. A portable pass does not exercise
+its widgets or pointer/zoom behavior. Use the registered zoom, exploration,
+collection and live-identity regressions for changes to these contracts.
+
 ## CI and packaging
 
 .github/workflows/tcl.yml runs portable Tcl/tooling checks on Linux, macOS and

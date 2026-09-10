@@ -346,7 +346,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
         grid $outer -row 0 -column 0 -sticky nsew
         grid rowconfigure $window 0 -weight 1
         grid columnconfigure $window 0 -weight 1
-        grid rowconfigure $outer 0 -weight 1
+        grid rowconfigure $outer 1 -weight 1
         grid columnconfigure $outer 0 -weight 1
 
         set canvas $outer.canvas
@@ -358,9 +358,9 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
         ttk::scrollbar $outer.xbar -orient horizontal -command [list $canvas xview]
         ttk::scrollbar $outer.ybar -orient vertical -command [list $canvas yview]
         $canvas configure -xscrollcommand [list $outer.xbar set] -yscrollcommand [list $outer.ybar set]
-        grid $canvas -row 0 -column 0 -sticky nsew
-        grid $outer.ybar -row 0 -column 1 -sticky ns
-        grid $outer.xbar -row 1 -column 0 -sticky ew
+        grid $canvas -row 1 -column 0 -sticky nsew
+        grid $outer.ybar -row 1 -column 1 -sticky ns
+        grid $outer.xbar -row 2 -column 0 -sticky ew
         set scrubber ""
         if {$show_controls} {
             set scrubber_frame [ttk::frame $outer.scrubber_frame]
@@ -375,7 +375,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
             grid columnconfigure $scrubber_frame 1 -weight 1
             grid $scrubber_frame.label -row 0 -column 0 -sticky w -padx {0 8}
             grid $scrubber -row 0 -column 1 -sticky ew
-            grid $scrubber_frame -row 2 -column 0 -columnspan 2 -sticky ew -pady {8 0}
+            grid $scrubber_frame -row 3 -column 0 -columnspan 2 -sticky ew -pady {8 0}
             set neighborhood_frame [ttk::frame $outer.neighborhood_frame]
             ttk::checkbutton $neighborhood_frame.enabled \
                 -text "Nearby frames" \
@@ -397,9 +397,9 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
             grid $neighborhood_frame.apply -row 0 -column 5 -sticky w -padx {0 8}
             grid $neighborhood_frame.clear -row 0 -column 6 -sticky w -padx {0 12}
             grid $neighborhood_frame.summary -row 0 -column 8 -sticky ew
-            grid $neighborhood_frame -row 3 -column 0 -columnspan 2 -sticky ew -pady {8 0}
+            grid $neighborhood_frame -row 4 -column 0 -columnspan 2 -sticky ew -pady {8 0}
             ttk::label $outer.status -textvariable ::RMSXFlipbookTimeline::TimelinePlot::status_var -anchor w
-            grid $outer.status -row 4 -column 0 -columnspan 2 -sticky ew -pady {8 0}
+            grid $outer.status -row 5 -column 0 -columnspan 2 -sticky ew -pady {8 0}
         }
         bind $window <Destroy> [list ::RMSXFlipbookTimeline::TimelinePlot::window_destroyed $window %W]
         return $canvas
@@ -680,6 +680,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
         $canvas bind pickable <B1-Motion> {::RMSXFlipbookTimeline::TimelinePlot::hover_current}
         $canvas bind pickable <Motion> {::RMSXFlipbookTimeline::TimelinePlot::hover_current}
         ::RMSXFlipbookTimeline::Navigation::attach $canvas [dict get $layout records] [list ::RMSXFlipbookTimeline::TimelinePlot::select_on_canvas $canvas $dataset] [list ::RMSXFlipbookTimeline::TimelinePlot::clear_on_canvas $canvas]
+        ::RMSXFlipbookTimeline::HeatmapTools::attach $canvas $dataset
     }
 
     proc draw_category_legend {canvas x y w h categories label} {
@@ -752,11 +753,14 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
 
     proc clear_structure_highlight {} {
         variable highlight_reps
-        foreach item $highlight_reps {
-            set molid [lindex $item 0]
-            set repid [lindex $item 1]
+        # Representation indices change when another plugin or the user deletes
+        # a preceding representation. Resolve our stable names at cleanup time.
+        foreach item [lreverse $highlight_reps] {
+            lassign $item molid name
             if {[info commands molinfo] ne "" && [lsearch -exact [molinfo list] $molid] != -1} {
-                catch {mol delrep $repid $molid}
+                if {![catch {mol repindex $molid $name} repid] && $repid >= 0} {
+                    catch {mol delrep $repid $molid}
+                }
             }
         }
         set highlight_reps {}
@@ -767,13 +771,20 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
         if {$selection eq "" || [info commands molinfo] eq "" || [lsearch -exact [molinfo list] $molid] == -1} {
             return
         }
-        mol representation VDW 0.9 12
-        mol selection $selection
-        mol color ColorID 4
-        mol material Opaque
         mol addrep $molid
         set repid [expr {[molinfo $molid get numreps] - 1}]
-        lappend highlight_reps [list $molid $repid]
+        try {
+            set name [mol repname $molid $repid]
+            # Configure just the new representation; leave VMD's defaults intact.
+            mol modselect $repid $molid $selection
+            mol modstyle $repid $molid VDW 0.9 12
+            mol modcolor $repid $molid ColorID 4
+            mol modmaterial $repid $molid Opaque
+        } on error {message options} {
+            catch {mol delrep $repid $molid}
+            return -options $options $message
+        }
+        lappend highlight_reps [list $molid $name]
     }
 
     proc column_target_molid {dataset column} {
@@ -959,6 +970,9 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
     }
 
     proc select_on_canvas {target dataset record} {
+        if {[info commands ::RMSXFlipbookTimeline::HeatmapTools::state] ne "" &&
+            [::RMSXFlipbookTimeline::HeatmapTools::state $target] ne {} &&
+            ![::RMSXFlipbookTimeline::HeatmapTools::allowed $target]} {return {}}
         variable canvas; variable current_dataset; variable selected_record
         set old_canvas $canvas; set old_dataset $current_dataset
         set canvas $target; set current_dataset $dataset; set selected_record {}
@@ -1210,6 +1224,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
                 set canvas [ensure_window [dict get $layout canvas_width] [dict get $layout canvas_height] $title controls $controls]
                 wm withdraw $window
                 draw $dataset $layout $palette
+                grid [::RMSXFlipbookTimeline::HeatmapTools::mount [winfo parent $canvas] $canvas] -row 0 -column 0 -columnspan 2 -sticky ew -pady {0 6}
                 if {$controls} {
                     configure_scrubber [dict get $dataset column_count]
                     set status_var "Use arrow keys or click a heatmap cell to select a frame and residue."
@@ -1233,6 +1248,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelinePlot {
         ::RMSXFlipbookTimeline::state_set current_timeline_dataset $dataset
         ::RMSXFlipbookTimeline::publish_matrix_result $dataset $opts
         if {$drawn} {
+            ::RMSXFlipbookTimeline::HeatmapTools::activate $canvas
             focus_live_matrix_scene $dataset
             wm deiconify $window
             if {$old_window ne $window && [winfo exists $old_window]} {destroy $old_window}

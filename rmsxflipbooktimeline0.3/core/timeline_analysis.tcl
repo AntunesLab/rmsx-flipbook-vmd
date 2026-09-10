@@ -82,34 +82,38 @@ namespace eval ::RMSXFlipbookTimeline::TimelineAnalysis {
 
     proc residue_rows {molid selection frame} {
         set sel [atomselect $molid [key_atom_selection $selection] frame $frame]
+        set all ""
         try {
             if {[$sel num] == 0} {
                 error "Selection returned no Timeline key atoms: $selection"
             }
+            # Keep the existing representative atom, but give it the same
+            # identity as every other analysis and picker. Count occurrences
+            # against the complete molecule so filtering cannot renumber them.
+            # Calculators read every selected key atom in this order, including
+            # alternate locations. Preserve those rows so identity enrichment
+            # does not change value counts or established numerical behavior.
+            set representatives [$sel get {index residue}]
+            set all [atomselect [$sel molid] all frame $frame]
+            set identities {}
+            foreach record [::RMSXFlipbookTimeline::ResidueIdentity::from_selection $all] {
+                dict set identities [dict get $record residue] $record
+            }
             set rows {}
-            foreach atom [$sel get {index residue resid resname chain segid}] {
-                lassign $atom atom_index residue resid resname chain segid
-                set chain [string trim $chain]
-                set segid [string trim $segid]
-                set display_chain $chain
-                if {$display_chain eq "" || $display_chain eq "X"} {
-                    set display_chain $segid
-                }
-                set label [string trim "$display_chain:$resid $resname" ":"]
-                lappend rows [dict create \
-                    index [llength $rows] \
-                    atom_index $atom_index \
-                    residue $residue \
-                    resid $resid \
-                    resname $resname \
-                    chain $display_chain \
-                    segid $segid \
-                    label $label \
-                    selection "same residue as index $atom_index" \
-                    row_mode residue]
+            foreach atom $representatives {
+                lassign $atom atom_index residue
+                set record [dict get $identities $residue]
+                dict set record index [llength $rows]
+                dict set record row_id r[llength $rows]
+                dict set record atom_index $atom_index
+                dict set record label "[::RMSXFlipbookTimeline::ResidueIdentity::label $record] [dict get $record resname]"
+                dict set record selection "same residue as index [dict get $record atom_index]"
+                dict set record row_mode residue
+                lappend rows $record
             }
             return $rows
         } finally {
+            if {$all ne ""} {catch {$all delete}}
             catch {$sel delete}
         }
     }

@@ -361,6 +361,44 @@
       "seed_outputs": [
         "native-rmsx-real-multichain-protease"
       ]
+    },
+    {
+      "id": "heatmap_zoom",
+      "script": "smoke_heatmap_zoom.tcl",
+      "capability": "gui"
+    },
+    {
+      "id": "live_thresholds",
+      "script": "smoke_live_thresholds.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_collections",
+      "script": "smoke_timeline_collections.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "timeline_identity_live",
+      "script": "smoke_timeline_identity_live.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "heatmap_exploration",
+      "script": "smoke_heatmap_exploration.tcl",
+      "capability": "gui",
+      "seed_outputs": [
+        "native-rmsx-1ubq-9"
+      ]
+    },
+    {
+      "id": "timeline_identity_live_vmd",
+      "script": "smoke_timeline_identity_live.tcl",
+      "capability": "vmd"
+    },
+    {
+      "id": "live_thresholds_gui",
+      "script": "smoke_live_thresholds.tcl",
+      "capability": "gui"
     }
   ]
 }

@@ -9,8 +9,13 @@ README.md
 THIRD_PARTY_NOTICES.md
 docs/MEETING.md
 docs/METHODS.md
+docs/QUICK_START.md
 docs/SUPPORT.md
 docs/VMD_INTEROP.md
+docs/figures/protease.png
+docs/figures/protease.svg
+docs/figures/ubiquitin.png
+docs/figures/ubiquitin.svg
 fixtures/README.md
 fixtures/dna/LICENSE
 fixtures/dna/bdna.pdb
@@ -138,6 +143,7 @@ rmsxflipbooktimeline0.3/README_RELEASE.md
 rmsxflipbooktimeline0.3/THIRD_PARTY_NOTICES.md
 rmsxflipbooktimeline0.3/USER_GUIDE.md
 rmsxflipbooktimeline0.3/VERSION
+rmsxflipbooktimeline0.3/core/collections.tcl
 rmsxflipbooktimeline0.3/core/effects.tcl
 rmsxflipbooktimeline0.3/core/loader.tcl
 rmsxflipbooktimeline0.3/core/manifest.tcl
@@ -167,10 +173,13 @@ rmsxflipbooktimeline0.3/tests/smoke_figure_export_v03.tcl
 rmsxflipbooktimeline0.3/tests/smoke_gui_native_slice_size_command.tcl
 rmsxflipbooktimeline0.3/tests/smoke_gui_show.tcl
 rmsxflipbooktimeline0.3/tests/smoke_gui_timeline_commands.tcl
+rmsxflipbooktimeline0.3/tests/smoke_heatmap_exploration.tcl
 rmsxflipbooktimeline0.3/tests/smoke_heatmap_folder.tcl
 rmsxflipbooktimeline0.3/tests/smoke_heatmap_svg.tcl
+rmsxflipbooktimeline0.3/tests/smoke_heatmap_zoom.tcl
 rmsxflipbooktimeline0.3/tests/smoke_hotkeys.tcl
 rmsxflipbooktimeline0.3/tests/smoke_linked_residue_identity.tcl
+rmsxflipbooktimeline0.3/tests/smoke_live_thresholds.tcl
 rmsxflipbooktimeline0.3/tests/smoke_load_folder.tcl
 rmsxflipbooktimeline0.3/tests/smoke_manifest_reload.tcl
 rmsxflipbooktimeline0.3/tests/smoke_mouse_preserve_view.tcl
@@ -204,8 +213,10 @@ rmsxflipbooktimeline0.3/tests/smoke_session_lifecycle_v03.tcl
 rmsxflipbooktimeline0.3/tests/smoke_session_operation.tcl
 rmsxflipbooktimeline0.3/tests/smoke_staged_loader_v03.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_cancel.tcl
+rmsxflipbooktimeline0.3/tests/smoke_timeline_collections.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_cross_correlation.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_filter_svg.tcl
+rmsxflipbooktimeline0.3/tests/smoke_timeline_identity_live.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_live_calculators.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_neighborhood.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_neighborhood_vmd.tcl
@@ -215,6 +226,7 @@ rmsxflipbooktimeline0.3/tests/smoke_timeline_rmsx_slice_targets.tcl
 rmsxflipbooktimeline0.3/tests/smoke_timeline_tml_roundtrip.tcl
 rmsxflipbooktimeline0.3/tests/smoke_viewer_plot.tcl
 rmsxflipbooktimeline0.3/visualization/angle_overlay.tcl
+rmsxflipbooktimeline0.3/visualization/heatmap_tools.tcl
 rmsxflipbooktimeline0.3/visualization/hotkeys.tcl
 rmsxflipbooktimeline0.3/visualization/layout.tcl
 rmsxflipbooktimeline0.3/visualization/mask.tcl
@@ -224,6 +236,7 @@ rmsxflipbooktimeline0.3/visualization/neighborhood_flipbook.tcl
 rmsxflipbooktimeline0.3/visualization/plot_window.tcl
 rmsxflipbooktimeline0.3/visualization/render.tcl
 rmsxflipbooktimeline0.3/visualization/style.tcl
+rmsxflipbooktimeline0.3/visualization/threshold_controls.tcl
 rmsxflipbooktimeline0.3/visualization/timeline_plot.tcl
 rmsxflipbooktimeline0.3/visualization/viewer_plot.tcl
 scripts/build_release.py
@@ -244,8 +257,3 @@ scripts/test_harness.tcl
 scripts/test_rmsxflipbooktimeline_release.sh
 scripts/tooling_tests.py
 scripts/vmd_process.py
-docs/QUICK_START.md
-docs/figures/ubiquitin.png
-docs/figures/ubiquitin.svg
-docs/figures/protease.png
-docs/figures/protease.svg

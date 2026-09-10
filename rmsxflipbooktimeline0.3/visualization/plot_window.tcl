@@ -564,7 +564,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
         grid $outer -row 0 -column 0 -sticky nsew
         grid rowconfigure $window 0 -weight 1
         grid columnconfigure $window 0 -weight 1
-        grid rowconfigure $outer 0 -weight 1
+        grid rowconfigure $outer 1 -weight 1
         grid columnconfigure $outer 0 -weight 1
 
         set canvas $outer.canvas
@@ -579,14 +579,14 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
         ttk::scrollbar $ybar -orient vertical -command [list $canvas yview]
         $canvas configure -xscrollcommand [list $xbar set] -yscrollcommand [list $ybar set]
 
-        grid $canvas -row 0 -column 0 -sticky nsew
-        grid $ybar -row 0 -column 1 -sticky ns
-        grid $xbar -row 1 -column 0 -sticky ew
+        grid $canvas -row 1 -column 0 -sticky nsew
+        grid $ybar -row 1 -column 1 -sticky ns
+        grid $xbar -row 2 -column 0 -sticky ew
 
         ttk::label $outer.status \
             -textvariable ::RMSXFlipbookTimeline::PlotWindow::status_var \
             -anchor w
-        grid $outer.status -row 2 -column 0 -columnspan 2 -sticky ew -pady {8 0}
+        grid $outer.status -row 3 -column 0 -columnspan 2 -sticky ew -pady {8 0}
 
         bind $window <Destroy> {+if {"%W" eq ".rmsxflipbooktimeline_plot"} {::RMSXFlipbookTimeline::PlotWindow::on_window_destroy}}
         return $canvas
@@ -1348,11 +1348,14 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
 
     proc clear_structure_highlight {} {
         variable highlight_reps
-        foreach item $highlight_reps {
-            set molid [lindex $item 0]
-            set repid [lindex $item 1]
-            if {[lsearch -exact [molinfo list] $molid] != -1} {
-                catch {mol delrep $repid $molid}
+        # Representation indices change when another plugin or the user deletes
+        # a preceding representation. Resolve our stable names at cleanup time.
+        foreach item [lreverse $highlight_reps] {
+            lassign $item molid name
+            if {[info commands molinfo] ne "" && [lsearch -exact [molinfo list] $molid] != -1} {
+                if {![catch {mol repindex $molid $name} repid] && $repid >= 0} {
+                    catch {mol delrep $repid $molid}
+                }
             }
         }
         set highlight_reps {}
@@ -1360,16 +1363,23 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
 
     proc add_highlight_rep {molid selection} {
         variable highlight_reps
-        if {[lsearch -exact [molinfo list] $molid] == -1} {
+        if {$selection eq "" || [info commands molinfo] eq "" || [lsearch -exact [molinfo list] $molid] == -1} {
             return
         }
-        mol representation VDW 0.9 12
-        mol selection $selection
-        mol color ColorID 4
-        mol material Opaque
         mol addrep $molid
         set repid [expr {[molinfo $molid get numreps] - 1}]
-        lappend highlight_reps [list $molid $repid]
+        try {
+            set name [mol repname $molid $repid]
+            # Configure just the new representation; leave VMD's defaults intact.
+            mol modselect $repid $molid $selection
+            mol modstyle $repid $molid VDW 0.9 12
+            mol modcolor $repid $molid ColorID 4
+            mol modmaterial $repid $molid Opaque
+        } on error {message options} {
+            catch {mol delrep $repid $molid}
+            return -options $options $message
+        }
+        lappend highlight_reps [list $molid $name]
     }
 
     proc draw_canvas_selection {record} {
@@ -1450,6 +1460,9 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
     }
 
     proc select_on_canvas {target record} {
+        if {[info commands ::RMSXFlipbookTimeline::HeatmapTools::state] ne "" &&
+            [::RMSXFlipbookTimeline::HeatmapTools::state $target] ne {} &&
+            ![::RMSXFlipbookTimeline::HeatmapTools::allowed $target]} {return {}}
         variable canvas
         set old_canvas $canvas; set canvas $target
         try {return [select_record $record]} finally {set canvas $old_canvas}
@@ -1702,6 +1715,13 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             layout $layout]
     }
 
+    proc exploration_dataset {prepared} {
+        set current [::RMSXFlipbookTimeline::Results::get]
+        set folder [dict get $prepared folder]
+        if {$current ne {} && [dict exists $current folder] && [file normalize [dict get $current folder]] eq [file normalize $folder] && [dict exists $current dataset] && [dict get $current dataset] ne {}} {return [dict get $current dataset]}
+        return [::RMSXFlipbookTimeline::TimelineIO::read_rmsx_folder $folder csv [dict get $prepared matrix csv]]
+    }
+
     proc draw_prepared {target_canvas prepared} {
         variable canvas
         set canvas $target_canvas
@@ -1718,6 +1738,7 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             [dict get $prepared rmsd_slice_points] \
             [dict get $prepared rmsf_points]
         context_attach $target_canvas $prepared
+        ::RMSXFlipbookTimeline::HeatmapTools::attach $target_canvas [exploration_dataset $prepared]
         return [result_from_prepared $prepared 1 [dict get [dict get $prepared opts] pick]]
     }
 
@@ -1768,6 +1789,8 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
         if {[dict get $opts draw]} {
             set canvas [ensure_window [dict get $layout canvas_width] [dict get $layout canvas_height] "RMSX Flipbook Timeline Plot"]
             draw_prepared $canvas $prepared
+            ::RMSXFlipbookTimeline::HeatmapTools::activate $canvas
+            grid [::RMSXFlipbookTimeline::HeatmapTools::mount [winfo parent $canvas] $canvas] -row 0 -column 0 -columnspan 2 -sticky ew -pady {0 6}
             set status_var "Click a heatmap cell or slice-mean point; RMSD/RMSF context is shown when available."
             set drawn 1
         } else {
@@ -1893,10 +1916,14 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
     proc context_event {target x y select} {
         variable context_views; variable status_var
         if {![dict exists $context_views $target]} {return}
+        if {$select && [info commands ::RMSXFlipbookTimeline::HeatmapTools::state] ne "" &&
+            [::RMSXFlipbookTimeline::HeatmapTools::state $target] ne {} &&
+            ![::RMSXFlipbookTimeline::HeatmapTools::allowed $target]} {return {}}
         set selected {}
         if {[dict exists $::RMSXFlipbookTimeline::Navigation::views $target selected]} {set selected [dict get $::RMSXFlipbookTimeline::Navigation::views $target selected]}
         set view [dict get $context_views $target]
-        set hit [context_hit $view [$target canvasx $x] [$target canvasy $y] $selected]
+        lassign [::RMSXFlipbookTimeline::Navigation::to_model $target [$target canvasx $x] [$target canvasy $y]] model_x model_y
+        set hit [context_hit $view $model_x $model_y $selected]
         if {$hit eq {}} {return}
         if {$select} {
             set current [::RMSXFlipbookTimeline::Results::get]
