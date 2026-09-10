@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.dcd binary
+*.png binary
+*.zip binary
+fixtures/** -text

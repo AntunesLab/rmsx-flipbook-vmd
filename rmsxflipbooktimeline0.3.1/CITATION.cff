@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "Please cite the RMSX/Flipbook method and VMD when publishing results."
+type: software
+title: "RMSX / Flipbook Timeline for VMD"
+authors:
+  - name: "Finn2400"
+repository-code: "https://github.com/AntunesLab/rmsx-flipbook-vmd"
+license: MIT
+preferred-citation:
+  type: article
+  title: "High resolution mapping of protein motions in time and space with RMSX and Flipbook"
+  authors:
+    - family-names: "Beruldsen"
+      given-names: "F."
+    - family-names: "de Freitas"
+      given-names: "M. V."
+    - family-names: "Antunes"
+      given-names: "D. A."
+  year: 2026
+  journal: "Scientific Reports"
+  doi: "10.1038/s41598-026-39869-7"
+  url: "https://doi.org/10.1038/s41598-026-39869-7"

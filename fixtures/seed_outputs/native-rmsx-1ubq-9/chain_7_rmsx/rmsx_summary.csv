@@ -1,0 +1,7 @@
+Group,Rank,ResidueID,ChainID,TimeSlice,RMSX
+top,1,76,7,slice_2.dcd,9.616027
+top,2,75,7,slice_1.dcd,7.957498
+top,3,75,7,slice_2.dcd,7.495831
+bottom,1,48,7,slice_1.dcd,6e-06
+bottom,2,48,7,slice_2.dcd,6e-06
+bottom,3,48,7,slice_3.dcd,6e-06

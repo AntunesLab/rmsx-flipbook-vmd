@@ -1,0 +1,38 @@
+name: Licensed VMD release qualification
+# Deliberately manual: requires a trusted checkout and provisioned licensed VMD.
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: Provisioned self-hosted graphical VMD runner label
+        required: true
+        type: choice
+        options: [vmd-macos-arm64, vmd-macos-intel, vmd-linux, vmd-windows]
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: [self-hosted, '${{ inputs.runner }}']
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require provisioned runtime and run all required capabilities
+        shell: bash
+        run: |
+          test -n "${VMD_EXECUTABLE:-}"
+          python3 scripts/check_release.py
+          python3 scripts/tooling_tests.py
+          python3 scripts/demo_tooling_tests.py
+          python3 scripts/handoff_gate_tests.py
+          python3 scripts/demo_vmd_play_test.py --vmd "$VMD_EXECUTABLE" --output artifacts/native-play
+          python3 scripts/run_tests.py --profile release --vmd "$VMD_EXECUTABLE" --artifacts artifacts/vmd
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vmd-${{ inputs.runner }}
+          path: |
+            artifacts/vmd/summary.json
+            artifacts/vmd/**/test.log
+            artifacts/vmd/**/result.txt
+            artifacts/native-play/summary.json
+            artifacts/native-play/vmd.log

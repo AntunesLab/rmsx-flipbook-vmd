@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "history_audit": {
+    "status": "PENDING",
+    "source_revision": "",
+    "reviewer": "",
+    "report": ""
+  },
+  "fixture_provenance_audit": {
+    "status": "PENDING",
+    "source_revision": "",
+    "reviewer": "",
+    "report": ""
+  },
+  "targets": {
+    "macos-arm64-2.0b1": {
+      "status": "PENDING",
+      "artifact_sha256": "",
+      "build_id": "",
+      "source_revision": "",
+      "reviewer": "",
+      "os": "",
+      "graphics": "",
+      "suite_report": "",
+      "quick_check_report": "",
+      "manual": {
+        "file_menu_open": "PENDING",
+        "renamed_non_ascii_download": "PENDING",
+        "offline_open": "PENDING",
+        "single_and_multi_fresh_run": "PENDING",
+        "comparison_and_residue_linking": "PENDING",
+        "mouse_rotation_in_place": "PENDING",
+        "resize_and_window_placement": "PENDING",
+        "live_opengl_and_export": "PENDING",
+        "cancel_close_reopen_remove": "PENDING",
+        "unrelated_session_preserved": "PENDING",
+        "unassisted_trial_under_two_minutes": "PENDING"
+      },
+      "vmd_distribution": "2.0b1",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
+    },
+    "macos-arm64-2.0.0a7-pre2": {
+      "status": "PENDING",
+      "artifact_sha256": "",
+      "build_id": "",
+      "source_revision": "",
+      "reviewer": "",
+      "os": "",
+      "graphics": "",
+      "suite_report": "",
+      "quick_check_report": "",
+      "manual": {
+        "file_menu_open": "PENDING",
+        "renamed_non_ascii_download": "PENDING",
+        "offline_open": "PENDING",
+        "single_and_multi_fresh_run": "PENDING",
+        "comparison_and_residue_linking": "PENDING",
+        "mouse_rotation_in_place": "PENDING",
+        "resize_and_window_placement": "PENDING",
+        "live_opengl_and_export": "PENDING",
+        "cancel_close_reopen_remove": "PENDING",
+        "unrelated_session_preserved": "PENDING",
+        "unassisted_trial_under_two_minutes": "PENDING"
+      },
+      "vmd_distribution": "2.0.0a7-pre2",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
+    },
+    "macos-intel-1.9.4a57": {
+      "status": "PENDING",
+      "artifact_sha256": "",
+      "build_id": "",
+      "source_revision": "",
+      "reviewer": "",
+      "os": "",
+      "graphics": "",
+      "suite_report": "",
+      "quick_check_report": "",
+      "manual": {
+        "file_menu_open": "PENDING",
+        "renamed_non_ascii_download": "PENDING",
+        "offline_open": "PENDING",
+        "single_and_multi_fresh_run": "PENDING",
+        "comparison_and_residue_linking": "PENDING",
+        "mouse_rotation_in_place": "PENDING",
+        "resize_and_window_placement": "PENDING",
+        "live_opengl_and_export": "PENDING",
+        "cancel_close_reopen_remove": "PENDING",
+        "unrelated_session_preserved": "PENDING",
+        "unassisted_trial_under_two_minutes": "PENDING"
+      },
+      "vmd_distribution": "1.9.4a57",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
+    },
+    "windows-x64-2.0.0a6": {
+      "status": "PENDING",
+      "artifact_sha256": "",
+      "build_id": "",
+      "source_revision": "",
+      "reviewer": "",
+      "os": "",
+      "graphics": "",
+      "suite_report": "",
+      "quick_check_report": "",
+      "manual": {
+        "file_menu_open": "PENDING",
+        "renamed_non_ascii_download": "PENDING",
+        "offline_open": "PENDING",
+        "single_and_multi_fresh_run": "PENDING",
+        "comparison_and_residue_linking": "PENDING",
+        "mouse_rotation_in_place": "PENDING",
+        "resize_and_window_placement": "PENDING",
+        "live_opengl_and_export": "PENDING",
+        "cancel_close_reopen_remove": "PENDING",
+        "unrelated_session_preserved": "PENDING",
+        "unassisted_trial_under_two_minutes": "PENDING"
+      },
+      "vmd_distribution": "2.0.0a6",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
+    },
+    "linux-x64-2.0.1a1": {
+      "status": "PENDING",
+      "artifact_sha256": "",
+      "build_id": "",
+      "source_revision": "",
+      "reviewer": "",
+      "os": "",
+      "graphics": "",
+      "suite_report": "",
+      "quick_check_report": "",
+      "manual": {
+        "file_menu_open": "PENDING",
+        "renamed_non_ascii_download": "PENDING",
+        "offline_open": "PENDING",
+        "single_and_multi_fresh_run": "PENDING",
+        "comparison_and_residue_linking": "PENDING",
+        "mouse_rotation_in_place": "PENDING",
+        "resize_and_window_placement": "PENDING",
+        "live_opengl_and_export": "PENDING",
+        "cancel_close_reopen_remove": "PENDING",
+        "unrelated_session_preserved": "PENDING",
+        "unassisted_trial_under_two_minutes": "PENDING"
+      },
+      "vmd_distribution": "2.0.1a1",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
+    }
+  }
+}

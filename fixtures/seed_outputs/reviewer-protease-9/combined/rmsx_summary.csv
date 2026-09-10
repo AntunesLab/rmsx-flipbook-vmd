@@ -1,0 +1,7 @@
+Group,Rank,ResidueID,ChainID,SegID,InsertionCode,ResidueOrdinal,TimeSlice,RMSX
+top,1,17,A,A,,0,slice_3.dcd,1.224918
+top,2,17,B,B,,0,slice_5.dcd,1.096713
+top,3,16,B,B,,0,slice_8.dcd,0.948403
+bottom,1,83,B,B,,0,slice_5.dcd,0.062894
+bottom,2,29,B,B,,0,slice_4.dcd,0.069442
+bottom,3,13,B,B,,0,slice_6.dcd,0.080276
