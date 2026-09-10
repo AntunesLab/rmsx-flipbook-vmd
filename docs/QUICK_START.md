@@ -14,7 +14,9 @@ Use the ordinary **Run** button when you want to calculate a new result.
 
 A fresh launch opens the nine-window Single preview after the dashboard paints.
 Reopening the same build reuses it. Another already-loaded build requires a
-fresh VMD session. No Python or permanent installation is needed for this route.
+fresh VMD session. If an older RMSX build loads automatically at startup,
+temporarily disable only its RMSX startup entry before restarting VMD.
+No Python or permanent installation is needed for this route.
 
 ## Two reproducible examples
 
@@ -24,6 +26,9 @@ fresh VMD session. No Python or permanent installation is needed for this route.
 | Multi | `protease_backbone.pdb` + `short_protease_backbone.dcd`; all chains | 0–26; nine three-frame windows | `resid 25:26` |
 
 Leave physical time unspecified; these examples use frame/window labels.
+The Single trajectory contains 316 frames; the demo deliberately selects
+0–314 (315 frames), leaving frame 315 outside the chosen range. The initial
+PDB coordinate frame is not counted in these trajectory indices.
 
 The Multi precomputed preview was freshly generated from these same 27 input
 frames for the 0.3.1 review build. Earlier multichain seed results are retained

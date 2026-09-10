@@ -32,6 +32,19 @@ timeouts, launch failures and skipped required capabilities fail the gate;
 VMD’s shell exit code alone is insufficient. Retain per-case logs and source
 hashes, and reject qualification if source files changed during a run.
 
+Each completion receipt includes the interpreter's actual OS/kernel version,
+machine, Tcl/Tk version, VMD version/architecture, and graphical or headless mode.
+The runner records the launcher and VMD executable SHA-256 plus the startup
+banner's build date. Quick Check records the same platform/display fields; GPU
+driver details remain explicitly unknown unless observed separately. These
+capability fields do not establish that the OpenGL window looked correct.
+
+For an extracted source ZIP, the runner verifies every listed file checksum,
+the generated BUILD_ID and the payload fingerprint before trusting its recorded
+source revision. It rejects missing, modified, linked or unlisted source files
+and never takes a revision from an unrelated enclosing Git repository. Generated
+archive metadata is part of the verified inventory, not an uncommitted change.
+
 ## Historical evidence retained privately
 
 - Commit `4027f9a0ab26b50a66e533c164e8e9da7aaa11f4` (0.3) has a complete local
@@ -55,6 +68,13 @@ File-menu launch/mouse/OpenGL review. The [template](qualification-template.json
 2.0.0a7-pre2, Intel macOS 1.9.4a57, Windows x64 2.0.0a6, and Linux x64 2.0.1a1.
 Targets without an available licensed graphical runtime remain pending.
 Long-term stable-VMD support is a separate policy decision for the maintainers.
+
+Populate `vmd_executable_sha256` and `vmd_build_date` from the actual suite
+receipts and confirm that they identify the intended VMD distribution. The
+2.0.0a7-pre2 app reports runtime version `2.0.0a7`, so its binary hash/build date
+are required along with the distribution label. The gate validates observed
+OS, VMD architecture/version and graphical capabilities for each target; copying
+one machine's reports into the other target entries cannot qualify them.
 
 Retain an independent reviewer trial using only the delivered packet and its
 instructions. Add the final walkthrough/recording only after inspecting the

@@ -46,6 +46,38 @@ An old green receipt is not evidence for changed bytes. See
 [verification](VERIFICATION.md) and the package’s
 [developer notes](../rmsxflipbooktimeline0.3.1/DEVELOPER_NOTES.md).
 
+## Run checks and build a review packet
+
+Run these commands from the repository root. Replace the runtime placeholders
+with your installed Tcl 8.6 and licensed VMD executable paths. Use the local
+Python 3 command (`python3`, or `python` where configured). Choose new output
+directories for each run so earlier evidence and artifacts remain intact.
+
+```sh
+python3 scripts/check_release.py
+python3 scripts/run_tests.py --profile tcl --tclsh /path/to/tclsh8.6
+python3 scripts/run_tests.py --profile release --tclsh /path/to/tclsh8.6 \
+    --vmd /path/to/vmd --artifacts ../rmsx-release-check
+python3 scripts/build_release.py --output ../rmsx-review-artifacts
+```
+
+`TCLSH` and `VMD_EXECUTABLE` can provide the same defaults; explicit flags take
+precedence. Do not substitute Tcl 8.5 or assume Tcl 9 qualification. The release
+profile needs a usable graphical VMD session and real rendering capability.
+Commit the reviewed source before building a qualifying packet; `--allow-dirty`
+is for disposable review snapshots and cannot establish final qualification.
+
+For an additional check of VMD’s visualization-state playback route:
+
+```sh
+python3 scripts/demo_vmd_play_test.py --vmd /path/to/vmd \
+    --output ../rmsx-play-check
+```
+
+That targeted transport check complements the full suite and manual File-menu
+trial; it does not replace either. Retain the generated receipts and use the
+handoff gate described in [VERIFICATION.md](VERIFICATION.md).
+
 ## Upstream integration proposal
 
 The current proposal is an entry in the existing **Analysis** extension category,
@@ -73,8 +105,9 @@ cannot be called ready to merge.
 
 ## Release and handover
 
-Integrate the private review branches into the agreed repository branch; its
-historical 0.2 `main` is not the 0.3.1 delivery. Freeze a clean commit, generate
+Integrate the private review branches into the agreed repository branch. Use
+the exact source revision recorded in the matching build manifest, rather than
+assuming that a branch name identifies the delivered build. Freeze a clean commit, generate
 both artifacts together, retain their hashes and full test receipts, and pass
 all targets in the handoff gate. Public visibility and release publication are
 separate final actions after the audit and qualification pass.

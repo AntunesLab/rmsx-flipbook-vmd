@@ -36,7 +36,9 @@
         "unrelated_session_preserved": "PENDING",
         "unassisted_trial_under_two_minutes": "PENDING"
       },
-      "vmd_distribution": "2.0b1"
+      "vmd_distribution": "2.0b1",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
     },
     "macos-arm64-2.0.0a7-pre2": {
       "status": "PENDING",
@@ -61,7 +63,9 @@
         "unrelated_session_preserved": "PENDING",
         "unassisted_trial_under_two_minutes": "PENDING"
       },
-      "vmd_distribution": "2.0.0a7-pre2"
+      "vmd_distribution": "2.0.0a7-pre2",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
     },
     "macos-intel-1.9.4a57": {
       "status": "PENDING",
@@ -86,7 +90,9 @@
         "unrelated_session_preserved": "PENDING",
         "unassisted_trial_under_two_minutes": "PENDING"
       },
-      "vmd_distribution": "1.9.4a57"
+      "vmd_distribution": "1.9.4a57",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
     },
     "windows-x64-2.0.0a6": {
       "status": "PENDING",
@@ -111,7 +117,9 @@
         "unrelated_session_preserved": "PENDING",
         "unassisted_trial_under_two_minutes": "PENDING"
       },
-      "vmd_distribution": "2.0.0a6"
+      "vmd_distribution": "2.0.0a6",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
     },
     "linux-x64-2.0.1a1": {
       "status": "PENDING",
@@ -136,7 +144,9 @@
         "unrelated_session_preserved": "PENDING",
         "unassisted_trial_under_two_minutes": "PENDING"
       },
-      "vmd_distribution": "2.0.1a1"
+      "vmd_distribution": "2.0.1a1",
+      "vmd_executable_sha256": "",
+      "vmd_build_date": ""
     }
   }
 }

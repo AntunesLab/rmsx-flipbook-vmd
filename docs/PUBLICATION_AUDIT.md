@@ -108,7 +108,7 @@ acceptance of attribution and license handling remains part of upstream review.
   directories outside the package. Sanitize reports before external sharing.
 - Attach a reviewed final-revision history/provenance report to the qualification
   template and pass every required build target with matching artifact identity.
-- Integrate the agreed private branch chain. The historical 0.2 default branch
-  is not the 0.3.1 submission. Confirm the final source/PR and maintainer roles.
+- Integrate the agreed private branch chain and confirm that the final source
+  revision/PR matches the artifact manifest. Confirm maintainer roles.
 - Only after those gates pass, carry out the separately authorized public
   visibility/release action. This audit document performs no publication.

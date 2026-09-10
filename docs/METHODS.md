@@ -35,8 +35,8 @@ instead of asserting unrestricted equivalence to every external lDDT tool.
 
 ## Frames, time and windows
 
-Frame indices are zero based. Native frame-offset handling accounts for a
-coordinate frame loaded with topology before adding trajectory frames. Start,
+Frame indices are zero based. Native frame-offset handling excludes the
+initial coordinate frame loaded with topology from trajectory indices. Start,
 end and stride refer to the requested trajectory range as documented by the
 native API. A slice comprises selected frames; RMSX requires at least two frames
 per slice. First-frame structure samples are not time averages of coordinates.
@@ -46,6 +46,9 @@ Physical time labels require a verified timestep or total-time override. A
 trajectory's frame spacing must not be confused with the integrator timestep.
 If physical timing is unknown, retain frame/slice indices rather than inventing
 nanoseconds. The short protease demonstration is 27 frames from upstream data.
+The bundled `mon_sys.dcd` contains 316 trajectory frames; the Single demo
+deliberately selects 0–314 for nine 35-frame windows. Frame 315 is outside that
+selected range, not an unused trailing frame within it.
 
 Public native APIs now default to unknown physical time, matching the blank
 dashboard timing input. Frame-only RMSD sidecars omit the `Time` column.

@@ -55,9 +55,12 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer {
         file mkdir $out
         set fp [file tempfile probe [file join $out writable-]]
         try {puts $fp reviewer; flush $fp} finally {close $fp; file delete $probe}
-        set data [dict create plugin $::RMSXFlipbookTimeline::version build [::RMSXFlipbookTimeline::build_id] vmd [vmdinfo version] tcl [info patchlevel] tk [package provide Tk] os $::tcl_platform(os) machine $::tcl_platform(machine) windowing [tk windowingsystem] renderers [::RMSXFlipbookTimeline::Render::render_methods] qualification {This VMD session only; no other platform is qualified.}]
+        set data [dict create plugin $::RMSXFlipbookTimeline::version build [::RMSXFlipbookTimeline::build_id] vmd [vmdinfo version] tcl [info patchlevel] tk [package provide Tk] os $::tcl_platform(os) os_version $::tcl_platform(osVersion) machine $::tcl_platform(machine) executable [info nameofexecutable] graphics_mode gui graphics_driver unknown display_width unavailable display_height unavailable windowing [tk windowingsystem] renderers [::RMSXFlipbookTimeline::Render::render_methods] qualification {This VMD session only; no other platform is qualified. OpenGL appearance requires visual review.}]
         catch {dict set data vmd_arch [vmdinfo arch]}
-        catch {dict set data display_size [display get size]}
+        if {![catch {display get size} size] && [llength $size] == 2} {
+            dict set data display_width [lindex $size 0]
+            dict set data display_height [lindex $size 1]
+        }
         return $data
     }
     proc launch {root identity {initial single}} {

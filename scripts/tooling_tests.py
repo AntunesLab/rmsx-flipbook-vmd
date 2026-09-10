@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Exercise installation ownership and the result gate independently of VMD."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -105,6 +106,28 @@ class ConsoleTests(unittest.TestCase):
 
 
 class ResultGateTests(unittest.TestCase):
+    def test_pass_requires_a_matching_environment_receipt(self):
+        for include_environment in (False, True):
+            with tempfile.TemporaryDirectory(prefix="rmsx-environment-test-") as tmp:
+                def fake_run(command, **kwargs):
+                    result_path = Path(kwargs["env"]["RMSX_TEST_RESULT"])
+                    result_path.write_text("PASS\n")
+                    if include_environment:
+                        Path(str(result_path) + ".environment.json").write_text(json.dumps({
+                            "schema": 1, "status": "PASS", "environment": {
+                                "os": "Windows NT", "executable": sys.executable,
+                                "path_sample": "C:\\review π\\sample"}}), encoding="utf-8")
+                    return argparse.Namespace(stdout="VMD for WIN64, version 2.0.0a6 (test build date)\n", returncode=0)
+                args = argparse.Namespace(tclsh="unused", vmd="unused", timeout=1)
+                entry = {"id": "environment", "script": "not-run.tcl", "capability": "tcl"}
+                with patch.object(run_tests.subprocess, "run", fake_run):
+                    result = run_tests.run_one(entry, args, Path(tmp))
+                self.assertEqual(result["status"], "PASS" if include_environment else "FAIL")
+                if include_environment:
+                    self.assertEqual(result["environment"]["path_sample"], "C:\\review π\\sample")
+                    self.assertEqual(result["startup"]["vmd_arch"], "WIN64")
+                    self.assertEqual(result["executable"]["sha256"], hashlib.sha256(Path(sys.executable).read_bytes()).hexdigest())
+
     def test_zero_process_status_does_not_override_failed_or_missing_receipt(self):
         for receipt in [None, "FAIL\ndetail assertion failed\n"]:
             with tempfile.TemporaryDirectory(prefix="rmsx-gate-test-") as tmp:
@@ -128,6 +151,59 @@ class ResultGateTests(unittest.TestCase):
             with patch.object(run_tests.vmd_process, "run", fake_run):
                 result = run_tests.run_one(entry, args, Path(tmp))
             self.assertEqual(result["status"], "FAIL")
+
+
+class SourceArchiveTests(unittest.TestCase):
+    def make_archive(self, root):
+        package = "rmsxflipbooktimeline0.3.1"
+        files = {package + "/VERSION": b"0.3.1\n", package + "/core/example.tcl": b"set example 1\n"}
+        payload = sorted(files)
+        fingerprint = hashlib.sha256(b"RMSX reviewer payload source v1\0")
+        for name in payload:
+            encoded, data = name.encode(), files[name]
+            fingerprint.update(str(len(encoded)).encode() + b":" + encoded)
+            fingerprint.update(str(len(data)).encode() + b":" + data)
+        build_id = fingerprint.hexdigest()
+        files[package + "/BUILD_ID"] = (build_id + "\n").encode()
+        files["REVIEW_BUILD.json"] = b"{}\n"
+        for name, content in files.items():
+            path = root / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(content)
+        manifest = {"schema": 2, "package": "rmsxflipbooktimeline", "version": "0.3.1",
+                    "source_revision": "a" * 40, "dirty_review_snapshot": False, "build_id": build_id,
+                    "demo_payload_files": payload,
+                    "files": {name: hashlib.sha256(content).hexdigest() for name, content in files.items()}}
+        (root / "RELEASE_MANIFEST.json").write_text(json.dumps(manifest))
+        return package, manifest
+
+    def test_clean_archive_preserves_identity_without_trusting_parent_git(self):
+        with tempfile.TemporaryDirectory(prefix="rmsx-archive-test-") as tmp:
+            root = Path(tmp) / "archive"; root.mkdir()
+            package, manifest = self.make_archive(root)
+            result = run_tests.archive_provenance(root, package)
+            self.assertEqual(result["revision"], manifest["source_revision"])
+            self.assertFalse(result["dirty"])
+            self.assertEqual(result["build_id"], manifest["build_id"])
+            with patch.object(run_tests, "ROOT", root), patch.object(run_tests, "PACKAGE", root / package), \
+                 patch.object(run_tests.subprocess, "run", return_value=argparse.Namespace(stdout=tmp, returncode=0)):
+                observed = run_tests.source_provenance()
+            self.assertEqual(observed, result)
+
+    def test_modified_missing_unlisted_and_traversing_archive_files_are_rejected(self):
+        for failure in ("modified", "missing", "unlisted", "traversal", "wrong_build_id"):
+            with tempfile.TemporaryDirectory(prefix="rmsx-archive-negative-") as tmp:
+                root = Path(tmp); package, manifest = self.make_archive(root)
+                path = root / package / "core/example.tcl"
+                if failure == "modified": path.write_text("modified")
+                elif failure == "missing": path.unlink()
+                elif failure == "unlisted": (path.parent / "extra.tcl").write_text("extra")
+                elif failure == "traversal": manifest["files"]["../outside"] = "b" * 64
+                else:
+                    changed = ("c" * 64 + "\n").encode()
+                    (root / package / "BUILD_ID").write_bytes(changed)
+                    manifest["files"][package + "/BUILD_ID"] = hashlib.sha256(changed).hexdigest()
+                (root / "RELEASE_MANIFEST.json").write_text(json.dumps(manifest))
+                with self.assertRaises(ValueError, msg=failure):
+                    run_tests.archive_provenance(root, package)
 
 
 if __name__ == "__main__":

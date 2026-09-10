@@ -303,7 +303,7 @@ namespace eval ::RMSXReviewBootstrap {
         if {[info commands ::RMSXFlipbookTimeline::build_id] eq "" ||
             [::RMSXFlipbookTimeline::build_id] ne $build_id ||
             [info commands ::RMSXFlipbookTimeline::Reviewer::reopen] eq ""} {
-            error "Another RMSX/Flipbook build is already loaded. Start a fresh VMD session to try this review file."
+            error "Another RMSX/Flipbook build is already loaded. Start a fresh VMD session to try this review file. If RMSX loads automatically at startup, temporarily disable that RMSX startup entry first; leave other VMD plugins unchanged."
         }
         return 1
     }

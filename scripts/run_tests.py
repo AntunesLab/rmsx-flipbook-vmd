@@ -10,7 +10,7 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import platform
 import re
 import shutil
@@ -44,7 +44,23 @@ def verify_fixtures():
 
 
 def source_provenance():
-    """Bind receipts to exact source bytes, including an uncommitted review build."""
+    """Bind receipts to exact checkout or fully verified source-archive bytes."""
+    def git(*arguments):
+        result = subprocess.run(["git", "-C", str(ROOT), *arguments], capture_output=True, text=True)
+        return result.stdout.strip() if result.returncode == 0 else None
+    try:
+        top = git("rev-parse", "--show-toplevel")
+        own_repository = bool(top) and Path(top).resolve() == ROOT.resolve()
+        revision, state = ((git("rev-parse", "HEAD"), git("status", "--porcelain"))
+                           if own_repository else (None, None))
+    except OSError:
+        revision, state = None, None
+    if revision is None and (ROOT / "RELEASE_MANIFEST.json").exists():
+        try:
+            return archive_provenance(ROOT, PACKAGE.name)
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+            return {"revision": None, "dirty": True, "sha256": None,
+                    "kind": "invalid_release_manifest", "error": str(exc)}
     digest = hashlib.sha256()
     roots = [PACKAGE, ROOT / "scripts", ROOT / "docs", ROOT / ".github"]
     paths = [p for base in roots for p in base.rglob("*") if p.is_file()]
@@ -56,15 +72,88 @@ def source_provenance():
         digest.update(path.relative_to(ROOT).as_posix().encode() + b"\0")
         digest.update(path.read_bytes())
         digest.update(b"\0")
-    def git(*arguments):
-        result = subprocess.run(["git", "-C", str(ROOT), *arguments], capture_output=True, text=True)
-        return result.stdout.strip() if result.returncode == 0 else None
-    try:
-        revision, state = git("rev-parse", "HEAD"), git("status", "--porcelain")
-    except OSError:
-        revision, state = None, None
     return {"revision": revision, "dirty": bool(state) if state is not None else None,
-            "sha256": digest.hexdigest()}
+            "sha256": digest.hexdigest(), "kind": "git" if revision else "unavailable"}
+
+
+def archive_provenance(root, package_name):
+    """Recover exact source identity only from a fully verified source archive."""
+    root = root.resolve()
+    manifest_path = root / "RELEASE_MANIFEST.json"
+    if manifest_path.is_symlink():
+        raise ValueError("Source archive manifest is a symlink")
+    manifest_bytes = manifest_path.read_bytes()
+    manifest = json.loads(manifest_bytes)
+    if (manifest.get("schema") != 2 or manifest.get("package") != "rmsxflipbooktimeline"
+            or package_name != "rmsxflipbooktimeline" + str(manifest.get("version"))
+            or not re.fullmatch(r"[0-9a-f]{40}", str(manifest.get("source_revision", "")))
+            or type(manifest.get("dirty_review_snapshot")) is not bool
+            or not re.fullmatch(r"[0-9a-f]{64}", str(manifest.get("build_id", "")))):
+        raise ValueError("Invalid source archive identity metadata")
+    files = manifest.get("files")
+    if not isinstance(files, dict) or not files:
+        raise ValueError("Source archive file inventory is missing")
+    verified = {}; folded = set(); snapshot = hashlib.sha256(manifest_bytes)
+    for name, expected in sorted(files.items()):
+        path = PurePosixPath(name)
+        if (not name or path.is_absolute() or "\\" in name or ":" in name
+                or any(part in {"", ".", ".."} for part in name.split("/"))
+                or name.lower() in folded or not re.fullmatch(r"[0-9a-f]{64}", str(expected))):
+            raise ValueError("Unsafe or invalid source archive entry: " + repr(name))
+        folded.add(name.lower())
+        actual = root / name
+        if (not actual.is_file() or actual.is_symlink()
+                or any(parent.is_symlink() for parent in actual.parents if parent != root and root in parent.parents)
+                or not actual.resolve().is_relative_to(root)):
+            raise ValueError("Missing or linked source archive file: " + name)
+        data = actual.read_bytes()
+        if hashlib.sha256(data).hexdigest() != expected:
+            raise ValueError("Source archive checksum mismatch: " + name)
+        verified[name] = data
+        snapshot.update(name.encode("utf-8") + b"\0" + data + b"\0")
+    # Extra code/data in authoritative directories is not covered by the archive.
+    for directory in (root / package_name, root / "scripts", root / "docs", root / "fixtures", root / ".github"):
+        for path in directory.rglob("*"):
+            if not path.is_file() or "__pycache__" in path.parts or path.name == ".DS_Store" or path.suffix == ".pyc":
+                continue
+            if path.relative_to(root).as_posix() not in verified:
+                raise ValueError("Unlisted source archive file: " + path.relative_to(root).as_posix())
+    if verified.get(package_name + "/BUILD_ID", b"").decode("ascii").strip() != manifest["build_id"]:
+        raise ValueError("Source archive BUILD_ID does not match its manifest")
+    payload = manifest.get("demo_payload_files")
+    if (not isinstance(payload, list) or not payload or len(payload) != len(set(payload))
+            or any(name not in verified for name in payload)):
+        raise ValueError("Source archive demo payload inventory is invalid")
+    fingerprint = hashlib.sha256(b"RMSX reviewer payload source v1\0")
+    for name in sorted(payload):
+        encoded, data = name.encode("utf-8"), verified[name]
+        fingerprint.update(str(len(encoded)).encode("ascii") + b":" + encoded)
+        fingerprint.update(str(len(data)).encode("ascii") + b":" + data)
+    if fingerprint.hexdigest() != manifest["build_id"]:
+        raise ValueError("Source archive payload fingerprint does not match BUILD_ID")
+    return {"revision": manifest["source_revision"], "dirty": manifest["dirty_review_snapshot"],
+            "sha256": snapshot.hexdigest(), "kind": "release_manifest", "build_id": manifest["build_id"],
+            "archive_manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest()}
+
+
+def executable_identity(command):
+    """Hash the actual executable reported by Tcl, or the selected launcher."""
+    path = shutil.which(str(command)) if command else None
+    if not path and command and Path(command).is_file():
+        path = command
+    if not path:
+        return {"path": str(command or ""), "sha256": None}
+    try:
+        path = Path(path).resolve(strict=True)
+        return {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    except OSError:
+        return {"path": str(path), "sha256": None}
+
+
+def startup_identity(output):
+    match = re.search(r"VMD for ([^,\r\n]+), version ([^ (\r\n]+) \(([^)\r\n]+)\)", output)
+    return ({"vmd_arch": match[1].strip(), "vmd": match[2].strip(), "build_date": match[3].strip()}
+            if match else {})
 
 
 def run_one(entry, args, artifact_root):
@@ -124,10 +213,24 @@ def run_one(entry, args, artifact_root):
     except OSError as exc:
         output, reason = str(exc), f"Cannot launch required runtime: {exc}"
     (work / "test.log").write_text(output, encoding="utf-8")
+    environment = {}
+    try:
+        observed = json.loads(Path(str(status_path) + ".environment.json").read_text(encoding="utf-8"))
+        if observed.get("schema") != 1 or not isinstance(observed.get("environment"), dict):
+            raise ValueError("Invalid environment receipt")
+        environment = observed["environment"]
+        if status == "PASS" and observed.get("status") != "PASS":
+            raise ValueError("Environment receipt does not match test completion")
+    except (OSError, ValueError, AttributeError) as exc:
+        if status == "PASS":
+            status, reason = "FAIL", "Missing or invalid runtime environment receipt: " + str(exc)
     return {"id": entry["id"], "status": status, "reason": reason,
             "seconds": round(time.monotonic() - began, 3), "exit_code": code,
             "capability": entry["capability"], "script": entry["script"],
             "receipt": status_path.read_text(encoding="utf-8") if status_path.exists() else None,
+            "environment": environment,
+            "executable": executable_identity(environment.get("executable")),
+            "startup": startup_identity(output),
             "log": str(work / "test.log")}
 
 
@@ -167,6 +270,8 @@ def main():
     else:
         artifact_root = Path(tempfile.mkdtemp(prefix="rmsx-tests-"))
     before_source = source_provenance()
+    if before_source.get("error"):
+        parser.error("Source archive validation failed: " + before_source["error"])
     results = []
     print(f"Profile: {args.profile}; {len(selected)} tests; artifacts: {artifact_root}", flush=True)
     for entry in selected:
@@ -176,10 +281,11 @@ def main():
         if result["status"] != "PASS":
             print(f"     {result['reason']} - {result['log']}", flush=True)
     after_source = source_provenance()
-    source_changed = before_source["sha256"] != after_source["sha256"]
+    source_changed = before_source["sha256"] != after_source["sha256"] or bool(after_source.get("error"))
     summary = {"schema": 2, "profile": args.profile,
                "source": before_source, "source_changed_during_run": source_changed,
                "platform": platform.platform(), "architecture": platform.machine(),
+               "launcher": executable_identity(args.vmd) if args.profile != "tcl" else None,
                "version": (PACKAGE / "VERSION").read_text(encoding="utf-8").strip(),
                "complete_local_release_profile": args.profile == "release" and not args.only,
                "qualification_scope": "local_runtime_only",

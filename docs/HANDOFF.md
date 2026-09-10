@@ -1,8 +1,9 @@
 # Private reviewer handoff — 0.3.1
 
 **Status: private review; public distribution pending.** Share the generated
-review packet directly with the agreed reviewer. Do not substitute the older
-0.2 default branch, an earlier 0.3 archive, or a launcher from another packet.
+review packet directly with the agreed reviewer. Use the exact source revision
+recorded in its build manifest; do not substitute a branch checkout, an earlier
+archive, or a launcher from another packet.
 
 ## Reviewer route
 
