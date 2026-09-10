@@ -12,6 +12,7 @@ import shutil
 import unittest
 from unittest.mock import patch
 import install
+import demo_vmd_play_test
 import run_tests
 import vmd_process
 
@@ -106,6 +107,55 @@ class ConsoleTests(unittest.TestCase):
 
 
 class ResultGateTests(unittest.TestCase):
+    def test_native_play_crash_after_pass_receipt_cannot_pass(self):
+        for diagnostic, expected in (("Segmentation fault (core dumped)", 1),
+                                     ("Expected error: Segmentation fault (core dumped)", 0)):
+            with self.subTest(diagnostic=diagnostic), tempfile.TemporaryDirectory(prefix="rmsx-play-gate-") as tmp:
+                output = Path(tmp) / "play"
+                def fake_run(command, **kwargs):
+                    (output / "receipt.txt").write_text(
+                        "status=PASS\nmessage=Completed π\nmilliseconds=1\n", encoding="utf-8")
+                    return argparse.Namespace(stdout=diagnostic + "\n", returncode=0)
+                arguments = ["demo_vmd_play_test.py", "--vmd", "unused", "--output", str(output)]
+                with patch.object(sys, "argv", arguments), \
+                     patch.object(demo_vmd_play_test.vmd_process, "run", fake_run), patch("builtins.print"):
+                    self.assertEqual(demo_vmd_play_test.main(), expected)
+                summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+                self.assertEqual(summary["status"], "FAIL" if expected else "PASS")
+                self.assertEqual(summary["receipt"]["message"], "Completed π")
+                if expected:
+                    self.assertIn("Native runtime crash:", summary["failure"])
+                else:
+                    self.assertIsNone(summary["failure"])
+
+    def test_native_crash_overrides_zero_exit_pass_receipt_and_optional_skip(self):
+        reports = ("Segmentation fault (core dumped)", "Segmentation fault: 11",
+                   "Bus error: 10", "Abort trap: 6", "Aborted (core dumped)",
+                   '/tmp/vmd: line 520: 1234 Segmentation fault (core dumped) "$binary" "$@"')
+        for report in reports:
+            for optional in (False, True):
+                with self.subTest(report=report, optional=optional), tempfile.TemporaryDirectory(prefix="rmsx-crash-gate-") as tmp:
+                    def fake_run(command, **kwargs):
+                        result_path = Path(kwargs["env"]["RMSX_TEST_RESULT"])
+                        result_path.write_text("PASS\n")
+                        Path(str(result_path) + ".environment.json").write_text(json.dumps({
+                            "schema": 1, "status": "PASS", "environment": {"os": "Linux", "executable": sys.executable}}))
+                        return argparse.Namespace(stdout=("optional capability skipped\n" if optional else "") + report + "\n", returncode=0)
+                    args = argparse.Namespace(tclsh="unused", vmd="unused", timeout=1)
+                    entry = {"id": "native_crash", "script": "not-run.tcl", "capability": "vmd", "optional": optional}
+                    with patch.object(run_tests.vmd_process, "run", fake_run):
+                        result = run_tests.run_one(entry, args, Path(tmp))
+                    self.assertEqual(result["status"], "FAIL")
+                    self.assertIn("Native runtime crash:", result["reason"])
+
+    def test_native_crash_mentions_in_paths_and_error_assertions_are_not_reports(self):
+        for message in ("Expected error: Segmentation fault (core dumped)",
+                        "Expected error: line 42: Segmentation fault (core dumped)",
+                        "EXPECTED_ERROR=Bus error: 10", "Assertion checks 'Abort trap: 6'",
+                        "Opening /tmp/Segmentation fault (core dumped)/input.pdb",
+                        "Segmentation fault handler assertion passed", "Analysis Aborted by user"):
+            self.assertIsNone(run_tests.native_crash_diagnostic(message), message)
+
     def test_pass_requires_a_matching_environment_receipt(self):
         for include_environment in (False, True):
             with tempfile.TemporaryDirectory(prefix="rmsx-environment-test-") as tmp:

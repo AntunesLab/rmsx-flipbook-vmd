@@ -23,57 +23,6 @@ proc read_csv_rows {path} {
     }
 }
 
-proc write_dna_fixture_dcd {topology out_dcd {frames 10}} {
-    mol new $topology type pdb waitfor all
-    set molid [molinfo top get id]
-    set all_sel [atomselect $molid "all"]
-    set p_sel [atomselect $molid "nucleic and name P"]
-    set backbone_sel [atomselect $molid "nucleic and backbone"]
-
-    try {
-        if {[$p_sel num] == 0} {
-            smoke_fail "VMD did not recognize P atoms in the bundled DNA fixture"
-        }
-        if {[$backbone_sel num] == 0} {
-            smoke_fail "VMD did not recognize nucleic backbone atoms in the bundled DNA fixture"
-        }
-
-        set base_coords [$all_sel get {x y z}]
-        for {set frame 1} {$frame < $frames} {incr frame} {
-            animate dup frame 0 $molid
-        }
-
-        for {set frame 0} {$frame < $frames} {incr frame} {
-            $all_sel frame $frame
-            set shifted {}
-            set atom_index 0
-            foreach xyz $base_coords {
-                set phase [expr {double($frame) * 0.35 + double($atom_index) * 0.011}]
-                set dx [expr {0.18 * sin($phase)}]
-                set dy [expr {0.12 * cos($phase * 0.7)}]
-                set dz [expr {0.08 * sin($phase * 1.3)}]
-                lappend shifted [list \
-                    [expr {[lindex $xyz 0] + $dx}] \
-                    [expr {[lindex $xyz 1] + $dy}] \
-                    [expr {[lindex $xyz 2] + $dz}]]
-                incr atom_index
-            }
-            $all_sel set {x y z} $shifted
-        }
-
-        animate write dcd $out_dcd beg 0 end [expr {$frames - 1}] sel $all_sel waitfor all
-    } finally {
-        catch {$all_sel delete}
-        catch {$p_sel delete}
-        catch {$backbone_sel delete}
-        catch {mol delete $molid}
-    }
-
-    if {![file exists $out_dcd]} {
-        smoke_fail "Synthetic DNA DCD was not written: $out_dcd"
-    }
-}
-
 set script_name [info script]
 if {$script_name ne "" && [file exists $script_name]} {
     set script_path [file normalize $script_name]
@@ -91,22 +40,13 @@ if {[catch {package require rmsxflipbooktimeline 0.3} err]} {
     smoke_fail "package require failed: $err"
 }
 
-set topology ""
-if {[info exists ::env(RMSXFLIPBOOKTIMELINE_DNA_FIXTURE)] && $::env(RMSXFLIPBOOKTIMELINE_DNA_FIXTURE) ne ""} {
-    set topology [file normalize $::env(RMSXFLIPBOOKTIMELINE_DNA_FIXTURE)]
+# Curated bytes are verified by run_tests.py before this process starts.
+# Regenerate only with scripts/generate_native_test_fixtures.tcl.
+set topology [file join $workspace_root fixtures dna bdna.pdb]
+set trajectory [file join $workspace_root fixtures generated bdna_synthetic.dcd]
+foreach input [list $topology $trajectory] {
+    if {![file isfile $input]} { smoke_fail "Required curated fixture is missing: $input" }
 }
-if {![file exists $topology]} {
-    puts "RMSX Flipbook Timeline DNA smoke skipped: set RMSXFLIPBOOKTIMELINE_DNA_FIXTURE to a bdna.pdb fixture."
-    if {[info commands quit] ne ""} {
-        quit
-    }
-    exit 0
-}
-
-set fixture_dir [file join $workspace_root outputs native-rmsx-dna-fixture]
-file mkdir $fixture_dir
-set trajectory [file join $fixture_dir bdna_synthetic.dcd]
-write_dna_fixture_dcd $topology $trajectory 10
 
 set output_dir [file join $workspace_root outputs native-rmsx-dna chain_A_rmsx]
 if {[catch {

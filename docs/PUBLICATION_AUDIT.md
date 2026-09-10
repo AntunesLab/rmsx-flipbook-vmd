@@ -41,9 +41,9 @@ Do not copy that configuration or diagnostic secret values into review packets.
 
 ## Fixture provenance
 
-All **129/129** fixture SHA-256 values match the retained files. The original
-114 fixtures remain unchanged; 15 new reproducible reviewer-preview files were
-added separately. The additive
+All **132/132** current fixture SHA-256 values match the retained files. The original
+114 fixtures remain unchanged; 15 reproducible reviewer-preview files and three
+synthetic backend inputs were added separately. The additive
 origin/license metadata in [fixtures/provenance.json](../fixtures/provenance.json)
 now records the following evidence:
 
@@ -54,6 +54,7 @@ now records the following evidence:
 | 64 native baseline outputs | Byte-identical to their first tracked fixture import at `750b551c320a138a94b4d6b3f7565303a3333229`; original generator-run metadata was not retained |
 | One DNA fixture | Byte-identical to `vmdlite1.1/sandboxMolecules/bdna.pdb` in the retained VMD 2.0b1 ARM64 distribution |
 | 15 new 0.3.1 protease-preview files | Fresh VMD generation from the bundled 27-frame input: nine three-frame windows, all recognized protein chains, mask `resid 25:26`; nine PDBs and six CSVs |
+| Three synthetic backend inputs | Exact historical helper recipes from `f0fff690`; two ten-frame DCDs and one two-chain topology, with deterministic DCD comments and all coordinates unchanged |
 
 The upstream commit was verified against the
 [AntunesLab source repository](https://github.com/AntunesLab/rmsx/commit/dbd394198a6eeba257339fd630a4038eba424afe).
@@ -63,6 +64,15 @@ is byte-identical to the retained upstream notice, SHA-256
 The shortened DCD was read for comparison with MDAnalysis 2.7.0; its documented
 transformation is frame truncation, not an invented physical-time assignment.
 The DNA fixture retains its University of Illinois Open Source License notice.
+The synthetic DNA trajectory retains that same notice; the two-chain ubiquitin
+inputs retain MIT provenance. Their generator is an original MIT contribution.
+Two independent Mac VMD 2.0b1 generations produced identical hashes after
+normalizing only DCD title comments. Decoded coordinates matched both original
+recipes exactly (maximum difference 0 Å), and both smoke tests retained every
+analysis assertion. The private `qa/native-fixtures-verification.json` receipt
+records this fixture evidence separately from platform qualification. Earlier
+final-artifact audits of the 129-file fixture set remain accurate for those
+earlier artifact hashes.
 
 The 64 baseline artifacts are regression references, not fresh 0.3.1 analysis
 results. Their original execution environments cannot be reconstructed from the
