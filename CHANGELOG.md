@@ -2,6 +2,9 @@
 
 ## 0.3.1 — private review candidate
 
+- Show masked regions with transparency alone by default, without the yellow
+  sphere overlay. The explicit marker API option remains available.
+
 - Orient new results and Reset View with each slice's longest principal axis
   vertical and its secondary axis horizontal. Keep multichain assemblies intact,
   tighten row spacing and refit after resize without changing source coordinates
