@@ -8,6 +8,7 @@ LICENSE
 README.md
 THIRD_PARTY_NOTICES.md
 docs/HANDOFF.md
+docs/FIRST_TRY.md
 docs/MAINTAINING.md
 docs/MEETING.md
 docs/METHODS.md
