@@ -2,15 +2,14 @@
 
 ## 0.3.1 — private review candidate
 
+- Keep residue selection within the displayed metric palette instead of adding
+  red spheres. Enlarge the selected unmasked residue using its existing color
+  scale; masked residues remain transparent. Test both chains in nine-slice views.
+
 - Wait for X11 window resizing before rendering or restoring the display, and
   settle initial window dimensions before principal-axis fitting. This prevents
   stale export dimensions and a second fit on the first refresh. Resize waits
   are bounded and report failure if the requested dimensions cannot be reached.
-
-- Use a larger red selection highlight in both heatmaps so residue linking
-  remains distinguishable from Viridis' yellow metric values in nine-slice
-  views. Keep scientific colors and values unchanged; verify native rendered
-  contrast, the selected structure, and representation cleanup.
 
 - Show masked regions with transparency alone by default, without the yellow
   sphere overlay. The explicit marker API option remains available. Reviewer

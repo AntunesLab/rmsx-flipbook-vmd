@@ -1366,16 +1366,26 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
         if {$selection eq "" || [info commands molinfo] eq "" || [lsearch -exact [molinfo list] $molid] == -1} {
             return
         }
+        if {[molinfo $molid get numreps] < 1} {return}
+        # Match the displayed scientific color and scale. Intersect the base
+        # representation so masked residues keep their transparent appearance.
+        set base_selection [lindex [molinfo $molid get {{selection 0}}] 0]
+        set base_color [lindex [molinfo $molid get {{color 0}}] 0]
+        set base_range [mol scaleminmax $molid 0]
+        set selection "($selection) and ($base_selection)"
+        set atoms [atomselect $molid $selection]
+        try {set count [$atoms num]} finally {$atoms delete}
+        if {$count == 0} {return}
         mol addrep $molid
         set repid [expr {[molinfo $molid get numreps] - 1}]
         try {
             set name [mol repname $molid $repid]
-            # Configure just the new representation; leave VMD's defaults intact.
+            # Enlarge the selected residue above the default NewTube surface
+            # without introducing a color outside the metric palette.
             mol modselect $repid $molid $selection
-            # Keep the selection distinct from Viridis' yellow high values,
-            # including when nine structures share the molecular display.
-            mol modstyle $repid $molid VDW 1.4 16
-            mol modcolor $repid $molid ColorID 1
+            mol modstyle $repid $molid VDW 2.5 16
+            mol modcolor $repid $molid {*}$base_color
+            mol scaleminmax $molid $repid {*}$base_range
             mol modmaterial $repid $molid Opaque
         } on error {message options} {
             catch {mol delrep $repid $molid}
