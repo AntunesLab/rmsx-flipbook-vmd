@@ -132,7 +132,7 @@ set original_dir [pwd]
 set original_env [array get ::env]
 rename ::exec ::reviewer_native_exec
 proc ::exec {args} {
-    assert {[lindex $args end] eq "rmsx-launch.cmd"} "Launcher interpolated paths into shell syntax"
+    assert {[lindex $args 5] eq "rmsx-launch.cmd" && [lindex $args 6] eq ">"} "Launcher must use a fixed command and redirect the inherited output pipe"
     set fp [open rmsx-launch.cmd r];set batch [read $fp];close $fp
     assert {[string first {start "RMSX / Flipbook" "%RMSX_REVIEWER_VMD%"} $batch]>=0} "Launcher batch does not use quoted environment paths"
     assert {$::env(VMDMODULATENEWTUBE) eq "user"} "Child did not receive modulation at launch"

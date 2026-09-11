@@ -34,6 +34,8 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer::Windows {
         if {$poll_id ne ""} {after cancel $poll_id; set poll_id ""}
     }
     proc spawn {executable startup identity} {
+        set executable [file normalize $executable]
+        set startup [file normalize $startup]
         set command [file join $::env(SystemRoot) System32 cmd.exe]
         if {![file isfile $command] || ![file isfile $executable] || ![file isfile $startup]} {
             error "Cannot locate Windows command processor, VMD, or demo startup file"
@@ -60,15 +62,20 @@ start "RMSX / Flipbook" "%RMSX_REVIEWER_VMD%" -dispdev win -startup "%RMSX_REVIE
             # basename, and keep all variable paths in the child environment.
             # No Tk events run during this brief, restored directory change.
             cd $launch_dir
-            exec -- $command /d /v:off /c rmsx-launch.cmd
+            # A GUI child can inherit cmd's stdout handle. A file avoids Tcl
+            # waiting for that inherited pipe until the whole VMD session exits.
+            exec -- $command /d /v:off /c rmsx-launch.cmd > [file join $launch_dir launch.log] 2>@1
         } finally {
-            cd $previous_dir
-            dict for {key saved} $previous {
-                if {[lindex $saved 0]} {set ::env($key) [lindex $saved 1]} else {unset -nocomplain ::env($key)}
+            try {cd $previous_dir} finally {
+                dict for {key saved} $previous {
+                    if {[lindex $saved 0]} {set ::env($key) [lindex $saved 1]} else {unset -nocomplain ::env($key)}
+                }
             }
         }
     }
     proc write_startup {package_dir workspace identity example path} {
+        set package_dir [file normalize $package_dir]
+        set workspace [file normalize $workspace]
         set script "# Generated RMSX demo launcher; paths are Tcl list elements.\n"
         # Keep the -e file ASCII even when a Windows profile contains Unicode;
         # every maintained source file is subsequently sourced as UTF-8.
@@ -77,6 +84,7 @@ start "RMSX / Flipbook" "%RMSX_REVIEWER_VMD%" -dispdev win -startup "%RMSX_REVIE
         append script {
 set code [catch {
     lassign $::RMSX_REVIEW_CHILD_CONFIG package_dir workspace identity example
+    set dir $package_dir
     source -encoding utf-8 [file join $package_dir pkgIndex.tcl]
     package require -exact rmsxflipbooktimeline [string trim [read [set fp [open [file join $package_dir VERSION] r]]]]
     close $fp
