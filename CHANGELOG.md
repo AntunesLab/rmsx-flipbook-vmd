@@ -3,7 +3,9 @@
 ## 0.3.1 — private review candidate
 
 - Show masked regions with transparency alone by default, without the yellow
-  sphere overlay. The explicit marker API option remains available.
+  sphere overlay. The explicit marker API option remains available. Reviewer
+  Quick Check validates the transparent material and exact mask identities
+  without requiring the removed marker overlay.
 
 - Orient new results and Reset View with each slice's longest principal axis
   vertical and its secondary axis horizontal. Keep multichain assemblies intact,
