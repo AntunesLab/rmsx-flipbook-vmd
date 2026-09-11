@@ -83,7 +83,7 @@ the review sequence and scientific conventions.
 
 ### Linked comparison plots
 
-Keep **Compare: RMSD / RMSF** enabled above the heatmap. RMSD shows displacement over frames; click its curve area to choose a slice while retaining the selected residue. RMSF shows residue fluctuations over the analyzed trajectory; click its curve area to choose a residue while retaining the selected slice. Hover shows the value in Å. Heatmap selection adds red guides to both comparison plots. Each chain retains its own RMSF mapping. RMSD linking uses the current result’s actual frame ranges; folders without that metadata remain hover-only for RMSD.
+Keep **Compare: RMSD / RMSF** enabled above the heatmap. RMSD shows displacement over frames; click its curve area to choose a slice while retaining the selected residue. RMSF shows residue fluctuations over the analyzed trajectory; click its curve area to choose a residue while retaining the selected slice. Hover shows the value in Å. Heatmap selection adds red guides to both comparison plots. On the structure, selection enlarges the unmasked residue while retaining its metric color and scale. Masked residues remain transparent without added spheres. Each chain retains its own RMSF mapping. RMSD linking uses the current result’s actual frame ranges; folders without that metadata remain hover-only for RMSD.
 
 ### Result details and diagnostics
 

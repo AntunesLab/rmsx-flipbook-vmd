@@ -24,16 +24,16 @@ assert {[::RMSXFlipbookTimeline::PlotWindow::context_column_for_frame $columns 1
 assert {[::RMSXFlipbookTimeline::PlotWindow::context_column_for_frame $columns 21] == 2} "Single-frame slices must map correctly"
 set target_row -1
 foreach rec [dict get $prepared layout cell_records] {
-    if {[dict get $rec chain] eq "B" && [dict get $rec resid] == 48} {set target_row [dict get $rec row]; set target_record $rec; break}
+    if {[dict get $rec chain] eq "B" && [dict get $rec resid] == 17} {set target_row [dict get $rec row]; set target_record $rec; break}
 }
-assert {$target_row >= 0} "Missing B:48 fixture"
+assert {$target_row >= 0} "Missing B:17 fixture"
 ::RMSXFlipbookTimeline::Navigation::choose .comparison.c [list $target_row 4]
 assert {[llength [.comparison.c find withtag comparison_marker]] == 3} "Heatmap selection needs RMSD markers on both chains and RMSF on selected chain"
 set zone [lindex [dict get $view zones] 3]
 set x [expr {([dict get $zone x0]+[dict get $zone x1])/2.0}]
 set y [dict get $target_record center_y]
 set hit [::RMSXFlipbookTimeline::PlotWindow::context_hit $view $x $y [list 0 4]]
-assert {[dict get $hit coordinate] eq [list $target_row 4]} "RMSF must select B:48, preserving slice"
+assert {[dict get $hit coordinate] eq [list $target_row 4]} "RMSF must select B:17, preserving slice"
 # Real Tk pointer events exercise the same route as an actual chart click.
 event generate .comparison.c <Motion> -x [expr {int($x)}] -y [expr {int($y)}]
 event generate .comparison.c <Button-1> -x [expr {int($x)}] -y [expr {int($y)}]
@@ -45,15 +45,30 @@ set rep [mol repindex $molid $repname]
 assert {$rep >= 0} "Chart highlight representation no longer exists"
 set picked [atomselect $molid [lindex [molinfo $molid get [list "selection $rep"]] 0]]
 assert {[lsort -unique [$picked get chain]] eq {B}} "RMSF selected wrong chain"
-assert {[lsort -unique [$picked get resid]] eq {48}} "RMSF selected wrong residue"
+assert {[lsort -unique [$picked get resid]] eq {17}} "RMSF selected wrong residue"
 $picked delete
-# Click the chain-B RMSD plot at frame 16: preserve B:48, choose actual slice 2.
+# Click the chain-B RMSD plot at frame 16: preserve B:17, choose actual slice 2.
 set rmsd_zone [lindex [dict get $view zones] 2]
 set x [expr {[dict get $rmsd_zone x0]+(16.0-[dict get $rmsd_zone frame_min])/([dict get $rmsd_zone frame_max]-[dict get $rmsd_zone frame_min])*([dict get $rmsd_zone x1]-[dict get $rmsd_zone x0])}]
 set y [expr {([dict get $rmsd_zone y0]+[dict get $rmsd_zone y1])/2.0}]
 event generate .comparison.c <Button-1> -x [expr {int($x)}] -y [expr {int($y)}]
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] selected_cell] eq [list $target_row 1]} "RMSD click lost selected residue or chose wrong slice"
 assert {[string match {*RMSD*Å*slice 2} $::RMSXFlipbookTimeline::PlotWindow::status_var]} "RMSD hover/click status missing value or slice"
+# Masked chart selections remain linked in the plots without opaque spheres.
+set masked_row -1
+foreach rec [dict get $prepared layout cell_records] {
+    if {[dict get $rec chain] eq "B" && [dict get $rec resid] == 48} {
+        assert {[dict get $rec masked]} "Expected B:48 to be masked"
+        set masked_row [dict get $rec row]
+        break
+    }
+}
+assert {$masked_row >= 0} "Missing masked B:48 fixture"
+::RMSXFlipbookTimeline::Navigation::choose .comparison.c [list $masked_row 1]
+assert {[dict get [::RMSXFlipbookTimeline::Results::get] selected_cell] eq [list $masked_row 1]} "Masked selection lost its identity"
+assert {[llength [.comparison.c find withtag comparison_marker]] == 3} "Masked selection lost comparison markers"
+assert {$::RMSXFlipbookTimeline::PlotWindow::highlight_reps eq {}} "Masked selection added opaque spheres"
+::RMSXFlipbookTimeline::Navigation::choose .comparison.c [list $target_row 1]
 # Reject input into a stale result canvas.
 set saved [::RMSXFlipbookTimeline::Results::get]
 ::RMSXFlipbookTimeline::Results::publish [dict merge $saved [dict create selected_cell {0 0}]]
