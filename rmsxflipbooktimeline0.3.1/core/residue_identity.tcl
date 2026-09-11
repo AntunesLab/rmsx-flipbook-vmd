@@ -186,7 +186,19 @@ namespace eval ::RMSXFlipbookTimeline::ResidueIdentity {
         return [::RMSXFlipbookTimeline::OutputTxn::atomic_write $path [list [namespace current]::write_pdb_body $selection]]
     }
     proc write_pdb_body {selection path} {
-        $selection writepdb $path
+        if {$::tcl_platform(platform) eq "windows"} {
+            # VMD's native writer cannot open deeply nested Windows paths.
+            # Tcl can copy to them, so keep native I/O in an owned temp file
+            # and retain the surrounding output transaction and destination.
+            set channel [file tempfile native_path rmsx_pdb_]
+            close $channel
+            try {
+                $selection writepdb $native_path
+                file copy -force $native_path $path
+            } finally {file delete $native_path}
+        } else {
+            $selection writepdb $path
+        }
         set input [open $path rb]
         try {set text [read $input]} finally {close $input}
         set lines {}

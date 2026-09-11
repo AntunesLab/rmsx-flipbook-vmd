@@ -2135,7 +2135,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set palette [::RMSXFlipbookTimeline::state_get palette viridis]
         set initial [format "rmsx_%s.png" [string tolower [string trim $palette]]]
         if {[info commands tk_getSaveFile] eq ""} {
-            return [file normalize [file join /tmp $initial]]
+            return [file normalize [file join $base $initial]]
         }
         set picked [tk_getSaveFile \
             -parent $top \
@@ -2440,7 +2440,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     proc choose_save_file {kind} {
         variable top
         if {[info commands tk_getSaveFile] eq ""} {
-            return [file normalize [file join /tmp "rmsxflipbooktimeline-dashboard.$kind"]]
+            return [file normalize [file join [pwd] "rmsxflipbooktimeline-dashboard.$kind"]]
         }
         return [tk_getSaveFile -parent $top -title "Export Timeline $kind" -defaultextension ".$kind"]
     }

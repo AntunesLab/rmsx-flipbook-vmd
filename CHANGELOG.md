@@ -2,6 +2,14 @@
 
 ## 0.3.1 — private review candidate
 
+- Use platform-native temporary files for view fitting and comparison structures.
+  Stage Windows native PDB writes through a short temporary path before Tcl
+  copies them into the output transaction, avoiding VMD's native path-length
+  limit without changing the working directory.
+- Finish loading cross-correlation volumes before analysis, using the explicit
+  target molecule so Windows file handles are released deterministically.
+- Record the official Windows a6 installer's inconsistent a7 startup banner
+  while still requiring its a6 runtime identity, architecture and binary hash.
 - Add a generated single-file reviewer route through VMD’s File → Load
   Visualization State menu, with labeled precomputed single/multichain previews,
   fresh calculation and a bounded Quick Check/report workflow.

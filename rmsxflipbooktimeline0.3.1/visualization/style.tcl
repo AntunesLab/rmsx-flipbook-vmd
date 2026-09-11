@@ -322,12 +322,7 @@ namespace eval ::RMSXFlipbookTimeline::Style {
         set anchor ""
         set anchor_path ""
         if {[catch {
-            global env
-            set tmpdir "/tmp"
-            if {[info exists env(TMPDIR)] && $env(TMPDIR) ne ""} {
-                set tmpdir $env(TMPDIR)
-            }
-            set fp [file tempfile anchor_path [file join $tmpdir rmsx_view_anchor_XXXXXX.pdb]]
+            set fp [file tempfile anchor_path rmsx_view_anchor_]
             try {
                 set atom_id 1
                 foreach coords [row_bound_corners $bounds $rotate_side] {

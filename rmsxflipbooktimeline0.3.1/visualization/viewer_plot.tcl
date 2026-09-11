@@ -124,7 +124,9 @@ namespace eval ::RMSXFlipbookTimeline::ViewerPlot {
     }
 
     proc unique_tmp_pdb {} {
-        return [file join [file normalize "/tmp"] [format "rmsxflipbooktimeline_viewer_plot_%s_%s.pdb" [pid] [clock clicks]]]
+        set channel [file tempfile path rmsx_viewer_plot_]
+        close $channel
+        return $path
     }
 
     proc pdb_atom_line {serial x y z value {resname PLT} {atom_name C}} {
@@ -865,8 +867,7 @@ namespace eval ::RMSXFlipbookTimeline::ViewerPlot {
             install_pick_trace
         }
 
-        catch {file delete $tmp_path}
-        set plot_tmp_path ""
+        if {![catch {file delete $tmp_path}]} {set plot_tmp_path ""}
 
         set result [dict create \
             molid $plot_molid \

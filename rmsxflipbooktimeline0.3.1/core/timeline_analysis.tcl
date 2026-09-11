@@ -213,7 +213,7 @@ namespace eval ::RMSXFlipbookTimeline::TimelineAnalysis {
                 error "Cross-correlation map file does not exist: $map_file"
             }
             catch {mol top $molid}
-            if {[catch {mol addfile $map_file} err]} {
+            if {[catch {mol addfile $map_file waitfor all molid $molid} err]} {
                 error "Could not load cross-correlation map file '$map_file': $err"
             }
             set num_volumes [molinfo $molid get numvolumedata]
