@@ -25,9 +25,11 @@ proc fail_on_later_chain {event} {
 }
 try {
     if {$::tcl_platform(platform) eq "windows"} {
-        set deep [file join $root [string repeat a 90] [string repeat b 90]]
+        # Keep the directory within Windows' directory-name limit while the
+        # complete filename exceeds the native VMD writer's 260-character cap.
+        set deep [file join $root [string repeat a [expr {max(1, 230 - [string length $root])}]]]
         file mkdir $deep
-        set path [file join $deep selected.pdb]
+        set path [file join $deep [string repeat b 60].pdb]
         assert {[string length $path] > 260} "Windows native-write regression path is not sufficiently deep"
         set saved_cwd [pwd]
         set test_mol [mol new $topology type pdb waitfor all]

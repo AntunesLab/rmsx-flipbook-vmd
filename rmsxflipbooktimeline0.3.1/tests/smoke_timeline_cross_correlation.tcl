@@ -35,6 +35,43 @@ proc assert_numeric_values {dataset label} {
     }
 }
 
+# A deterministic analytic density fixture. Windows VMD's `mdff sim` retains
+# its output file handle even after molecule deletion; the plugin does not use
+# that generator. Exercise the actual correlation backend with a Tcl-written
+# DX map so fixture cleanup does not depend on the native generator's lifetime.
+proc write_test_density {selection path} {
+    lassign [measure minmax $selection] lo hi
+    set center [measure center $selection]
+    set origin {}; set counts {}
+    foreach a $lo b $hi {
+        lappend origin [expr {$a - 8.0}]
+        lappend counts [expr {int(ceil(($b-$a+16.0)/4.0))+1}]
+    }
+    lassign $counts nx ny nz
+    lassign $origin ox oy oz
+    lassign $center cx cy cz
+    set fp [open $path w]
+    try {
+        puts $fp "object 1 class gridpositions counts $nx $ny $nz"
+        puts $fp "origin $ox $oy $oz"
+        puts $fp "delta 4 0 0\ndelta 0 4 0\ndelta 0 0 4"
+        puts $fp "object 2 class gridconnections counts $nx $ny $nz"
+        puts $fp "object 3 class array type double rank 0 items [expr {$nx*$ny*$nz}] data follows"
+        for {set x 0} {$x < $nx} {incr x} {
+            for {set y 0} {$y < $ny} {incr y} {
+                for {set z 0} {$z < $nz} {incr z} {
+                    puts $fp [expr {exp(-((4*$x+$ox-$cx)**2+(4*$y+$oy-$cy)**2+(4*$z+$oz-$cz)**2)/200.0)}]
+                }
+            }
+        }
+        puts $fp {attribute "dep" string "positions"}
+        puts $fp {object "density" class field}
+        puts $fp {component "positions" value 1}
+        puts $fp {component "connections" value 2}
+        puts $fp {component "data" value 3}
+    } finally {close $fp}
+}
+
 proc assert_vmd_state {molid guard_molid expected_top expected_molid_frame expected_guard_frame label} {
     if {[molinfo top] != $expected_top} {
         smoke_fail "$label changed top molecule: expected $expected_top, got [molinfo top]"
@@ -91,16 +128,9 @@ file delete -force $map_file
 
 set sim_sel [atomselect $molid "protein" frame 0]
 try {
-    if {[catch {mdff sim $sim_sel -o $map_file -res 10.0 -spacing 4.0} err]} {
-        puts "RMSX Flipbook Timeline cross-correlation smoke skipped: mdff sim failed: $err"
-        exit 0
-    }
+    write_test_density $sim_sel $map_file
 } finally {
     catch {$sim_sel delete}
-}
-if {![file exists $map_file]} {
-    puts "RMSX Flipbook Timeline cross-correlation smoke skipped: mdff sim did not write $map_file"
-    exit 0
 }
 
 molinfo $molid set frame 1
