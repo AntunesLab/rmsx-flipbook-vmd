@@ -23,7 +23,11 @@ def complete_evidence(root):
                               "environment": environment, "executable": {"sha256": "e" * 64},
                               "startup": {"vmd": version, "vmd_arch": arch, "build_date": "verified-build-date"}}]}
         quick = {"build_id": "b" * 64, "status": "PASS", "environment": environment,
-                 "stages": [{"name": name, "status": "PASS"} for name in gate.QUICK_STAGES]}
+                 # Actual reviewer report schema, independent of the gate's
+                 # expected-stage constant so producer/consumer drift is caught.
+                 "stages": [{"name": name, "status": "PASS"} for name in
+                            ("preflight", "calculation", "identity", "rotation",
+                             "rendering", "residue_thickness", "cleanup")]}
         (root / (target + "-suite.json")).write_text(json.dumps(suite))
         (root / (target + "-quick.json")).write_text(json.dumps(quick))
         evidence["targets"][target] = {"status": "PASS", "artifact_sha256": "c" * 64, "build_id": "b" * 64,
@@ -40,6 +44,22 @@ class HandoffGateTests(unittest.TestCase):
     def qualifies(self, evidence, root):
         return gate.evaluate(evidence, "c" * 64, "b" * 64, "a" * 40, ["required"], root,
                              test_capabilities={"required": "render"})["release_qualified"]
+
+    def test_native_thickness_stage_is_required_and_must_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); evidence = complete_evidence(root)
+            self.assertTrue(self.qualifies(evidence, root))
+            target = "windows-x64-2.0.0a6"
+            path = root / evidence["targets"][target]["quick_check_report"]
+            original = json.loads(path.read_text())
+            for status in (None, "FAIL", "UNAVAILABLE"):
+                report = copy.deepcopy(original)
+                if status is None:
+                    report["stages"] = [s for s in report["stages"] if s["name"] != "residue_thickness"]
+                else:
+                    next(s for s in report["stages"] if s["name"] == "residue_thickness")["status"] = status
+                path.write_text(json.dumps(report))
+                self.assertFalse(self.qualifies(evidence, root), status)
 
     def test_windows_installer_banner_disagrees_without_relaxing_runtime_identity(self):
         with tempfile.TemporaryDirectory() as tmp:
