@@ -524,6 +524,24 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         }]} {return $rgb}
         return [::RMSXFlipbookTimeline::NativeAnalysis::heatmap_color $fraction 0.0 1.0 $palette]
     }
+    proc figure_label_centers {image_result} {
+        set bounds [dict get $image_result projected_bounds]
+        set pixels [dict get $image_result pixel_bounds]
+        set centers [dict get $bounds centers]
+        if {[llength $centers] != [dict get $image_result molecules]} {
+            error "Figure is missing a projected position for an exported molecule"
+        }
+        # Calibrate the projected coordinates against the actual image content,
+        # including the white framing margins. Saved metadata describes the
+        # render camera, even though the caller's view has since been restored.
+        set span [expr {[dict get $bounds xmax]-[dict get $bounds xmin]}]
+        set result {}
+        foreach center $centers {
+            set fraction [expr {$span > 0 ? ([lindex $center 0]-[dict get $bounds xmin])/double($span) : 0.5}]
+            lappend result [expr {[dict get $pixels x0]+$fraction*([dict get $pixels x1]-[dict get $pixels x0])}]
+        }
+        return $result
+    }
     proc figure_svg {image_result result png filename} {
         set fp [open $png rb]
         try {set encoded [binary encode base64 -maxlen 0 [read $fp]]} finally {close $fp}
@@ -575,8 +593,25 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             }
             lappend labels [list $label $detail]
         }
-        set label_cols [expr {max(1,min($n,int($w/130)))}]
-        set label_rows [expr {int(ceil(double($n)/$label_cols))}]
+        set label_layout {}; set occupied {}; set label_rows 1
+        foreach item $labels center [figure_label_centers $image_result] {
+            set x [expr {$margin+$center*$w/double($width)}]
+            lassign $item label detail
+            set half_width [expr {6+3.3*max([string length $label],[string length $detail])}]
+            set row 0
+            while {1} {
+                set collision 0
+                foreach placed $occupied {
+                    lassign $placed other_x other_half other_row
+                    if {$row == $other_row && abs($x-$other_x) < $half_width+$other_half} {set collision 1; break}
+                }
+                if {!$collision} {break}
+                incr row
+            }
+            lappend occupied [list $x $half_width $row]
+            lappend label_layout [list $x $row]
+            set label_rows [expr {max($label_rows,$row+1)}]
+        }
         set legend_y [expr {$top+$h+36+$label_rows*40}]
         set canvas_h [expr {$legend_y+100}]
         set fp [open $filename w]
@@ -590,11 +625,11 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             set i 0
             foreach item $labels {
                 lassign $item label detail
-                set x [expr {$margin+($i%$label_cols)*double($w)/$label_cols}]
-                set y [expr {$top+$h+24+int($i/$label_cols)*40}]
-                puts $fp [format {<text x="%.2f" y="%d" font-family="sans-serif" font-size="12">%s</text>} $x $y [xml $label]]
+                lassign [lindex $label_layout $i] x row
+                set y [expr {$top+$h+24+$row*40}]
+                puts $fp [format {<text x="%.2f" y="%d" text-anchor="middle" font-family="sans-serif" font-size="12">%s</text>} $x $y [xml $label]]
                 if {$detail ne ""} {
-                    puts $fp [format {<text x="%.2f" y="%d" font-family="sans-serif" font-size="12">%s</text>} $x [expr {$y+16}] [xml $detail]]
+                    puts $fp [format {<text x="%.2f" y="%d" text-anchor="middle" font-family="sans-serif" font-size="12">%s</text>} $x [expr {$y+16}] [xml $detail]]
                 }
                 incr i
             }

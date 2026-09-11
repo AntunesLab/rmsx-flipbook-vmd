@@ -344,6 +344,11 @@
       "capability": "render"
     },
     {
+      "id": "figure_label_alignment",
+      "script": "smoke_figure_label_alignment.tcl",
+      "capability": "render"
+    },
+    {
       "id": "session_lifecycle_v03",
       "script": "smoke_session_lifecycle_v03.tcl",
       "capability": "vmd"

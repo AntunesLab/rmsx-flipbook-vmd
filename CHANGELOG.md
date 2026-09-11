@@ -2,6 +2,10 @@
 
 ## 0.3.1 — private review candidate
 
+- Center SVG slice and frame labels on the projected molecular positions in
+  the rendered image, including its framing margins. Preserve uneven spacing
+  and stagger crowded annotations without shifting their horizontal anchors.
+
 - Preserve existing molecular camera matrices when temporary analysis inputs
   are loaded. Frame counting hides its input molecule and restores the prior
   top molecule, avoiding oversized previous results during setup.

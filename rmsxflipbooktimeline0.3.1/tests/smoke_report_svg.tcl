@@ -133,11 +133,14 @@ for {set i 0} {$i < 9} {incr i} {
     lappend columns [dict create frame_start [expr {$i*35}] frame_end [expr {($i+1)*35-1}]]
 }
 set figure_result [dict create label {Nine slices & frames} metric RMSX units Å dataset [dict create columns $columns]]
-set image_result [dict create width 2400 height 208 molecules 9]
+set centers {}; for {set i 1} {$i <= 9} {incr i} {lappend centers [list $i 0]}
+set image_result [dict create width 2400 height 208 molecules 9 projected_bounds [dict create xmin 0 xmax 10 centers $centers] pixel_bounds [dict create x0 100 x1 2300]]
 set figure [file join $output_dir nine-frame-figure.svg]
 ::RMSXFlipbookTimeline::Render::figure_svg $image_result $figure_result $png $figure
 set fp [open $figure r]; fconfigure $fp -encoding utf-8; set svg [read $fp]; close $fp
 foreach i {0 1 2 3 4 5 6 7 8} {
+    set pattern [format {<text x="([0-9.]+)"[^>]*text-anchor="middle"[^>]*>Slice %d</text>} [expr {$i+1}]]
+    if {![regexp $pattern $svg unused actual_x] || abs($actual_x-(192+110*$i)) > 0.01} {smoke_fail "Slice label is not centered at its rendered position: $i"}
     set slice "Slice [expr {$i+1}]"
     set frames "frames [expr {$i*35}]–[expr {($i+1)*35-1}]"
     set label_pattern [format {<text[^>]* y="([0-9]+)"[^>]*>%s</text>} $slice]
@@ -150,10 +153,16 @@ if {[string first [::RMSXFlipbookTimeline::Render::xml $figure_result] $svg] < 0
     smoke_fail "Figure annotation layout changed scientific metadata or embedded PNG"
 }
 dict set figure_result dataset columns [list [dict create time 1.25 time_unit ns frame_start 0 frame_end 34]]
-::RMSXFlipbookTimeline::Render::figure_svg [dict replace $image_result molecules 1] $figure_result $png $figure
+::RMSXFlipbookTimeline::Render::figure_svg [dict replace $image_result molecules 1 projected_bounds [dict create xmin 0 xmax 10 centers {{5 0}}]] $figure_result $png $figure
 if {![file_contains $figure {>1.25 ns</text>}] || [file_contains $figure {>frames 0–34</text>}]} {
     smoke_fail "Known physical time lost precedence over frame labels"
 }
+
+# Uneven spacing must survive; labels cannot revert to a uniform grid.
+set irregular [dict replace $image_result molecules 3 projected_bounds [dict create xmin 0 xmax 10 centers {{1 0} {2 0} {8 0}}]]
+set mapped [::RMSXFlipbookTimeline::Render::figure_label_centers $irregular]
+if {$mapped ne {320.0 540.0 1860.0}} {smoke_fail "Uneven molecule positions were discarded: $mapped"}
+if {![catch {::RMSXFlipbookTimeline::Render::figure_label_centers [dict replace $irregular molecules 4]}]} {smoke_fail "Missing molecule positions were silently invented"}
 
 puts "RMSX Flipbook Timeline native report SVG smoke passed"
 puts "SVG: [dict get $result svg]"
