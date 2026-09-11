@@ -25,7 +25,7 @@ MANUAL_CHECKS = (
     "live_opengl_and_export", "cancel_close_reopen_remove",
     "unrelated_session_preserved", "unassisted_trial_under_two_minutes",
 )
-QUICK_STAGES = {"preflight", "calculation", "identity", "rotation", "rendering", "cleanup"}
+QUICK_STAGES = {"preflight", "calculation", "identity", "rotation", "rendering", "residue_thickness", "cleanup"}
 # Distribution names and interpreter-reported versions are different for pre2.
 # Its exact binary hash/build date must also be supplied and match suite receipts.
 RUNTIMES = {
