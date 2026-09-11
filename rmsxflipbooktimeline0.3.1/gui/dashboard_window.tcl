@@ -4962,6 +4962,10 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
             if {[catch {::RMSXFlipbookTimeline::Hotkeys::loaded_molids} ids]} {return}
             incr scene_refresh_guard
             try {
+                if {[::RMSXFlipbookTimeline::state_get view_preset] eq "principal" &&
+                    [display get size] ne [::RMSXFlipbookTimeline::state_get principal_fit_size {}]} {
+                    ::RMSXFlipbookTimeline::PrincipalView::fit $ids
+                }
                 # VMD can leave a resized OpenGL surface black until the scene
                 # is marked dirty. Reapply one owned molecule's exact matrix;
                 # this invalidates the scene without a geometric nudge.

@@ -387,6 +387,42 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         if {![file isfile $path]} {error "VMD renderer did not create an image"}
         return [tga_content_bounds $path [dict get $options background]]
     }
+    proc verify_residue_thickness {molid directory {checkpoint ""}} {
+        set snapshot [::RMSXFlipbookTimeline::Scene::snapshot]
+        set selection [atomselect $molid all]
+        set original [$selection get user]
+        set representation [lindex [molinfo $molid get {{representation 0}}] 0]
+        set pixels {}
+        try {
+            foreach id [molinfo list] {mol off $id}
+            mol on $molid
+            mol top $molid
+            display resetview
+            display projection Orthographic
+            color Display Background white
+            axes location Off
+            stage location Off
+            foreach value {1 8} {
+                if {$checkpoint ne ""} {uplevel #0 [list {*}$checkpoint [dict create stage writing message "Checking residue thickness ($value)…"]]}
+                $selection set user $value
+                mol modstyle 0 $molid {*}$representation
+                set path [file join $directory thickness-$value.tga]
+                set image [render_to_tga [dict create method TachyonInternal background white] $path 600 500]
+                convert_tga_to_png $path [file rootname $path].png
+                lappend pixels [dict get $image nonbackground_samples]
+            }
+            lassign $pixels low high
+            if {$high < 1.5*$low} {
+                error "Native residue thickness did not respond to user=1 versus user=8 ($pixels pixels). On Windows, use Open fresh VMD to enable thickness before startup."
+            }
+            return [dict create low_pixels $low high_pixels $high representation $representation]
+        } finally {
+            $selection set user $original
+            $selection delete
+            mol modstyle 0 $molid {*}$representation
+            ::RMSXFlipbookTimeline::Scene::restore_snapshot $snapshot
+        }
+    }
     proc render_payload {options ids path} {
         set snapshot [::RMSXFlipbookTimeline::Scene::snapshot]
         set state_before [::RMSXFlipbookTimeline::state_dict]

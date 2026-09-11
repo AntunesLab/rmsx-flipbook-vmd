@@ -16,6 +16,11 @@ masked two-chain example. **Quick Check** performs a small fresh check;
 **Save report…** saves diagnostics. The source ZIP and checksums are available
 for code review and verification; they are not needed to open the demo.
 
+On Windows, choose **Open fresh VMD** when the demo requests it. That button
+opens a separate session with residue thickness enabled before VMD starts;
+the original session stays open. Windows VMD may ignore thickness settings
+changed after startup. Quick Check tests the rendered geometry as well as values.
+
 VMD must already be installed. This route needs no Python, terminal commands,
 permanent installation, or VMD source changes. The single-file reviewer launcher
 is generated from the same reviewed source snapshot as the companion source ZIP;

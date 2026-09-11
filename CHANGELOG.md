@@ -2,6 +2,15 @@
 
 ## 0.3.1 — private review candidate
 
+- Orient new results and Reset View with each slice's longest principal axis
+  vertical and its secondary axis horizontal. Keep multichain assemblies intact,
+  tighten row spacing and refit after resize without changing source coordinates
+  or metric calculations.
+- Add an explicit Windows reviewer button to open a separate VMD session with
+  native residue-thickness modulation configured before startup. Preserve the
+  original session. Verify actual low/high thickness geometry in Quick Check
+  and a required render test rather than inferring it from Tcl settings.
+
 - Use platform-native temporary files for view fitting and comparison structures.
   Stage Windows native PDB writes through a short temporary path before Tcl
   copies them into the output transaction, avoiding VMD's native path-length

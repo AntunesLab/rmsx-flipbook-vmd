@@ -53,8 +53,8 @@ if {[dict get $result files] < 1} {
     smoke_fail "no slice files discovered"
 }
 
-if {[dict get $result view_preset] ne "rmsx"} {
-    smoke_fail "expected rmsx view preset on load, got $result"
+if {[dict get $result view_preset] ne "principal"} {
+    smoke_fail "expected principal view preset on load, got $result"
 }
 
 set manifest [dict get $result manifest]

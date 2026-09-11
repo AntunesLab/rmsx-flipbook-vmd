@@ -459,7 +459,12 @@ namespace eval ::RMSXFlipbookTimeline::Style {
             return current
         }
 
-        if {$cleaned in {rmsx default side side-on sideon y y-axis yaxis}} {
+        if {$cleaned in {principal default upright}} {
+            ::RMSXFlipbookTimeline::PrincipalView::apply
+            return principal
+        }
+
+        if {$cleaned in {rmsx side side-on sideon y y-axis yaxis}} {
             if {[info commands ::RMSXFlipbookTimeline::MouseRotate::without_intercept] ne ""} {
                 ::RMSXFlipbookTimeline::MouseRotate::without_intercept {
                     ::RMSXFlipbookTimeline::Style::reset_display_on_row 1
@@ -483,12 +488,12 @@ namespace eval ::RMSXFlipbookTimeline::Style {
             return reset
         }
 
-        error "Unknown RMSX view preset '$preset'. Use rmsx, current, or reset."
+        error "Unknown RMSX view preset '$preset'. Use principal, rmsx, current, or reset."
     }
 
     proc reset_view {} {
-        set preset [apply_view_preset rmsx]
-        set restored [restore_initial_view_matrices]
+        set preset [apply_view_preset principal]
+        set restored [store_initial_view_matrices]
         catch {display update}
         return [dict create view_preset $preset restored_molecules $restored]
     }

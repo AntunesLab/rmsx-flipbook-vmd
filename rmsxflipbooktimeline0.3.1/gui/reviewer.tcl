@@ -98,6 +98,7 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer {
         return [launch $workspace $identity]
     }
     proc detach {} {
+        ::RMSXFlipbookTimeline::Reviewer::Windows::detach
         catch {trace remove variable ::RMSXFlipbookTimeline::Results::current write ::RMSXFlipbookTimeline::Reviewer::result_changed}
         variable queued
         if {$queued ne ""} {catch {after cancel $queued}; set queued ""}
@@ -127,6 +128,7 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer {
         catch {trace remove variable ::RMSXFlipbookTimeline::Results::current write ::RMSXFlipbookTimeline::Reviewer::result_changed}
         trace add variable ::RMSXFlipbookTimeline::Results::current write ::RMSXFlipbookTimeline::Reviewer::result_changed
         ::RMSXFlipbookTimeline::Effects::register reviewer_input ::RMSXFlipbookTimeline::Reviewer::detach input
+        ::RMSXFlipbookTimeline::Reviewer::Windows::mount $top.header
         result_changed
     }
     proc result_changed {args} {
@@ -393,6 +395,8 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer {
                 try {fconfigure $fp -encoding utf-8; set text [read $fp]} finally {close $fp}
                 require {[string first {data:image/png;base64,} $text] >= 0 && [string first {frames 0–8} $text] >= 0} "SVG lacks embedded image or correct frame labels"
                 record rendering PASS "Native PNG decoded with molecular color variation; fitted borders clear; SVG embeds PNG and frame labels"
+                set thickness [::RMSXFlipbookTimeline::Render::verify_residue_thickness [lindex $ids 0] $dir ::RMSXFlipbookTimeline::Operation::checkpoint]
+                record residue_thickness PASS "Native geometry changed at fixed camera/color: $thickness"
             }
         } on error {message options} {
             set outcome [expr {[::RMSXFlipbookTimeline::Operation::cancelled $options] ? "CANCELLED" : "FAIL"}]
@@ -419,3 +423,5 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer {
         return $report
     }
 }
+
+source -encoding utf-8 [file join [file dirname [info script]] windows_demo.tcl]

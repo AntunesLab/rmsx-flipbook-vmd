@@ -33,7 +33,7 @@ set install_prefix [file join [pwd] installed]
 set startup [file join [pwd] qa-vmdrc]
 set original_config "set ::qa_preserved_config yes\n"
 set fp [open $startup w]; puts -nonewline $fp $original_config; close $fp
-exec python3 [file join $repo scripts install.py] install --prefix $install_prefix --startup-file $startup
+exec $::env(RMSX_TEST_PYTHON) [file join $repo scripts install.py] install --prefix $install_prefix --startup-file $startup
 source -encoding utf-8 $startup
 assert {$::qa_preserved_config eq "yes"} "Installer discarded existing startup content"
 menu rmsxflipbooktimeline on
@@ -304,7 +304,7 @@ rename ::RMSXFlipbookTimeline::Dashboard::qa_header ::RMSXFlipbookTimeline::Dash
 
 ::RMSXFlipbookTimeline::reset 1
 assert {[file isdirectory $folder]} "Remove deleted source files"
-exec python3 [file join $repo scripts install.py] uninstall --prefix $install_prefix --startup-file $startup
+exec $::env(RMSX_TEST_PYTHON) [file join $repo scripts install.py] uninstall --prefix $install_prefix --startup-file $startup
 set fp [open $startup r]; set restored [read $fp]; close $fp
 assert {$restored eq $original_config} "Uninstall did not preserve unrelated startup content"
 puts "Dashboard GUI installation, geometry, navigation, lifecycle and Stop checks passed"

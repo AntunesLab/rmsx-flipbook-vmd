@@ -101,6 +101,14 @@ namespace eval ::RMSXFlipbookTimeline::Hotkeys {
             set spacing 0.5
         }
         set molids [loaded_molids]
+        if {[::RMSXFlipbookTimeline::state_get view_preset] eq "principal"} {
+            set offsets [::RMSXFlipbookTimeline::PrincipalView::arrange $molids $spacing [::RMSXFlipbookTimeline::state_get layout_offsets {}]]
+            ::RMSXFlipbookTimeline::state_set spacing $spacing
+            ::RMSXFlipbookTimeline::state_set spacing_mode manual
+            ::RMSXFlipbookTimeline::state_set layout_offsets $offsets
+            ::RMSXFlipbookTimeline::PrincipalView::fit $molids
+            return [dict create spacing $spacing molids [llength $molids]]
+        }
         set offsets [::RMSXFlipbookTimeline::Layout::set_grid_spacing \
             $molids \
             $spacing \
