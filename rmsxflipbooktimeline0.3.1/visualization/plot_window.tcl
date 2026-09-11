@@ -1372,8 +1372,10 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             set name [mol repname $molid $repid]
             # Configure just the new representation; leave VMD's defaults intact.
             mol modselect $repid $molid $selection
-            mol modstyle $repid $molid VDW 0.9 12
-            mol modcolor $repid $molid ColorID 4
+            # Keep the selection distinct from Viridis' yellow high values,
+            # including when nine structures share the molecular display.
+            mol modstyle $repid $molid VDW 1.4 16
+            mol modcolor $repid $molid ColorID 1
             mol modmaterial $repid $molid Opaque
         } on error {message options} {
             catch {mol delrep $repid $molid}

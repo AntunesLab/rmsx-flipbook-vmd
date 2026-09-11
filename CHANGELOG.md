@@ -2,6 +2,11 @@
 
 ## 0.3.1 — private review candidate
 
+- Use a larger red selection highlight in both heatmaps so residue linking
+  remains distinguishable from Viridis' yellow metric values in nine-slice
+  views. Keep scientific colors and values unchanged; verify native rendered
+  contrast, the selected structure, and representation cleanup.
+
 - Show masked regions with transparency alone by default, without the yellow
   sphere overlay. The explicit marker API option remains available. Reviewer
   Quick Check validates the transparent material and exact mask identities
