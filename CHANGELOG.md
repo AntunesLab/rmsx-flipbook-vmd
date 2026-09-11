@@ -13,6 +13,8 @@
   public launch callbacks and VMD’s own Timeline entry.
 - Fit wide nine-slice exports using the final image aspect ratio, including
   spacing after in-place rotation; refine very small proof images once.
+- Place figure slice names and frame/time annotations on separate editable
+  lines so long nine-slice labels remain readable.
 - Use reproducible, curated synthetic trajectories for native regression tests,
   avoiding a confirmed VMD 2.0.1a1 frame-duplication crash in fixture generation.
   Reject native crash diagnostics even when a launcher returns zero after a

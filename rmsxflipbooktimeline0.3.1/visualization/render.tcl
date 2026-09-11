@@ -528,19 +528,20 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         set n [dict get $image_result molecules]
         for {set i 0} {$i < $n} {incr i} {
             set label "Slice [expr {$i+1}]"
+            set detail ""
             if {$i < [llength $columns]} {
                 set column [lindex $columns $i]
                 if {[dict exists $column time] && [dict exists $column time_unit]} {
-                    append label " · [dict get $column time] [dict get $column time_unit]"
+                    set detail "[dict get $column time] [dict get $column time_unit]"
                 } elseif {[dict exists $column frame_start] && [dict exists $column frame_end]} {
-                    append label " · frames [dict get $column frame_start]–[dict get $column frame_end]"
-                } elseif {[dict exists $column frame]} {append label " · frame [dict get $column frame]"}
+                    set detail "frames [dict get $column frame_start]–[dict get $column frame_end]"
+                } elseif {[dict exists $column frame]} {set detail "frame [dict get $column frame]"}
             }
-            lappend labels $label
+            lappend labels [list $label $detail]
         }
         set label_cols [expr {max(1,min($n,int($w/130)))}]
         set label_rows [expr {int(ceil(double($n)/$label_cols))}]
-        set legend_y [expr {$top+$h+36+$label_rows*24}]
+        set legend_y [expr {$top+$h+36+$label_rows*40}]
         set canvas_h [expr {$legend_y+100}]
         set fp [open $filename w]
         fconfigure $fp -encoding utf-8 -translation lf
@@ -551,10 +552,14 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             puts $fp [format {<text x="32" y="55" font-family="sans-serif" font-size="14">%s · %s · %d slices</text>} [xml $metric] [xml $units] $n]
             puts $fp [format {<image x="32" y="%d" width="%d" height="%d" xlink:href="data:image/png;base64,%s"/>} $top $w $h $encoded]
             set i 0
-            foreach label $labels {
+            foreach item $labels {
+                lassign $item label detail
                 set x [expr {$margin+($i%$label_cols)*double($w)/$label_cols}]
-                set y [expr {$top+$h+24+int($i/$label_cols)*24}]
+                set y [expr {$top+$h+24+int($i/$label_cols)*40}]
                 puts $fp [format {<text x="%.2f" y="%d" font-family="sans-serif" font-size="12">%s</text>} $x $y [xml $label]]
+                if {$detail ne ""} {
+                    puts $fp [format {<text x="%.2f" y="%d" font-family="sans-serif" font-size="12">%s</text>} $x [expr {$y+16}] [xml $detail]]
+                }
                 incr i
             }
             for {set i 0} {$i < 100} {incr i} {

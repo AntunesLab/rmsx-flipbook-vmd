@@ -123,6 +123,38 @@ foreach unexpected {"Window Check" "Mean RMSD Per Slice" "Mean RMSX Per Slice"} 
     }
 }
 
+# Ordinary figure exports retain editable, separate slice and frame/time lines
+# so nine long frame ranges do not run into their neighboring annotations.
+set png [file join $output_dir figure-pixel.png]
+set png_bytes [binary decode base64 {iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6nAAAAABJRU5ErkJggg==}]
+set fp [open $png wb]; puts -nonewline $fp $png_bytes; close $fp
+set columns {}
+for {set i 0} {$i < 9} {incr i} {
+    lappend columns [dict create frame_start [expr {$i*35}] frame_end [expr {($i+1)*35-1}]]
+}
+set figure_result [dict create label {Nine slices & frames} metric RMSX units Å dataset [dict create columns $columns]]
+set image_result [dict create width 2400 height 208 molecules 9]
+set figure [file join $output_dir nine-frame-figure.svg]
+::RMSXFlipbookTimeline::Render::figure_svg $image_result $figure_result $png $figure
+set fp [open $figure r]; fconfigure $fp -encoding utf-8; set svg [read $fp]; close $fp
+foreach i {0 1 2 3 4 5 6 7 8} {
+    set slice "Slice [expr {$i+1}]"
+    set frames "frames [expr {$i*35}]–[expr {($i+1)*35-1}]"
+    set label_pattern [format {<text[^>]* y="([0-9]+)"[^>]*>%s</text>} $slice]
+    set frame_pattern [format {<text[^>]* y="([0-9]+)"[^>]*>%s</text>} $frames]
+    if {![regexp $label_pattern $svg unused label_y] || ![regexp $frame_pattern $svg unused frame_y] || $frame_y != $label_y+16} {
+        smoke_fail "Expected separate editable slice/frame lines for $slice"
+    }
+}
+if {[string first [::RMSXFlipbookTimeline::Render::xml $figure_result] $svg] < 0 || [string first [binary encode base64 -maxlen 0 $png_bytes] $svg] < 0} {
+    smoke_fail "Figure annotation layout changed scientific metadata or embedded PNG"
+}
+dict set figure_result dataset columns [list [dict create time 1.25 time_unit ns frame_start 0 frame_end 34]]
+::RMSXFlipbookTimeline::Render::figure_svg [dict replace $image_result molecules 1] $figure_result $png $figure
+if {![file_contains $figure {>1.25 ns</text>}] || [file_contains $figure {>frames 0–34</text>}]} {
+    smoke_fail "Known physical time lost precedence over frame labels"
+}
+
 puts "RMSX Flipbook Timeline native report SVG smoke passed"
 puts "SVG: [dict get $result svg]"
 puts "CSV: [dict get $result csv]"
