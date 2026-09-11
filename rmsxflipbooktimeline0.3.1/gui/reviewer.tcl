@@ -355,8 +355,10 @@ namespace eval ::RMSXFlipbookTimeline::Reviewer {
                 foreach row [dict get $dataset rows] {if {[dict get $row masked]} {lappend masked [list [dict get $row chain] [dict get $row resid]]}}
                 require {[lsort $masked] eq {{A 25} {A 26} {B 25} {B 26}}} "Multichain mask identities do not match residues 25:26 on both chains"
                 foreach id $ids {
-                    require {[molinfo $id get numreps] >= 3} "Masked candidate lacks transparency or marker representation"
-                    foreach rep {1 2} {
+                    require {[molinfo $id get numreps] == 2} "Masked candidate must have a backbone and one transparent mask representation"
+                    set material [lindex [molinfo $id get {{material 1}}] 0]
+                    require {[string match RMSXFlipbook_Mask_* $material] && abs([lindex [material settings $material] 5] - 0.30) < 0.0001} "Masked candidate has an incorrect transparent material"
+                    foreach rep {1} {
                         set masked_sel [atomselect $id [lindex [molinfo $id get [list [list selection $rep]]] 0]]
                         try {
                             require {[lsort -unique [$masked_sel get {chain resid}]] eq {{A 25} {A 26} {B 25} {B 26}}} "Mask representation selects the wrong chain/residue identities"
