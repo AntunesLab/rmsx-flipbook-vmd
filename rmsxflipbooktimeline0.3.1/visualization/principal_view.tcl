@@ -101,6 +101,10 @@ namespace eval ::RMSXFlipbookTimeline::PrincipalView {
     proc apply {} {
         set ids [::RMSXFlipbookTimeline::state_get molids {}]
         if {![llength $ids]} {return {}}
+        # A flick can leave VMD spinning between events. A newly requested
+        # default/reset view must settle, without changing the mouse mode or
+        # disabling the user's ability to spin the result again afterward.
+        if {[info commands mouse] ne ""} {mouse stoprotation}
         ::RMSXFlipbookTimeline::Layout::undo_offsets $ids [::RMSXFlipbookTimeline::state_get layout_offsets {}]
         set reference {};set orientations {};set maxwidth 0.0
         foreach id $ids {

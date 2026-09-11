@@ -25,7 +25,9 @@ assert {abs([vecdist [measure center $a] [measure center $b]]-$separation)<0.001
 $a delete;$b delete
 set before [::RMSXFlipbookTimeline::PrincipalView::axes $source_coords]
 ::RMSXFlipbookTimeline::Hotkeys::rotate_all y 25
+rock y by 2 -1
 ::RMSXFlipbookTimeline::reset_view
+for {set tick 0} {$tick<10} {incr tick} {display update; display update ui}
 set s [atomselect $first {protein and name CA}]
 set answer [::RMSXFlipbookTimeline::PrincipalView::axes [$s get {x y z}]];$s delete
 assert {abs([lindex [dict get $answer axes] 0 1])>0.99999} "Reset did not restore vertical principal orientation"

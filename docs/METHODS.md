@@ -50,7 +50,9 @@ This transformation affects only the displayed result copies, after calculation.
 It does not fit the source trajectory, change saved coordinates or recalculate
 metric values. The row is centered and fitted to the display, with margins for
 residue thickness. Resizing refits the current orientation; Reset View restores
-the upright principal axes. Explicit `rmsx` and `current` view presets remain
+the upright principal axes. Applying the default view stops any ongoing VMD
+spin so it stays settled; subsequent mouse rotation remains available.
+Explicit `rmsx` and `current` view presets remain
 available.
 
 Frame indices are zero based. Native frame-offset handling excludes the
