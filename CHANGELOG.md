@@ -2,6 +2,10 @@
 
 ## 0.3.1 — private review candidate
 
+- Preserve existing molecular camera matrices when temporary analysis inputs
+  are loaded. Frame counting hides its input molecule and restores the prior
+  top molecule, avoiding oversized previous results during setup.
+
 - Keep coordinate rotations rigid during sustained mouse dragging and spinning.
   Remove numerical scale/shear from VMD view matrices before transforming
   display-axis rotations; verify molecular size and residue distances over

@@ -2786,11 +2786,12 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {!$auto} {
             set_status "Counting trajectory frames..."
         }
+        set previous_top [molinfo top]
         set molid ""
         set before_mols {}
         catch {set before_mols [molinfo list]}
         if {[catch {
-            set load_info [::RMSXFlipbookTimeline::NativeAnalysis::load_trajectory $native_topology $native_trajectory]
+            set load_info [::RMSXFlipbookTimeline::NativeAnalysis::load_trajectory $native_topology $native_trajectory hidden 1]
             set molid [dict get $load_info molid]
             set frames [expr {[dict get $load_info total_frame_count] - [::RMSXFlipbookTimeline::NativeAnalysis::resolve_frame_offset auto $load_info]}]
             update_time_estimate_from_loaded_trajectory $molid $frames $native_trajectory
@@ -2806,10 +2807,12 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
                     }
                 }
             }
+            if {$previous_top in [molinfo list]} {mol top $previous_top}
             set_status "Frame count failed:\n$err"
             return ""
         }
         catch {mol delete $molid}
+        if {$previous_top in [molinfo list]} {mol top $previous_top}
         if {![string is integer -strict $frames] || int($frames) < 1} {
             set_status "Frame count failed: trajectory reported no frames."
             return ""

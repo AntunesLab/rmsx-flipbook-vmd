@@ -778,12 +778,23 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
     proc load_structure_file {path requested_type} {
         set normalized [file normalize $path]
         set mol_type [resolve_molfile_type $normalized $requested_type topology]
-        if {$mol_type eq "pdb"} {
-            set molid [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $normalized]
-        } elseif {$mol_type eq ""} {
-            set molid [mol new $normalized waitfor all]
-        } else {
-            set molid [mol new $normalized type $mol_type waitfor all]
+        # VMD recenters existing molecules when a topology is created. Restore
+        # every existing view before progress callbacks can repaint the scene.
+        set existing_views [::RMSXFlipbookTimeline::Style::capture_view_matrices [molinfo list]]
+        try {
+            if {$mol_type eq "pdb"} {
+                set molid [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb $normalized]
+            } elseif {$mol_type eq ""} {
+                set molid [mol new $normalized waitfor all]
+            } else {
+                set molid [mol new $normalized type $mol_type waitfor all]
+            }
+        } finally {
+            foreach view $existing_views {
+                foreach key {center_matrix global_matrix scale_matrix rotate_matrix} {
+                    ::RMSXFlipbookTimeline::Style::set_molecule_matrix [dict get $view molid] $key $view
+                }
+            }
         }
         if {![string is integer -strict $molid] || [lsearch -exact [molinfo list] $molid] < 0} {error "VMD could not load topology: $normalized"}
         track_working_molecule $molid
@@ -806,10 +817,11 @@ namespace eval ::RMSXFlipbookTimeline::NativeAnalysis {
     }
 
     proc load_trajectory {topology trajectory args} {
-        set opts [::RMSXFlipbookTimeline::parse_kv_options [dict create topology_type auto trajectory_type auto] {*}$args]
+        set opts [::RMSXFlipbookTimeline::parse_kv_options [dict create topology_type auto trajectory_type auto hidden 0] {*}$args]
         set top_info [load_structure_file $topology [dict get $opts topology_type]]
         set molid [dict get $top_info molid]
         try {
+            if {[dict get $opts hidden]} {mol off $molid}
             set initial_frames [molinfo $molid get numframes]
             checkpoint "Loading trajectory coordinates"
             set trajectory_type [add_coordinate_file $molid $trajectory [dict get $opts trajectory_type]]

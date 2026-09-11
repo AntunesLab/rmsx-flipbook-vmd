@@ -450,6 +450,11 @@
       "id": "mouse_rotation_rigidity",
       "script": "smoke_mouse_rotation_rigidity.tcl",
       "capability": "vmd"
+    },
+    {
+      "id": "input_view_preservation",
+      "script": "smoke_input_view_preservation.tcl",
+      "capability": "gui"
     }
   ]
 }
