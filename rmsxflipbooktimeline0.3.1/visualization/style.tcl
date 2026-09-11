@@ -43,10 +43,27 @@ namespace eval ::RMSXFlipbookTimeline::Style {
             [list 0.0 0.0 0.0 1.0]]
     }
 
+    proc orthonormal_rotation_matrix {matrix} {
+        set m [normalize_matrix $matrix]
+        # VMD's stored rotation matrices accumulate small floating-point errors.
+        # Their transpose is an inverse only after removing this scale/shear.
+        set x [lrange [lindex $m 0] 0 2]
+        set y [lrange [lindex $m 1] 0 2]
+        if {[veclength $x] < 1.0e-12} {error "Degenerate display rotation axis"}
+        set x [vecnorm $x]
+        set y [vecsub $y [vecscale [vecdot $x $y] $x]]
+        if {[veclength $y] < 1.0e-12} {error "Degenerate display rotation basis"}
+        set y [vecnorm $y]
+        set z [vecnorm [veccross $x $y]]
+        return [list [concat $x 0.0] [concat $y 0.0] [concat $z 0.0] {0.0 0.0 0.0 1.0}]
+    }
+
     proc display_delta_to_coordinate_delta {view_matrix display_delta} {
-        set view [normalize_matrix $view_matrix]
+        set view [orthonormal_rotation_matrix $view_matrix]
         set inverse_view [inverse_rotation_matrix $view]
-        return [transmult $inverse_view $display_delta $view]
+        # The native multiplication can round again. Keep the final coordinate
+        # update rigid too, including during a sustained mouse flick/spin.
+        return [orthonormal_rotation_matrix [transmult $inverse_view $display_delta $view]]
     }
 
     proc capture_view_matrices {{molids ""}} {

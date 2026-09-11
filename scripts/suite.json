@@ -445,6 +445,11 @@
       "id": "highlight_visibility",
       "script": "smoke_highlight_visibility.tcl",
       "capability": "render"
+    },
+    {
+      "id": "mouse_rotation_rigidity",
+      "script": "smoke_mouse_rotation_rigidity.tcl",
+      "capability": "vmd"
     }
   ]
 }

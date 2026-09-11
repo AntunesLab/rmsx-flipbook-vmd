@@ -2,6 +2,11 @@
 
 ## 0.3.1 — private review candidate
 
+- Keep coordinate rotations rigid during sustained mouse dragging and spinning.
+  Remove numerical scale/shear from VMD view matrices before transforming
+  display-axis rotations; verify molecular size and residue distances over
+  20,000 native rotation commands at an oblique viewing angle.
+
 - Keep residue selection within the displayed metric palette instead of adding
   red spheres. Enlarge the selected unmasked residue using its existing color
   scale; masked residues remain transparent. Test both chains in nine-slice views.
