@@ -99,6 +99,9 @@ if {[info commands winfo] ne ""} {
     set frame [::RMSXFlipbookTimeline::ThresholdControls::attach .threshold_smoke .threshold_smoke.heat $dataset]
     pack $frame -fill x
     ::RMSXFlipbookTimeline::ThresholdControls::toggle .threshold_smoke.heat
+    # Windows delivers initial window mapping through the event queue, not
+    # just idle geometry work. Service it before asserting actual visibility.
+    update
     update idletasks
     expect {[winfo ismapped $frame.body]} "Threshold disclosure did not show its controls"
     ::RMSXFlipbookTimeline::ThresholdControls::set_options .threshold_smoke.heat {min 1 max 2 min_frames 3 enabled 1}

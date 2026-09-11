@@ -67,7 +67,7 @@ namespace eval ::RMSXFlipbookTimeline {
             color_method User2
             color_min 0.0
             color_max 10.0
-            view_preset rmsx
+            view_preset principal
             mouse_rotation_enabled 0
             mouse_rotation_intercepted 0
             mouse_rotation_mode coords
@@ -105,7 +105,7 @@ namespace eval ::RMSXFlipbookTimeline {
 
     proc display_record {} {
         set record {}
-        foreach key {palette color_method color_min color_max raw_min raw_max norm_min norm_max rep thick user_scale user_offset masked_residue_count mask_opacity spacing layout_offsets} {
+        foreach key {palette color_method color_min color_max raw_min raw_max norm_min norm_max rep thick user_scale user_offset masked_residue_count mask_opacity spacing layout_offsets principal_axis_orientation} {
             dict set record $key [state_get $key]
         }
         return $record
@@ -266,6 +266,7 @@ namespace eval ::RMSXFlipbookTimeline {
     source -encoding utf-8 [file join $basedir core values.tcl]
     source -encoding utf-8 [file join $basedir visualization layout.tcl]
     source -encoding utf-8 [file join $basedir visualization style.tcl]
+    source -encoding utf-8 [file join $basedir visualization principal_view.tcl]
     source -encoding utf-8 [file join $basedir visualization mask.tcl]
     source -encoding utf-8 [file join $basedir visualization hotkeys.tcl]
     source -encoding utf-8 [file join $basedir visualization mouse_rotate.tcl]
@@ -342,7 +343,7 @@ namespace eval ::RMSXFlipbookTimeline {
         return [::RMSXFlipbookTimeline::Render::render_current {*}$args]
     }
 
-    proc apply_view_preset {{preset rmsx}} {
+    proc apply_view_preset {{preset principal}} {
         return [::RMSXFlipbookTimeline::Style::apply_view_preset $preset]
     }
 

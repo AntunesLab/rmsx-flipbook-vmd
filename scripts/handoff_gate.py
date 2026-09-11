@@ -35,6 +35,9 @@ RUNTIMES = {
     "windows-x64-2.0.0a6": ("windowsnt", "WIN64", "2.0.0a6", {"win32"}),
     "linux-x64-2.0.1a1": ("linux", "LINUXAMD64", "2.0.1a1", {"x11"}),
 }
+# The official Windows a6 installer reports a6 through vmdinfo, but its startup
+# banner says a7. Preserve both observations; exact binary/date checks still apply.
+STARTUP_VERSIONS = {"windows-x64-2.0.0a6": {"2.0.0a6", "2.0.0a7"}}
 
 
 def digest(value):
@@ -135,7 +138,7 @@ def evaluate(evidence, artifact_sha256, build_id, revision, required_tests, base
                         need(digest(result.get("executable", {}).get("sha256"))
                              and result["executable"]["sha256"] == item.get("vmd_executable_sha256"),
                              prefix + str(name) + ": runtime binary does not match the reviewed distribution")
-                        need(startup.get("vmd") == RUNTIMES[target][2]
+                        need(startup.get("vmd") in STARTUP_VERSIONS.get(target, {RUNTIMES[target][2]})
                              and startup.get("vmd_arch") == RUNTIMES[target][1]
                              and startup.get("build_date") == item.get("vmd_build_date"),
                              prefix + str(name) + ": VMD startup identity does not match the target")

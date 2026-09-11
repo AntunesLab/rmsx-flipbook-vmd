@@ -119,3 +119,38 @@ try {
 }
 assert {[info commands winfo] eq ""} "Reviewer pure logic loaded Tk"
 puts "RMSX reviewer runtime smoke passed"
+
+# The Windows launcher must not interpolate profile paths into cmd syntax or
+# leave process environment changes behind when CreateProcess fails.
+set fp [file tempfile launchroot rmsx-windows-launch-test-]; close $fp
+file delete $launchroot; file mkdir $launchroot
+set old_systemroot [list [info exists ::env(SystemRoot)] [expr {[info exists ::env(SystemRoot)] ? $::env(SystemRoot) : ""}]]
+set ::env(SystemRoot) $launchroot
+file mkdir [file join $launchroot System32]
+foreach path [list [file join $launchroot System32 cmd.exe] [file join $launchroot {VMD %PATH% & π.exe}] [file join $launchroot start.tcl]] {set fp [open $path w];close $fp}
+set original_dir [pwd]
+set original_env [array get ::env]
+rename ::exec ::reviewer_native_exec
+proc ::exec {args} {
+    assert {[lindex $args 5] eq "rmsx-launch.cmd" && [lindex $args 6] eq ">"} "Launcher must use a fixed command and redirect the inherited output pipe"
+    set fp [open rmsx-launch.cmd r];set batch [read $fp];close $fp
+    assert {[string first {start "RMSX / Flipbook" "%RMSX_REVIEWER_VMD%"} $batch]>=0} "Launcher batch does not use quoted environment paths"
+    assert {$::env(VMDMODULATENEWTUBE) eq "user"} "Child did not receive modulation at launch"
+    error "injected child launch failure"
+}
+try {
+    assert {[catch {::RMSXFlipbookTimeline::Reviewer::Windows::spawn [file join $launchroot {VMD %PATH% & π.exe}] [file join $launchroot start.tcl] test_build} message]} "Launch failure disappeared"
+    assert {[string first "injected child launch failure" $message] >= 0} "Launcher did not reach process creation"
+    assert {[pwd] eq $original_dir} "Failed launch changed working directory"
+    assert {[lsort $original_env] eq [lsort [array get ::env]]} "Failed launch altered the parent's environment"
+    ::RMSXFlipbookTimeline::Reviewer::Windows::write_startup [file join $launchroot {package π}] $launchroot test_build single [file join $launchroot start.tcl]
+    set fp [open [file join $launchroot start.tcl] r];fconfigure $fp -encoding utf-8
+    set script [read $fp];close $fp
+    assert {![regexp {[^\x00-\x7f]} $script]} "Generated Windows startup is not ASCII-safe"
+    assert {[info complete $script]} "Generated Windows startup is incomplete Tcl"
+} finally {
+    rename ::exec {};rename ::reviewer_native_exec ::exec
+    if {[lindex $old_systemroot 0]} {set ::env(SystemRoot) [lindex $old_systemroot 1]} else {unset ::env(SystemRoot)}
+    file delete -force $launchroot
+}
+puts "Windows reviewer launch safety smoke passed"

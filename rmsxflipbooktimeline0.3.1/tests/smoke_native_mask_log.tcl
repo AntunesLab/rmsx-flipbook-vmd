@@ -153,11 +153,18 @@ if {[dict get $load_result masked_residues] != 6} {
     smoke_fail "expected viewer to apply 6 masked residues, got [dict get $load_result masked_residues]"
 }
 set loaded_molecules [dict get $load_result molecules]
-if {[dict get $load_result mask_marker_reps_added] != $loaded_molecules} {
-    smoke_fail "expected one bright mask marker rep per molecule, got [dict get $load_result mask_marker_reps_added] for $loaded_molecules molecules"
+if {[dict get $load_result mask_marker_reps_added] != 0} {
+    smoke_fail "mask markers should be disabled by default"
 }
-if {[dict get $load_result mask_reps_added] != [expr {$loaded_molecules * 2}]} {
-    smoke_fail "expected transparent and bright marker mask reps per molecule, got [dict get $load_result mask_reps_added] for $loaded_molecules molecules"
+if {[dict get $load_result mask_reps_added] != $loaded_molecules} {
+    smoke_fail "expected only a transparent mask rep per molecule"
+}
+foreach id [dict get $load_result molids] {
+    if {[molinfo $id get numreps] != 2} {smoke_fail "unexpected mask overlay on molecule $id"}
+    set material [lindex [molinfo $id get {{material 1}}] 0]
+    if {![string match RMSXFlipbook_Mask_* $material] || abs([lindex [material settings $material] 5]-0.30)>0.0001} {
+        smoke_fail "transparent mask material was not preserved"
+    }
 }
 
 if {[catch {

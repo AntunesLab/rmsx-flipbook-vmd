@@ -425,6 +425,21 @@
       "id": "render_nine_slice_framing",
       "script": "smoke_render_nine_slice_framing.tcl",
       "capability": "render"
+    },
+    {
+      "id": "residue_thickness_render",
+      "script": "smoke_residue_thickness_render.tcl",
+      "capability": "render"
+    },
+    {
+      "id": "principal_axes",
+      "script": "smoke_principal_axes.tcl",
+      "capability": "tcl"
+    },
+    {
+      "id": "principal_view",
+      "script": "smoke_principal_view.tcl",
+      "capability": "vmd"
     }
   ]
 }

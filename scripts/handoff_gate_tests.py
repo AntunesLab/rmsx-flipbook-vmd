@@ -41,6 +41,21 @@ class HandoffGateTests(unittest.TestCase):
         return gate.evaluate(evidence, "c" * 64, "b" * 64, "a" * 40, ["required"], root,
                              test_capabilities={"required": "render"})["release_qualified"]
 
+    def test_windows_installer_banner_disagrees_without_relaxing_runtime_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); evidence=complete_evidence(root)
+            target="windows-x64-2.0.0a6"
+            path=root/evidence["targets"][target]["suite_report"]
+            suite=json.loads(path.read_text())
+            suite["results"][0]["startup"]["vmd"]="2.0.0a7"
+            path.write_text(json.dumps(suite))
+            self.assertTrue(self.qualifies(evidence, root))
+            for field,value in (("vmd","2.0.0a8"),("vmd_arch","LINUXAMD64")):
+                bad=copy.deepcopy(suite); bad["results"][0]["startup"][field]=value
+                path.write_text(json.dumps(bad)); self.assertFalse(self.qualifies(evidence, root))
+            bad=copy.deepcopy(suite); bad["results"][0]["environment"]["vmd"]="2.0.0a7"
+            path.write_text(json.dumps(bad)); self.assertFalse(self.qualifies(evidence, root))
+
     def test_complete_evidence_and_missing_or_stale_receipts(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); evidence = complete_evidence(root)

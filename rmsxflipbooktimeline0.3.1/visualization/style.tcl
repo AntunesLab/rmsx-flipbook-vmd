@@ -322,12 +322,7 @@ namespace eval ::RMSXFlipbookTimeline::Style {
         set anchor ""
         set anchor_path ""
         if {[catch {
-            global env
-            set tmpdir "/tmp"
-            if {[info exists env(TMPDIR)] && $env(TMPDIR) ne ""} {
-                set tmpdir $env(TMPDIR)
-            }
-            set fp [file tempfile anchor_path [file join $tmpdir rmsx_view_anchor_XXXXXX.pdb]]
+            set fp [file tempfile anchor_path rmsx_view_anchor_]
             try {
                 set atom_id 1
                 foreach coords [row_bound_corners $bounds $rotate_side] {
@@ -464,7 +459,12 @@ namespace eval ::RMSXFlipbookTimeline::Style {
             return current
         }
 
-        if {$cleaned in {rmsx default side side-on sideon y y-axis yaxis}} {
+        if {$cleaned in {principal default upright}} {
+            ::RMSXFlipbookTimeline::PrincipalView::apply
+            return principal
+        }
+
+        if {$cleaned in {rmsx side side-on sideon y y-axis yaxis}} {
             if {[info commands ::RMSXFlipbookTimeline::MouseRotate::without_intercept] ne ""} {
                 ::RMSXFlipbookTimeline::MouseRotate::without_intercept {
                     ::RMSXFlipbookTimeline::Style::reset_display_on_row 1
@@ -488,12 +488,12 @@ namespace eval ::RMSXFlipbookTimeline::Style {
             return reset
         }
 
-        error "Unknown RMSX view preset '$preset'. Use rmsx, current, or reset."
+        error "Unknown RMSX view preset '$preset'. Use principal, rmsx, current, or reset."
     }
 
     proc reset_view {} {
-        set preset [apply_view_preset rmsx]
-        set restored [restore_initial_view_matrices]
+        set preset [apply_view_preset principal]
+        set restored [store_initial_view_matrices]
         catch {display update}
         return [dict create view_preset $preset restored_molecules $restored]
     }

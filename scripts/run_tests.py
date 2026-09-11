@@ -187,6 +187,7 @@ def run_one(entry, args, artifact_root):
     env.pop("RMSXFLIPBOOKTIMELINE_EXPERIMENTAL", None)
     env.update({
         "RMSX_TEST_REPO": str(ROOT), "RMSX_TEST_PACKAGE": str(PACKAGE),
+        "RMSX_TEST_PYTHON": sys.executable,
         "RMSX_TEST_WORKDIR": str(work), "RMSX_TEST_RESULT": str(status_path),
         "RMSX_TEST_SCRIPT": str(PACKAGE / "tests" / entry["script"]),
         "RMSX_TEST_GUI": "1" if entry["capability"] in {"gui", "render"} else "0",

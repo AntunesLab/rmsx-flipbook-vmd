@@ -1,0 +1,19 @@
+# Real geometry evidence, independent of merely assigning the user field.
+lappend auto_path $::env(RMSX_TEST_REPO)
+package require rmsxflipbooktimeline
+set folder [file join $::env(RMSX_TEST_WORKDIR) fixtures seed_outputs native-rmsx-1ubq-9 chain_7_rmsx]
+::RMSXFlipbookTimeline::load_folder $folder view_preset current
+set molid [lindex [::RMSXFlipbookTimeline::state_get molids] 0]
+set before [::RMSXFlipbookTimeline::Scene::snapshot]
+set selection [atomselect $molid all]
+set original [$selection get user]
+try {
+    set evidence [::RMSXFlipbookTimeline::Render::verify_residue_thickness $molid [file join $::env(RMSX_TEST_WORKDIR) outputs]]
+    if {[$selection get user] ne $original} {error "Thickness check changed scientific display values"}
+    set after [::RMSXFlipbookTimeline::Scene::snapshot]
+    foreach key {values views visibility top} {
+        if {[dict get $before $key] ne [dict get $after $key]} {error "Thickness check failed to restore $key"}
+    }
+    puts "Residue thickness render passed: $evidence"
+} finally {$selection delete}
+quit

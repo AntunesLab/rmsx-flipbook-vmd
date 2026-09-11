@@ -50,7 +50,7 @@ namespace eval ::RMSXFlipbookTimeline::Mask {
             material Transparent \
             color_min 0.0 \
             color_max 10.0 \
-            marker 1 \
+            marker 0 \
             marker_style {VDW 0.45 12} \
             marker_color 4 \
             marker_material AOChalky]

@@ -8,6 +8,7 @@ LICENSE
 README.md
 THIRD_PARTY_NOTICES.md
 docs/HANDOFF.md
+docs/FIRST_TRY.md
 docs/MAINTAINING.md
 docs/MEETING.md
 docs/METHODS.md
@@ -295,3 +296,8 @@ scripts/generate_native_test_fixtures.tcl
 fixtures/generated/bdna_synthetic.dcd
 fixtures/generated/two_chain_1ubq.pdb
 fixtures/generated/two_chain_1ubq.dcd
+rmsxflipbooktimeline0.3.1/tests/smoke_residue_thickness_render.tcl
+rmsxflipbooktimeline0.3.1/gui/windows_demo.tcl
+rmsxflipbooktimeline0.3.1/visualization/principal_view.tcl
+rmsxflipbooktimeline0.3.1/tests/smoke_principal_axes.tcl
+rmsxflipbooktimeline0.3.1/tests/smoke_principal_view.tcl

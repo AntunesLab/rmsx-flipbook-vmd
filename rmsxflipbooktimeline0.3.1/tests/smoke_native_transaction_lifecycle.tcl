@@ -24,6 +24,24 @@ proc fail_on_later_chain {event} {
     if {[dict get $event stage] eq "chain_started" && [dict get $event chain_index] == 2} {return -code error -errorcode {RMSX_TEST LATE_CHAIN} "Injected later-chain failure"}
 }
 try {
+    if {$::tcl_platform(platform) eq "windows"} {
+        # Keep the directory within Windows' directory-name limit while the
+        # complete filename exceeds the native VMD writer's 260-character cap.
+        set deep [file join $root [string repeat a [expr {max(1, 230 - [string length $root])}]]]
+        file mkdir $deep
+        set path [file join $deep [string repeat b 60].pdb]
+        assert {[string length $path] > 260} "Windows native-write regression path is not sufficiently deep"
+        set saved_cwd [pwd]
+        set test_mol [mol new $topology type pdb waitfor all]
+        set test_sel [atomselect $test_mol protein]
+        try {
+            ::RMSXFlipbookTimeline::ResidueIdentity::write_pdb $test_sel $path
+            assert {[file size $path] > 0} "Deep Windows PDB output is missing"
+            set fp [open $path r]; set pdb [read $fp]; close $fp
+            assert {[llength [::RMSXFlipbookTimeline::ResidueIdentity::pdb_atom_records $pdb]] == [$test_sel num]} "Deep Windows output changed the atom count"
+            assert {[pwd] eq $saved_cwd} "Native output changed the working directory"
+        } finally {$test_sel delete; mol delete $test_mol}
+    }
     set failed [file join $root invalid]
     assert {[catch {::RMSXFlipbookTimeline::NativeAnalysis::run $topology $trajectory $failed -frame_offset 999999 -num_slices 3 -verbose 0}]} "Invalid frame offset accepted"
     assert {[molinfo list] eq $owned_before} "Invalid frame offset leaked a molecule"

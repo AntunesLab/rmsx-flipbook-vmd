@@ -33,7 +33,7 @@ set install_prefix [file join [pwd] installed]
 set startup [file join [pwd] qa-vmdrc]
 set original_config "set ::qa_preserved_config yes\n"
 set fp [open $startup w]; puts -nonewline $fp $original_config; close $fp
-exec python3 [file join $repo scripts install.py] install --prefix $install_prefix --startup-file $startup
+exec $::env(RMSX_TEST_PYTHON) [file join $repo scripts install.py] install --prefix $install_prefix --startup-file $startup
 source -encoding utf-8 $startup
 assert {$::qa_preserved_config eq "yes"} "Installer discarded existing startup content"
 menu rmsxflipbooktimeline on
@@ -47,10 +47,10 @@ assert {![winfo exists .rmsxflipbooktimeline]} "Menu unexpectedly opened classic
 assert {[llength [$w.tabs tabs]] == 5} "Dashboard must have five tabs"
 assert {[wm minsize $w] eq {600 540}} "Unexpected compact minimum size"
 wm geometry $w 600x540
-update idletasks
+update
 foreach tab {easy matrix export advanced help} {
     $w.tabs select $w.tabs.$tab
-    update idletasks
+    update
     foreach suffix {scroll_canvas scrollbar content} {assert {[winfo exists $w.tabs.$tab.$suffix]} "Missing scrolling widget: $tab.$suffix"}
     set body $w.tabs.$tab.content
     assert {[winfo reqwidth $body] <= [winfo width $body]+2} "Tab $tab content is clipped at minimum width: [winfo reqwidth $body]/[winfo width $body]"
@@ -59,7 +59,7 @@ foreach tab {easy matrix export advanced help} {
 # since mapped widgets and requested-width checks alone miss this Tk failure.
 $w.tabs select $w.tabs.easy
 wm geometry $w 600x800
-update idletasks
+update
 set easy $w.tabs.easy.content
 foreach relative {
     source.source_new_analysis source.source_existing_folder
@@ -84,7 +84,7 @@ foreach metric [$matrix_combo cget -values] {
     set ::RMSXFlipbookTimeline::Dashboard::timeline_metric $metric
     ::RMSXFlipbookTimeline::Dashboard::refresh_dashboard
     $w.tabs select $w.tabs.matrix
-    update idletasks
+    update
     set body $w.tabs.matrix.content
     assert {[winfo reqwidth $body] <= [winfo width $body]+2} "Timeline options clipped for $metric"
 }
@@ -100,7 +100,7 @@ foreach font {TkDefaultFont TkTextFont TkHeadingFont TkMenuFont TkSmallCaptionFo
 wm geometry $w 720x800
 foreach tab {easy matrix export advanced help} {
     $w.tabs select $w.tabs.$tab
-    update idletasks
+    update
     set body $w.tabs.$tab.content
     assert {[winfo reqwidth $body] <= [winfo width $body]+2} "Enlarged font clipped $tab"
 }
@@ -169,7 +169,7 @@ assert {[wm state $w] eq "withdrawn"} "Close did not hide the window"
 assert {[::RMSXFlipbookTimeline::state_get molids] eq $molids} "Close removed loaded scene"
 assert {![dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Close retained the rotation input hook"
 menu rmsxflipbooktimeline on
-update idletasks
+update
 assert {[dict get [::RMSXFlipbookTimeline::Results::get] id] == $result_id} "Reopen changed current result identity"
 assert {[dict get [::RMSXFlipbookTimeline::mouse_rotation_status] enabled]} "Reopen lost per-protein rotation"
 assert {$::RMSXFlipbookTimeline::Dashboard::scene_refresh_after ne ""} "Reopen did not resume redraws"
@@ -253,7 +253,7 @@ assert {[string first "Selection: protein" $details] >= 0} "Result Details omits
 set prior_status $::RMSXFlipbookTimeline::Dashboard::status_text
 set prior_log $::RMSXFlipbookTimeline::Dashboard::detail_log
 $w.header.details invoke
-update idletasks
+update
 assert {[$w.details.tabs select] eq "$w.details.tabs.result"} "Details did not open Result panel"
 assert {$::RMSXFlipbookTimeline::Dashboard::status_text eq $prior_status && $::RMSXFlipbookTimeline::Dashboard::detail_log eq $prior_log} "Opening Details overwrote status or duplicated metadata into log"
 set log_path [file join [pwd] details-log.txt]
@@ -263,7 +263,7 @@ assert {[string first "Selection: protein" $saved_log] >= 0 && [string first "Di
 $w.footer.details invoke
 assert {[$w.details.tabs select] eq "$w.details.tabs.log"} "Log button did not select diagnostics"
 $w.details.actions.hide invoke
-update idletasks
+update
 assert {![winfo ismapped $w.details]} "Hide left Details visible"
 assert {[winfo height $w.header] < 60} "Compact header grew beyond one row"
 # A filtered result must retain the source selection, units, and resolved frames.
@@ -304,7 +304,7 @@ rename ::RMSXFlipbookTimeline::Dashboard::qa_header ::RMSXFlipbookTimeline::Dash
 
 ::RMSXFlipbookTimeline::reset 1
 assert {[file isdirectory $folder]} "Remove deleted source files"
-exec python3 [file join $repo scripts install.py] uninstall --prefix $install_prefix --startup-file $startup
+exec $::env(RMSX_TEST_PYTHON) [file join $repo scripts install.py] uninstall --prefix $install_prefix --startup-file $startup
 set fp [open $startup r]; set restored [read $fp]; close $fp
 assert {$restored eq $original_config} "Uninstall did not preserve unrelated startup content"
 puts "Dashboard GUI installation, geometry, navigation, lifecycle and Stop checks passed"

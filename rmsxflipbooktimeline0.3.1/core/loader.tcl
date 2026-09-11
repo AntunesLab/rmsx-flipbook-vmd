@@ -210,7 +210,7 @@ namespace eval ::RMSXFlipbookTimeline::Loader {
             manifest_name rmsx_flipbook_timeline_manifest.tcldict rep [::RMSXFlipbookTimeline::Style::default_rep] thick 0.30 \
             res 32 aspect 1.00 spline 0 user_scale 1.0 user_offset 2.0 color_method User2 \
             color_min 0.0 color_max 10.0 spacing auto apply_mask 1 mask_opacity 0.30 \
-            view_preset rmsx activation_callback ""]
+            view_preset principal activation_callback ""]
         set opts [::RMSXFlipbookTimeline::parse_kv_options $defaults {*}$args]
         set source_folder [file normalize $folder]
         set files [discover_slice_files $source_folder]
@@ -296,6 +296,7 @@ namespace eval ::RMSXFlipbookTimeline::Loader {
             ::RMSXFlipbookTimeline::Style::apply_scene_settings [dict get $opts palette]
             foreach id $ids {mol on $id}
             dict set result view_preset [::RMSXFlipbookTimeline::Style::apply_view_preset [dict get $opts view_preset]]
+            dict set result spacing [::RMSXFlipbookTimeline::state_get spacing]
             ::RMSXFlipbookTimeline::Style::store_initial_view_matrices $ids
             if {[dict get $opts write_manifest]} {
                 set path [file join [dict get $result folder] [dict get $opts manifest_name]]
