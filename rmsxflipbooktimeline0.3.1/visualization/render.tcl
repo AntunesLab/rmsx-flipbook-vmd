@@ -605,7 +605,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             }
             puts $fp [format {<text x="32" y="%d" font-family="sans-serif" font-size="12">%.4g %s</text>} [expr {$legend_y+32}] $lo [xml $units]]
             puts $fp [format {<text x="%d" y="%d" text-anchor="end" font-family="sans-serif" font-size="12">%.4g %s</text>} [expr {$w+$margin}] [expr {$legend_y+32}] $hi [xml $units]]
-            puts $fp [format {<text x="32" y="%d" font-family="sans-serif" font-size="11">%s</text>} [expr {$legend_y+58}] [xml "[expr {[data_value $result masked_residues 0] > 0 ? {Masked residues: translucent with a bright marker. } : {}}]RMSX/Flipbook $::RMSXFlipbookTimeline::version"]]
+            puts $fp [format {<text x="32" y="%d" font-family="sans-serif" font-size="11">%s</text>} [expr {$legend_y+58}] [xml "[expr {[data_value $result masked_residues 0] > 0 ? {Masked residues: translucent. } : {}}]RMSX/Flipbook $::RMSXFlipbookTimeline::version"]]
             puts $fp "<metadata>[xml [dict create method $metric units $units result $result render $image_result]]</metadata>"
             puts $fp {</svg>}
         } finally {close $fp}
