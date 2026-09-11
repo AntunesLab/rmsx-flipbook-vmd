@@ -101,6 +101,20 @@ namespace eval ::RMSXFlipbookTimeline::PrincipalView {
     proc apply {} {
         set ids [::RMSXFlipbookTimeline::state_get molids {}]
         if {![llength $ids]} {return {}}
+        # An X11 window may still be processing its initial geometry. Fit only
+        # after the observed dimensions settle, so the next redraw does not
+        # immediately change the just-published view.
+        if {[info commands tk] ne "" && [tk windowingsystem] eq "x11"} {
+            set last {}; set stable 0
+            for {set attempt 0} {$attempt < 100} {incr attempt} {
+                display update ui
+                set size [display get size]
+                if {$size eq $last} {incr stable} else {set stable 0; set last $size}
+                if {$stable >= 3} {break}
+                after 10
+            }
+            if {$stable < 3} {error "Display dimensions did not settle before fitting the result"}
+        }
         # A flick can leave VMD spinning between events. A newly requested
         # default/reset view must settle, without changing the mouse mode or
         # disabling the user's ability to spin the result again afterward.

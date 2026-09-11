@@ -2,6 +2,11 @@
 
 ## 0.3.1 — private review candidate
 
+- Wait for X11 window resizing before rendering or restoring the display, and
+  settle initial window dimensions before principal-axis fitting. This prevents
+  stale export dimensions and a second fit on the first refresh. Resize waits
+  are bounded and report failure if the requested dimensions cannot be reached.
+
 - Use a larger red selection highlight in both heatmaps so residue linking
   remains distinguishable from Viridis' yellow metric values in nine-slice
   views. Keep scientific colors and values unchanged; verify native rendered

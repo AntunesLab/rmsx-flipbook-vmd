@@ -56,7 +56,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         set width [expr {int([dict get $opts width])}]
         set height [expr {int([dict get $opts height])}]
         if {$width > 0 && $height > 0} {
-            catch {display resize $width $height}
+            ::RMSXFlipbookTimeline::Scene::resize_display $width $height
         }
 
         catch {display projection Orthographic}
@@ -381,7 +381,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         return [dict create width $width height $height x0 $x0 x1 $x1 y0 $y0 y1 $y1 nonbackground_samples $pixels]
     }
     proc render_to_tga {options path width height} {
-        display resize $width $height
+        ::RMSXFlipbookTimeline::Scene::resize_display $width $height
         display update
         render [dict get $options method] $path
         if {![file isfile $path]} {error "VMD renderer did not create an image"}
