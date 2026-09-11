@@ -440,6 +440,11 @@
       "id": "principal_view",
       "script": "smoke_principal_view.tcl",
       "capability": "vmd"
+    },
+    {
+      "id": "highlight_visibility",
+      "script": "smoke_highlight_visibility.tcl",
+      "capability": "render"
     }
   ]
 }

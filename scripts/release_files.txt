@@ -301,3 +301,4 @@ rmsxflipbooktimeline0.3.1/gui/windows_demo.tcl
 rmsxflipbooktimeline0.3.1/visualization/principal_view.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_principal_axes.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_principal_view.tcl
+rmsxflipbooktimeline0.3.1/tests/smoke_highlight_visibility.tcl
