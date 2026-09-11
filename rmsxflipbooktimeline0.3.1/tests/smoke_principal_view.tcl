@@ -37,6 +37,11 @@ lassign [display get size] w h
 set halfheight [expr {0.25*[display get height]}]
 assert {[dict get $bounds xmin]>-$halfheight*$w/double($h) && [dict get $bounds xmax]<$halfheight*$w/double($h)} "Fitted row is outside the viewport"
 assert {[$atoms get {x y z}] eq $source_coords} "Reset or spacing altered the source"
+set manifest [file join $::env(RMSX_TEST_WORKDIR) outputs principal-session.tcldict]
+::RMSXFlipbookTimeline::Manifest::write $manifest
+set reloaded [::RMSXFlipbookTimeline::load_manifest $manifest]
+assert {[dict get $reloaded view_preset] eq "principal"} "Manifest reload used a different default view"
+assert {[::RMSXFlipbookTimeline::apply_view_preset] eq "principal"} "Public default view is not upright"
 $atoms delete
 puts "Principal display regression passed for nine multichain slices"
 quit

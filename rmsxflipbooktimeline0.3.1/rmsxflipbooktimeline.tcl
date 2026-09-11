@@ -343,7 +343,7 @@ namespace eval ::RMSXFlipbookTimeline {
         return [::RMSXFlipbookTimeline::Render::render_current {*}$args]
     }
 
-    proc apply_view_preset {{preset rmsx}} {
+    proc apply_view_preset {{preset principal}} {
         return [::RMSXFlipbookTimeline::Style::apply_view_preset $preset]
     }
 

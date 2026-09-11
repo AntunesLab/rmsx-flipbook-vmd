@@ -122,7 +122,7 @@ namespace eval ::RMSXFlipbookTimeline::Manifest {
 
         set view_preset [string trim [dict get $opts view_preset]]
         if {$view_preset eq ""} {
-            set view_preset rmsx
+            set view_preset principal
         }
         lappend load_args view_preset $view_preset
 
