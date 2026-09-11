@@ -22,10 +22,10 @@ an older successful test run is not a pass for this artifact.
 
 | Gate target | Required VMD distribution | Current evidence boundary |
 |---|---|---|
-| `macos-arm64-2.0b1` | Apple Silicon 2.0b1 | Earlier 0.3 has full local evidence; new artifact pending |
-| `macos-arm64-2.0.0a7-pre2` | Apple Silicon 2.0.0a7-pre2 | Earlier ARM compatibility evidence; new artifact pending |
+| `macos-arm64-2.0b1` | Apple Silicon 2.0b1 | 61 backend tests passed at `afa2c22`; final artifact GUI/manual qualification pending |
+| `macos-arm64-2.0.0a7-pre2` | Apple Silicon 2.0.0a7-pre2 | 61 backend tests passed at `afa2c22`; final artifact GUI/manual qualification pending |
 | `macos-intel-1.9.4a57` | Intel macOS 1.9.4a57 | Licensed graphical runner and artifact qualification pending |
-| `windows-x64-2.0.0a6` | Windows x64 2.0.0a6 | Real VMD GUI/renderer qualification pending |
+| `windows-x64-2.0.0a6` | Windows x64 2.0.0a6 | 75 release-profile tests passed at `afa2c22`, including GUI/rendering; final download/manual qualification pending |
 | `linux-x64-2.0.1a1` | Linux x64 2.0.1a1 | Graphical VMD environment and artifact qualification pending |
 
 Historical ARM 1.9.4a57 backend checks and Carya Linux backend checks remain
@@ -77,5 +77,6 @@ Fixtures are copied per case, so retained diagnostics do not modify source data.
 On POSIX, the runner gives VMD a real pseudo-terminal on all three console
 streams and drains it into the case log. This avoids early EOF and display-loop
 stalls observed with redirected console streams. Timeout terminates the entire
-test process group. Windows console behavior remains subject to its pending
-real VMD qualification; the portable Tcl job does not exercise that path.
+test process group. Windows console behavior was exercised by the recorded
+`afa2c22` VMD release profile; final downloadable-artifact qualification remains
+pending. The portable Tcl job does not exercise that VMD path.

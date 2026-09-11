@@ -67,6 +67,8 @@ the build or test tools.
 
 ## Feedback to retain
 
+Use the [first-time reviewer sheet](FIRST_TRY.md) for the independent trial.
+
 Record the launcher SHA-256, BUILD_ID, VMD/Tcl/Tk versions, OS and architecture,
 Quick Check report, and the smallest steps that reproduce a problem. Include
 whether the File-menu launch, real mouse rotation, OpenGL redraw and export were

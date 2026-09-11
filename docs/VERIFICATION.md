@@ -47,6 +47,20 @@ archive metadata is part of the verified inventory, not an uncommitted change.
 
 ## Historical evidence retained privately
 
+- Commit `afa2c226ccbccfc897de9d6ee8612fdcbf1ef625` passed 75/75 Windows
+  release-profile tests (including GUI and molecular rendering), and 61/61
+  backend tests on each of Apple Silicon VMD 2.0b1 and 2.0.0a7-pre2.
+  Windows used Tcl/Tk 8.6.16, an RTX 3070, and native residue-thickness
+  variables set before VMD startup. Manual nine-slice multichain inspection
+  covered upright orientation, in-place rotation, visible thickness and masks.
+  These observations do not complete the final download's File-menu, offline,
+  path, repeat-opening or independent-user qualification.
+- The subsequent marker-default change committed as `f926324` passed focused
+  `native_mask_log` and `native_real_multichain` checks before commit. Its
+  runtime-only application to the existing Windows view removed nine marker
+  overlays while preserving nine transparent representations at opacity 0.30,
+  result identity, molecule inventory and camera matrices. This live adjustment
+  is explicitly separate from testing a newly loaded immutable artifact.
 - Commit `4027f9a0ab26b50a66e533c164e8e9da7aaa11f4` (0.3) has a complete local
   release-profile receipt on macOS ARM64. Source SHA-256:
   `77c96f39d3dc84a85368bc0a36321546ca9c3b4dc949f2f984458e50ca12e75e`.
