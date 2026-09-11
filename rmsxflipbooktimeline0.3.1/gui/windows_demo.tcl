@@ -91,6 +91,7 @@ set code [catch {
     if {[::RMSXFlipbookTimeline::build_id] ne $identity} {error "Reviewer build changed; reopen the downloaded file"}
     source -encoding utf-8 [file join $package_dir gui reviewer.tcl]
     if {!$::RMSXFlipbookTimeline::Reviewer::Windows::ready} {error "Windows thickness startup settings were not inherited"}
+    menu main on
     ::RMSXFlipbookTimeline::Reviewer::launch $workspace $identity $example
     after 100 [list ::RMSXFlipbookTimeline::Reviewer::Windows::child_ready $workspace $identity]
 } message options]

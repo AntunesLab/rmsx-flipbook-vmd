@@ -59,6 +59,7 @@ foreach tab {easy matrix export advanced help} {
 # since mapped widgets and requested-width checks alone miss this Tk failure.
 $w.tabs select $w.tabs.easy
 wm geometry $w 600x800
+update
 update idletasks
 set easy $w.tabs.easy.content
 foreach relative {
