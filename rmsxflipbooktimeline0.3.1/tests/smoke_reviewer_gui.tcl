@@ -13,6 +13,10 @@ proc assert_reviewer_plot_frames {current} {
     }
     assert {[dict get $layout x_axis_title] eq "Frames" && [dict get $layout x_axis_unit] eq ""} "Comparison plot invented physical time"
     assert {[dict get $layout x_axis_labels] eq $expected} "Comparison plot did not use current-result frame windows"
+    foreach record [dict get $layout cell_records] {
+        set message [::RMSXFlipbookTimeline::PlotWindow::status_for_record $record]
+        assert {[string first ", frames " $message] >= 0 && [string first ", time " $message] < 0} "Heatmap hover/click status mislabeled frame bounds as time"
+    }
 }
 set review_guard [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb [file join $::env(RMSX_TEST_WORKDIR) fixtures upstream test_files 1UBQ.pdb]]
 set review_guard_drawn [molinfo $review_guard get drawn]
