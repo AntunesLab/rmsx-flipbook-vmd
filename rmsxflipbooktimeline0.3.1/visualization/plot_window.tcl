@@ -1686,6 +1686,28 @@ namespace eval ::RMSXFlipbookTimeline::PlotWindow {
             set x_axis_title "Time ($x_axis_unit)"
         }
 
+        # A committed result owns its time interpretation. Legacy preview CSVs
+        # can contain Time columns even when the result explicitly has no time.
+        set current [::RMSXFlipbookTimeline::Results::get]
+        if {$current ne {} && [dict exists $current folder] &&
+            [file normalize [dict get $current folder]] eq [file normalize $folder] &&
+            [dict exists $current time_known] && ![dict get $current time_known]} {
+            set x_axis_labels {}
+            set x_axis_unit ""
+            set x_axis_title "Slice"
+            if {[dict exists $current dataset columns] &&
+                [llength [dict get $current dataset columns]] == $column_count} {
+                foreach column [dict get $current dataset columns] {
+                    if {![dict exists $column frame_start] || ![dict exists $column frame_end]} {
+                        set x_axis_labels {}
+                        break
+                    }
+                    lappend x_axis_labels "[dict get $column frame_start]–[dict get $column frame_end]"
+                }
+                if {[llength $x_axis_labels] == $column_count} {set x_axis_title "Frames"}
+            }
+        }
+
         set layout [build_layout $matrix \
             width [dict get $opts width] \
             heatmap_min_height [dict get $opts heatmap_min_height] \

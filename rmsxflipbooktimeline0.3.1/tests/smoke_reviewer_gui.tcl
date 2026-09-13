@@ -4,6 +4,16 @@ lappend auto_path $package_dir
 package require rmsxflipbooktimeline
 source -encoding utf-8 [file join $package_dir gui reviewer.tcl]
 proc assert {condition message} {if {![uplevel 1 [list expr $condition]]} {error $message}}
+proc assert_reviewer_plot_frames {current} {
+    set prepared [::RMSXFlipbookTimeline::PlotWindow::prepare folder [dict get $current folder]]
+    set layout [dict get $prepared layout]
+    set expected {}
+    foreach column [dict get $current dataset columns] {
+        lappend expected "[dict get $column frame_start]–[dict get $column frame_end]"
+    }
+    assert {[dict get $layout x_axis_title] eq "Frames" && [dict get $layout x_axis_unit] eq ""} "Comparison plot invented physical time"
+    assert {[dict get $layout x_axis_labels] eq $expected} "Comparison plot did not use current-result frame windows"
+}
 set review_guard [::RMSXFlipbookTimeline::ResidueIdentity::load_pdb [file join $::env(RMSX_TEST_WORKDIR) fixtures upstream test_files 1UBQ.pdb]]
 set review_guard_drawn [molinfo $review_guard get drawn]
 set reviewer_stage 0
@@ -25,6 +35,7 @@ proc reviewer_next {} {
             set top $::RMSXFlipbookTimeline::Dashboard::top
             assert {[llength [$top.tabs tabs]] == 5 && [winfo exists $top.header.reviewer]} "Reviewer changed the five tabs or omitted toolbar"
             assert {[catch {::RMSXFlipbookTimeline::Reviewer::reopen different_build}]} "Different build reopened without rejection"
+            assert_reviewer_plot_frames $current
             ::RMSXFlipbookTimeline::Reviewer::quick_check
         }
         1 {
@@ -37,6 +48,7 @@ proc reviewer_next {} {
             assert {[llength [dict get $current molids]] == 9 && [dict get $current reviewer_preview]} "Multi preview did not load"
             assert {$::RMSXFlipbookTimeline::Dashboard::native_mask_selection eq {resid 25:26} && $::RMSXFlipbookTimeline::Dashboard::native_end == 26} "Multi inputs/mask not configured"
             assert {$::RMSXFlipbookTimeline::Dashboard::native_time_step eq "" && $::RMSXFlipbookTimeline::Dashboard::native_detected_time_step_ps eq ""} "Multi reviewer inferred physical time"
+            assert_reviewer_plot_frames $current
             set run [::RMSXFlipbookTimeline::Dashboard::easy_child actions].run
             assert {[$run cget -state] ne "disabled"} "Existing Run button is disabled for reviewer inputs"
             $run invoke
@@ -47,6 +59,7 @@ proc reviewer_next {} {
             assert {$::RMSXFlipbookTimeline::Dashboard::native_total_frames == 27} "Fresh Run included the topology frame in the trajectory count"
             foreach column [dict get $current dataset columns] {assert {![dict exists $column time]} "Fresh reviewer Run invented physical time"}
             assert {[molinfo $review_guard get drawn] eq $review_guard_drawn} "Fresh Run changed unrelated visibility"
+            assert_reviewer_plot_frames $current
             ::RMSXFlipbookTimeline::Reviewer::quick_check
         }
         4 {
