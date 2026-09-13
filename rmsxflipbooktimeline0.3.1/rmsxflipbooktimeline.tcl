@@ -87,6 +87,8 @@ namespace eval ::RMSXFlipbookTimeline {
             quiet_console 0
         }
         set state(basedir) $basedir
+        set state(rep) [::RMSXFlipbookTimeline::Style::default_rep]
+        set state(res) [::RMSXFlipbookTimeline::Style::default_resolution]
         set state(version) $version
     }
 

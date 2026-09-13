@@ -147,13 +147,13 @@ namespace eval ::RMSXFlipbookTimeline::GUI {
     proc quality_settings {name} {
         switch -- $name {
             Fast {
-                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res 16 thick 0.22]
+                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res [expr {[::RMSXFlipbookTimeline::Style::default_resolution] == 12 ? 8 : 16}] thick 0.22]
             }
             Balanced {
-                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res 32 thick 0.30]
+                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res [::RMSXFlipbookTimeline::Style::default_resolution] thick 0.30]
             }
             Screenshot {
-                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res 80 thick 0.30]
+                return [dict create rep [::RMSXFlipbookTimeline::Style::default_rep] res [expr {[::RMSXFlipbookTimeline::Style::default_resolution] == 12 ? 32 : 80}] thick 0.30]
             }
             default {
                 return [dict create]

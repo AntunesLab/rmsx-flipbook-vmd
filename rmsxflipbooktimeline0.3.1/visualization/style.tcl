@@ -189,6 +189,11 @@ namespace eval ::RMSXFlipbookTimeline::Style {
         if {[info commands vmdinfo] ne "" && [package vcompare [vmdinfo version] 2.0a1] < 0} {return NewCartoon}
         return NewTube
     }
+    proc default_resolution {} {
+        # Legacy NewCartoon tessellates a surface mesh rather than NewTube's
+        # tube primitives; 12 gives a smooth balanced mesh without excessive rays.
+        return [expr {[default_rep] eq "NewCartoon" ? 12 : 32}]
+    }
     proc representation_choices {} {
         set styles {NewTube NewCartoon Tube Ribbon Lines Licorice}
         if {[default_rep] eq "NewCartoon"} {set styles [lrange $styles 1 end]}
@@ -531,7 +536,7 @@ namespace eval ::RMSXFlipbookTimeline::Style {
         set defaults [dict create \
             rep [default_rep] \
             thick 0.30 \
-            res 32 \
+            res [default_resolution] \
             aspect 1.00 \
             spline 0 \
             color_method User2 \

@@ -87,5 +87,9 @@ representation active. The extension chooses `NewCartoon` with unit aspect ratio
 because legacy `Tube` does not modulate thickness from the residue user field.
 Native Intel 1.9.4a57 rendering verifies that `NewCartoon` responds to those values. It
 filters the displayed choices and checks the representation actually applied.
+The legacy NewCartoon quality presets use mesh resolutions 8 (Fast), 12
+(Balanced), and 32 (Screenshot); VMD 2.x keeps 16/32/80. Explicit API
+resolution settings remain honored. This avoids excessive mesh rendering cost
+on the older native CPU renderer.
 An explicitly unsupported request is an error rather than a successful-looking
 style change. These observations do not establish support on untested builds.
