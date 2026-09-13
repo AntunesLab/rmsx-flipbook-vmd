@@ -5,6 +5,10 @@ set folder [file join $::env(RMSX_TEST_WORKDIR) fixtures upstream test_files 1UB
 color Display Background blue
 set background [::RMSXFlipbookTimeline::Scene::read background]
 set palette [::RMSXFlipbookTimeline::Scene::read palette]
+set live_before {}
+foreach key {rendermode antialias} {
+    if {![catch {::RMSXFlipbookTimeline::Scene::read $key} value]} {dict set live_before $key $value}
+}
 set transparent [material settings Transparent]
 user add key u {puts CUSTOM_BEFORE}
 ::RMSXFlipbookTimeline::load_folder $folder
@@ -21,14 +25,21 @@ assert {[lindex [dict get $keys u] 0] eq {puts CUSTOM_BEFORE}} "Closing failed t
 assert {[molinfo list] eq {}} "Remove leaked plugin molecules"
 assert {[::RMSXFlipbookTimeline::Scene::read background] eq $background} "Remove failed to restore background"
 assert {[::RMSXFlipbookTimeline::Scene::read palette] eq $palette} "Remove failed to restore palette"
+dict for {key value} $live_before {
+    assert {[::RMSXFlipbookTimeline::Scene::read $key] eq $value} "Remove failed to restore $key"
+}
 assert {[material settings Transparent] eq $transparent} "Plugin modified shared Transparent material"
 ::RMSXFlipbookTimeline::load_folder $folder
 color Display Background red
+if {[dict exists $live_before antialias]} {display antialias off}
+if {[dict exists $live_before rendermode]} {display rendermode Normal}
 set red [::RMSXFlipbookTimeline::Scene::read background]
 ::RMSXFlipbookTimeline::Hotkeys::install
 user add key u {puts CUSTOM_AFTER}
 ::RMSXFlipbookTimeline::reset
 assert {[::RMSXFlipbookTimeline::Scene::read background] eq $red} "Cleanup overwrote later user background"
+if {[dict exists $live_before antialias]} {assert {[display get antialias] eq "off"} "Cleanup overwrote later antialias setting"}
+if {[dict exists $live_before rendermode]} {assert {[display get rendermode] eq "Normal"} "Cleanup overwrote later render mode"}
 assert {[lindex [dict get [::RMSXFlipbookTimeline::Hotkeys::key_bindings] u] 0] eq {puts CUSTOM_AFTER}} "Cleanup overwrote later hotkey edit"
 set order {}
 ::RMSXFlipbookTimeline::Effects::register test_first {lappend ::order first} operation 1

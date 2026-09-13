@@ -38,6 +38,8 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
         projection {{display get projection} {display projection}} \
         size {{display get size} {display resize}} \
         depthcue {{display get depthcue} {display depthcue}} \
+        rendermode {{display get rendermode} {display rendermode}} \
+        antialias {{display get antialias} {display antialias}} \
         shadows {{display get shadows} {display shadows}} \
         ambientocclusion {{display get ambientocclusion} {display ambientocclusion}} \
         axes {{axes location} {axes location}} \

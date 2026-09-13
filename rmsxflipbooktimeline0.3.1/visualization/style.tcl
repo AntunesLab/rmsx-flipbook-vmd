@@ -528,6 +528,13 @@ namespace eval ::RMSXFlipbookTimeline::Style {
         foreach {key value} {projection Orthographic axes Off stage Off background white depthcue off} {
             ::RMSXFlipbookTimeline::Scene::apply $key $value
         }
+        # Prefer smooth interactive shading where the native display supports it.
+        # Keep these queryable settings in scene leases so Remove preserves any
+        # later user changes, and a headless/older display remains usable.
+        if {![catch {display get rendermodes} modes] && [lsearch -exact $modes GLSL] >= 0} {
+            catch {::RMSXFlipbookTimeline::Scene::apply rendermode GLSL}
+        }
+        catch {::RMSXFlipbookTimeline::Scene::apply antialias on}
         return $applied
     }
 

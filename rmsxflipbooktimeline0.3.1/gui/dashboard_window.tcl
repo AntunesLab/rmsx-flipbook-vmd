@@ -2841,6 +2841,18 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         return $native_total_frames
     }
 
+    proc slice_number_font {} {
+        set options [font actual TkDefaultFont]
+        set size [dict get $options -size]
+        dict set options -size [expr {($size < 0 ? -1 : 1) * max(1, round(abs($size) * 0.9))}]
+        if {[lsearch -exact [font names] RMSXSliceNumberFont] < 0} {
+            font create RMSXSliceNumberFont {*}$options
+        } else {
+            font configure RMSXSliceNumberFont {*}$options
+        }
+        return RMSXSliceNumberFont
+    }
+
     proc refresh_slice_preview {} {
         variable top
         set settings [easy_child settings]
@@ -2859,13 +2871,12 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {$width < 80} {
             set width 360
         }
-        set height [winfo height $canvas]
-        if {$height < 18} {
-            set height 18
-        }
+        set number_font [slice_number_font]
         set x0 4
         set y0 2
-        set bar_h [expr {max(9, min(12, $height - 4))}]
+        set bar_h [expr {max(12, [font metrics $number_font -linespace] + 4)}]
+        set height [expr {$bar_h + 4}]
+        if {[$canvas cget -height] != $height} {$canvas configure -height $height}
         set bar_w [expr {max(24, $width - 8)}]
 
         if {![dict get $plan known]} {
@@ -2897,7 +2908,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
                 $canvas create text [expr {($sx0 + $sx1) / 2.0}] [expr {$y0 + ($bar_h / 2.0)}] \
                     -text [expr {$i + 1}] \
                     -anchor center \
-                    -font TkDefaultFont \
+                    -font $number_font \
                     -fill black
             }
         }
