@@ -2,6 +2,8 @@
 
 ## 0.3.1 — private review candidate
 
+- Skip ray-traced lighting in temporary silhouette-fit proofs, while retaining
+  the requested shadows and ambient occlusion in final exported images.
 - Restore residue-dependent thickness on VMD 1.9.4 using NewCartoon instead
   of the non-modulating legacy Tube fallback. Keep NewTube on VMD 2.x.
 - Remove oversized Aqua notebook content insets within the plugin and lay out
