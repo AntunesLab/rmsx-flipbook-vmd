@@ -4047,7 +4047,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid $native_panel.note -row 1 -column 0 -sticky ew -pady {4 0}
         grid columnconfigure $native_panel 0 -weight 1
 
-        foreach col {0 1 2 3} {
+        foreach col {0 1} {
             grid columnconfigure $utilities $col -weight 1
         }
         ttk::button $utilities.plot -text "Full Plot Window" -command ::RMSXFlipbookTimeline::Dashboard::open_full_plot_window
@@ -4057,16 +4057,15 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         ttk::button $utilities.multimodel -text "Multi-model PDB" -command ::RMSXFlipbookTimeline::Dashboard::export_multimodel_pdb
         ttk::button $utilities.load_manifest -text "Load Manifest" -command ::RMSXFlipbookTimeline::Dashboard::load_manifest_file
         ttk::button $utilities.show_manifest -text "Show Manifest" -command ::RMSXFlipbookTimeline::Dashboard::show_manifest
-        grid $utilities.plot -row 0 -column 0 -sticky ew -padx {0 8} -pady 3
-        grid $utilities.heatmap -row 0 -column 1 -sticky ew -padx {0 8} -pady 3
-        grid $utilities.report -row 0 -column 2 -sticky ew -padx {0 8} -pady 3
-        grid $utilities.repair -row 0 -column 3 -sticky ew -pady 3
-        grid $utilities.multimodel -row 1 -column 0 -sticky ew -padx {0 8} -pady 3
-        grid $utilities.load_manifest -row 1 -column 1 -sticky ew -padx {0 8} -pady 3
-        grid $utilities.show_manifest -row 1 -column 2 -sticky ew -padx {0 8} -pady 3
+        foreach {name row col} {
+            plot 0 0 heatmap 0 1 report 1 0 repair 1 1
+            multimodel 2 0 load_manifest 2 1 show_manifest 3 0
+        } {
+            grid $utilities.$name -row $row -column $col -sticky ew -padx {0 8} -pady 3
+        }
         if {$experimental} {
             ttk::button $utilities.hotkeys -text "Install Hotkeys" -command ::RMSXFlipbookTimeline::Dashboard::install_dashboard_hotkeys
-            grid $utilities.hotkeys -row 1 -column 3 -sticky ew -pady 3
+            grid $utilities.hotkeys -row 3 -column 1 -sticky ew -pady 3
 
             foreach {row label var} {
                 0 "Proc" timeline_residue_function
@@ -4139,6 +4138,17 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
     }
 
     proc configure_dashboard_styles {} {
+        # Older Aqua themes reserve 54 horizontal pixels for notebook padding.
+        # Keep the native tabs, but scope compact content padding to this plugin.
+        ttk::style configure RMSX.TNotebook -padding 0
+        if {[ttk::style theme use] eq "aqua"} {
+            # Aqua's native client element adds another fixed inset. Use the
+            # plain content border while retaining native notebook tab elements.
+            if {[lsearch -exact [ttk::style element names] RMSX.Notebook.client] < 0} {
+                ttk::style element create RMSX.Notebook.client from default Notebook.client
+            }
+            ttk::style layout RMSX.TNotebook {RMSX.Notebook.client -sticky nswe}
+        }
         foreach {name base} {RMSX.TButton TButton RMSX.Primary.TButton TButton RMSX.TCheckbutton TCheckbutton RMSX.TRadiobutton TRadiobutton} {
             ttk::style configure $name -font TkDefaultFont -padding {5 3}
         }
@@ -4195,7 +4205,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         grid $top.header.details -row 0 -column 1 -sticky e
         grid columnconfigure $top.header 0 -weight 1
         bind $top.header.title <Configure> {::RMSXFlipbookTimeline::Dashboard::fit_result_title %w}
-        set tabs [ttk::notebook $top.tabs]
+        set tabs [ttk::notebook $top.tabs -style RMSX.TNotebook]
         grid $tabs -row 1 -column 0 -sticky nsew -padx 8 -pady {0 6}
         foreach {name label} {easy "RMSX / Flipbook" matrix Timeline export Export advanced Advanced help Help} {
             ttk::frame $tabs.$name -padding 6

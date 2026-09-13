@@ -36,7 +36,9 @@ set fp [open $startup w]; puts -nonewline $fp $original_config; close $fp
 exec $::env(RMSX_TEST_PYTHON) [file join $repo scripts install.py] install --prefix $install_prefix --startup-file $startup
 source -encoding utf-8 $startup
 assert {$::qa_preserved_config eq "yes"} "Installer discarded existing startup content"
+set notebook_style_before [ttk::style configure TNotebook]
 menu rmsxflipbooktimeline on
+assert {[ttk::style configure TNotebook] eq $notebook_style_before} "Dashboard changed the global notebook style"
 set w .rmsxflipbooktimeline_dashboard
 assert {[winfo exists $w]} "Registered VMD menu did not open dashboard"
 assert {[string first $install_prefix [::RMSXFlipbookTimeline::state_get basedir]] == 0} "GUI did not use clean installed package"

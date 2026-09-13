@@ -83,7 +83,9 @@ VMD-wide bindings.
 The installed ARM VMD1.9.4a57 build does not support `NewTube`; the tested
 VMD2.0.0a7 and VMD2.0b1 builds do. An unsupported `mol modstyle` request can print
 an error without producing a Tcl exception and leave an old `Lines`
-representation active. The extension chooses `Tube` for the older build,
+representation active. The extension chooses `NewCartoon` with unit aspect ratio for the older build,
+because legacy `Tube` does not modulate thickness from the residue user field.
+Native Intel 1.9.4a57 rendering verifies that `NewCartoon` responds to those values. It
 filters the displayed choices and checks the representation actually applied.
 An explicitly unsupported request is an error rather than a successful-looking
 style change. These observations do not establish support on untested builds.

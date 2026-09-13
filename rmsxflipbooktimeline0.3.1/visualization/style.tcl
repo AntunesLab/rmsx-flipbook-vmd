@@ -184,12 +184,14 @@ namespace eval ::RMSXFlipbookTimeline::Style {
     }
 
     proc default_rep {} {
-        if {[info commands vmdinfo] ne "" && [package vcompare [vmdinfo version] 2.0a1] < 0} {return Tube}
+        # VMD 1.9.4 lacks NewTube. Its Tube ignores per-residue user values;
+        # NewCartoon with the existing unit aspect ratio supports modulation.
+        if {[info commands vmdinfo] ne "" && [package vcompare [vmdinfo version] 2.0a1] < 0} {return NewCartoon}
         return NewTube
     }
     proc representation_choices {} {
         set styles {NewTube NewCartoon Tube Ribbon Lines Licorice}
-        if {[default_rep] eq "Tube"} {set styles [lrange $styles 1 end]}
+        if {[default_rep] eq "NewCartoon"} {set styles [lrange $styles 1 end]}
         return $styles
     }
 
