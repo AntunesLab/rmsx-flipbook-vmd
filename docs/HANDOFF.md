@@ -1,6 +1,6 @@
-# Developer reviewer handoff — 0.3.1
+# Beta developer handoff — 0.3.1
 
-**Status: public review source; versioned one-file download pending.** Share the generated
+**Status: public beta source; versioned one-file download pending.** Share the generated
 review packet directly with the agreed reviewer. Use the exact source revision
 recorded in its build manifest; do not substitute a branch checkout, an earlier
 archive, or a launcher from another packet.
@@ -46,9 +46,7 @@ if they include private dataset names or local account paths.
 - Run and save the Quick Check report. Export a figure if rendering is
   available, then resize the viewer and confirm that it repaints.
 
-A current-launcher screenshot and recording belong in the final packet only
-after capture from that exact build. The scientific figures in QUICK_START
-are explicitly labeled as earlier 0.3 examples; they do not qualify this launcher.
+The [30-second video and HD Tachyon figure](media/README.md) include their recorded build and settings. They do not substitute for qualification of a later artifact.
 
 ## Copy-ready invitation — not sent
 
