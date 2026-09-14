@@ -10,7 +10,6 @@ THIRD_PARTY_NOTICES.md
 docs/HANDOFF.md
 docs/FIRST_TRY.md
 docs/MAINTAINING.md
-docs/MEETING.md
 docs/METHODS.md
 docs/PUBLICATION_AUDIT.md
 docs/QUICK_START.md
@@ -305,7 +304,6 @@ rmsxflipbooktimeline0.3.1/tests/smoke_principal_view.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_highlight_visibility.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_mouse_rotation_rigidity.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_input_view_preservation.tcl
-docs/LIVE_VIEW_POLISH.md
 rmsxflipbooktimeline0.3.1/tests/smoke_live_resize.tcl
 
 rmsxflipbooktimeline0.3.1/tests/smoke_dashboard_autopopulate.tcl

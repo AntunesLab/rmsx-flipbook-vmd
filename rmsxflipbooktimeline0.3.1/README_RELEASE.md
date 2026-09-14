@@ -1,4 +1,4 @@
-# RMSX / Flipbook Timeline 0.3 review release
+# RMSX / Flipbook Timeline 0.3.1 beta
 
 The active native VMD Tcl package is `rmsxflipbooktimeline 0.3.1`. VERSION in this
 directory is the authoritative version. There is one active source tree.

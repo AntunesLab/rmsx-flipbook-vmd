@@ -105,12 +105,11 @@ cannot be called ready to merge.
 
 ## Release and handover
 
-Integrate the private review branches into the agreed repository branch. Use
+Integrate reviewed changes into the release branch. Use
 the exact source revision recorded in the matching build manifest, rather than
 assuming that a branch name identifies the delivered build. Freeze a clean commit, generate
 both artifacts together, retain their hashes and full test receipts, and pass
-all targets in the handoff gate. Public visibility and release publication are
-separate final actions after the audit and qualification pass.
+all targets in the handoff gate. Publish versioned release assets only after the audit and qualification pass.
 
 Have a second developer follow only these documents to launch the artifact,
 run Quick Check and the full test harness, diagnose a small failing case, make a
