@@ -25,6 +25,21 @@ result is currently shown and exported.
    residue/time. VMD provides the structural context. Use the pop-out heatmap
    when more space is helpful.
 
+## Already loaded a simulation in VMD?
+
+Open RMSX/Flipbook with one trajectory-bearing molecule loaded and empty input
+fields. The dashboard fills in its original topology and trajectory filenames,
+selects its single chain/group (or all chains), and selects that molecule by ID
+for Interactive Timeline. If Output is empty, its parent defaults to the
+trajectory directory; change it if that location is not writable.
+
+This is file autopopulation: RMSX still reads the original trajectory file,
+not edited in-memory coordinates or VMD's loaded-frame subset/stride. Set the
+RMSX frame range explicitly when needed. Existing inputs, demo settings and
+results are preserved. Multiple simulations, concatenated trajectory files,
+missing source files, and unrecognized file formats require manual selection.
+Plugin-owned flipbook molecules are excluded from detection.
+
 ## Viewing existing results
 
 Choose an existing RMSX result folder and load it. Loading data does not imply

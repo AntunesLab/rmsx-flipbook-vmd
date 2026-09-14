@@ -465,6 +465,11 @@
       "id": "live_resize",
       "script": "smoke_live_resize.tcl",
       "capability": "gui"
+    },
+    {
+      "id": "dashboard_autopopulate",
+      "script": "smoke_dashboard_autopopulate.tcl",
+      "capability": "gui"
     }
   ]
 }

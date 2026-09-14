@@ -4295,6 +4295,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
 
     proc show {} {
         set window [build]
+        adopt_loaded_simulation
         restore_rotation_on_map $window
         return $window
     }
@@ -4616,6 +4617,76 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         set text [string trim $end_display]
         if {[string equal -nocase $text Last]} { set native_end -1 } else { set native_end $text }
         refresh_dashboard
+    }
+
+    # Read VMD's loader metadata, never infer filenames from a molecule's name.
+    # RMSX still reads the original files; Timeline uses the explicit live ID.
+    proc loaded_simulation_inputs {} {
+        if {[info commands molinfo] eq ""} {return {}}
+        set owned [::RMSXFlipbookTimeline::state_get molids {}]
+        set candidates {}
+        foreach id [molinfo list] {
+            if {$id in $owned} {continue}
+            if {![catch {molinfo $id get {numatoms numframes}} counts] &&
+                [lindex $counts 0] > 0 && [lindex $counts 1] > 1} {lappend candidates $id}
+        }
+        if {[llength $candidates] != 1} {return {}}
+        set id [lindex $candidates 0]
+        if {[catch {molinfo $id get {filename filetype}} metadata]} {return {}}
+        lassign $metadata files types
+        if {[llength $files] != [llength $types]} {return {}}
+        set topology ""
+        set trajectories {}
+        foreach path $files type $types {
+            # Molfile plugins may report each load as a singleton list.
+            if {![file isfile $path] && [llength $path] == 1} {set path [lindex $path 0]}
+            if {![file isfile $path]} {return {}}
+            set path [file normalize $path]
+            set type [string tolower $type]
+            if {$topology eq "" && $type in {pdb psf gro mol2 mae parm7}} {set topology $path}
+            if {$type in {dcd xtc trr netcdf crd}} {lappend trajectories $path}
+        }
+        # Several coordinate files must not silently become just the last one.
+        if {$topology eq "" || [llength $trajectories] != 1} {return {}}
+        set groups [::RMSXFlipbookTimeline::NativeAnalysis::chain_groups_for_molecule $id "protein or nucleic"]
+        if {$groups eq {}} {return {}}
+        return [dict create molid $id name [molinfo $id get name] topology $topology \
+            trajectory [lindex $trajectories 0] groups $groups]
+    }
+
+    proc adopt_loaded_simulation {} {
+        variable native_topology
+        variable native_trajectory
+        variable native_output
+        variable native_chain
+        variable native_chain_groups
+        variable native_chain_groups_topology
+        variable timeline_molid
+        variable source_type
+        # Opening/reopening must never overwrite an explicit or demo setup.
+        if {$source_type ne "new_analysis" || $native_topology ne "" || $native_trajectory ne "" ||
+            [::RMSXFlipbookTimeline::Operation::running] ||
+            [::RMSXFlipbookTimeline::Results::get] ne {}} {return 0}
+        if {[catch {loaded_simulation_inputs} input] || $input eq {}} {return 0}
+        set native_topology [dict get $input topology]
+        set native_trajectory [dict get $input trajectory]
+        if {$native_output eq ""} {set native_output [file dirname $native_trajectory]}
+        set timeline_molid "[dict get $input molid]: [file tail [dict get $input name]]"
+        set native_chain_groups {}
+        foreach group [dict get $input groups] {dict set native_chain_groups [dict get $group label] $group}
+        set native_chain_groups_topology $native_topology
+        set native_chain all
+        if {[dict size $native_chain_groups] == 1} {set native_chain [lindex [dict keys $native_chain_groups] 0]}
+        foreach name {native_topology native_trajectory native_output native_chain timeline_molid} {
+            ::RMSXFlipbookTimeline::state_set $name [set $name]
+        }
+        if {[info commands winfo] ne ""} {
+            set widget [easy_child settings].native_chain_entry
+            if {[winfo exists $widget]} {$widget configure -values [linsert [dict keys $native_chain_groups] 0 all]}
+        }
+        refresh_dashboard
+        set_status "Inputs from VMD molecule [dict get $input molid]: [file tail [dict get $input name]].\nRMSX reads the original trajectory file (including frames not loaded into VMD). Timeline uses the live molecule. Output parent: $native_output"
+        return 1
     }
 
     proc molecule_choices {} {

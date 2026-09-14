@@ -2,6 +2,11 @@
 
 ## 0.3.1 — private review candidate
 
+- Autopopulate empty dashboard inputs from one loaded VMD simulation, including
+  chain choices and an explicit Timeline molecule ID. Preserve existing input
+  choices and refuse ambiguous or concatenated trajectory sources. RMSX retains
+  its original file-based calculation behavior.
+
 - Fix explicit `-method Tachyon` PNG/SVG exports to use VMD's bundled
   executable at the requested resolution without resizing the OpenGL window.
   Preserve camera, visibility, and display settings on success and failure.
