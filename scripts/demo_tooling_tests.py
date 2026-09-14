@@ -216,7 +216,7 @@ class BuildTests(unittest.TestCase):
         again, _ = build_release.release_artifacts(snapshot, PACKAGE, VERSION, "revision", True)
         self.assertEqual(artifacts, again)
         self.assertFalse(manifest["release_qualified"])
-        self.assertEqual(manifest["distribution_status"], "private_review_build")
+        self.assertEqual(manifest["distribution_status"], "beta_review_build")
         self.assertNotIn("unrelated.txt", manifest["demo_payload_files"])
         self.assertNotIn(f"{PACKAGE}/tests/excluded.tcl", manifest["demo_payload_files"])
         zipped = artifacts[f"rmsx-flipbook-vmd-{VERSION}-review.zip"]
