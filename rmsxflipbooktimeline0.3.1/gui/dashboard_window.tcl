@@ -4982,7 +4982,7 @@ namespace eval ::RMSXFlipbookTimeline::Dashboard {
         if {[info commands winfo] eq "" || ![winfo exists $top] || ![winfo ismapped $top]} {return}
         # Never redraw a partially loaded or temporarily reframed operation.
         set exporting [expr {[info exists ::RMSXFlipbookTimeline::Render::active] && $::RMSXFlipbookTimeline::Render::active > 0}]
-        if {!$scene_refresh_guard && !$exporting && ![::RMSXFlipbookTimeline::Operation::running]} {
+        if {!$scene_refresh_guard && !$exporting && !$::RMSXFlipbookTimeline::Scene::resizing && ![::RMSXFlipbookTimeline::Operation::running]} {
             if {[catch {::RMSXFlipbookTimeline::Hotkeys::loaded_molids} ids]} {return}
             incr scene_refresh_guard
             try {

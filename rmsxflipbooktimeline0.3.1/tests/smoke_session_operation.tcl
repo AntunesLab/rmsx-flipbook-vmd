@@ -28,14 +28,26 @@ set mock_size {1024 1024}
 set mock_pending {}
 set mock_updates 0
 set mock_scale 1
+set mock_drawing 1
+set mock_resize_calls 0
+set mock_resize_fail 0
 proc display {args} {
     switch -- [lindex $args 0] {
         get {
             if {[lindex $args 1] eq "rendermode"} {return Normal}
             return $::mock_size
         }
-        resize {set ::mock_pending [list [expr {[lindex $args 1]*$::mock_scale}] [expr {[lindex $args 2]*$::mock_scale}]]}
+        resize {
+            incr ::mock_resize_calls
+            if {$::mock_resize_fail} {error "Injected resize failure"}
+            expect {!$::mock_drawing} "Cocoa resize ran with drawing enabled"
+            set ::mock_pending [list [expr {[lindex $args 1]*$::mock_scale}] [expr {[lindex $args 2]*$::mock_scale}]]}
         update {
+            switch -- [lindex $args 1] {
+                status {return $::mock_drawing}
+                off {set ::mock_drawing 0; return}
+                on {set ::mock_drawing 1; return}
+            }
             incr ::mock_updates
             if {$::mock_updates >= 2} {set ::mock_size $::mock_pending}
         }
@@ -51,6 +63,14 @@ set mock_scale 2
 expect {$mock_size eq {800 600}} "Retina resize did not converge to requested framebuffer size"
 set rounded [::RMSXFlipbookTimeline::Scene::resize_display 801 601]
 expect {$rounded eq {802 602}} "Native one-pixel rounding was not reported accurately"
+expect {$mock_drawing && !$::RMSXFlipbookTimeline::Scene::resizing} "Resize leaked its guard"
+set mock_drawing 0
+::RMSXFlipbookTimeline::Scene::resize_display 600 500
+expect {!$mock_drawing} "Resize enabled previously disabled drawing"
+set mock_drawing 1
+set mock_resize_fail 1
+expect {[catch {::RMSXFlipbookTimeline::Scene::resize_display 700 500}]} "Injected resize error was swallowed"
+expect {$mock_drawing && !$::RMSXFlipbookTimeline::Scene::resizing} "Failed resize leaked its guard"
 rename display {}
 rename tk {}
 puts "Scene render-mode and asynchronous resize regressions passed"

@@ -460,6 +460,11 @@
       "id": "input_view_preservation",
       "script": "smoke_input_view_preservation.tcl",
       "capability": "gui"
+    },
+    {
+      "id": "live_resize",
+      "script": "smoke_live_resize.tcl",
+      "capability": "gui"
     }
   ]
 }

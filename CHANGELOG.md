@@ -2,6 +2,10 @@
 
 ## 0.3.1 — private review candidate
 
+- Suspend Cocoa drawing while programmatic native resizing settles, restoring
+  the previous update state on success or failure. Prevent the dashboard's
+  auto-fit timer from changing the view midway through a resize. Add live
+  OpenGL framebuffer checks alongside the independent Tachyon export tests.
 - Report measured export dimensions when Retina rounds an odd pixel size;
   use those dimensions for fitting and annotations.
 - Wait for stable native display dimensions on Cocoa as well as X11 before

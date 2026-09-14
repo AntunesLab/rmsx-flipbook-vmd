@@ -34,6 +34,7 @@ namespace eval ::RMSXFlipbookTimeline::Effects {
 # property that can be read; restore it only if it still has our last value.
 namespace eval ::RMSXFlipbookTimeline::Scene {
     variable leases {}
+    variable resizing 0
     variable properties [dict create \
         projection {{display get projection} {display projection}} \
         size {{display get size} {display resize}} \
@@ -54,6 +55,25 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
     # immediately can use the previous size; restoring matrices before the
     # resize completes likewise leaves the caller's scene altered.
     proc resize_display {width height} {
+        variable resizing
+        # Cocoa can draw into an incompletely resized OpenGL surface when the
+        # event pump below runs with drawing enabled. Keep processing native
+        # events, but suspend drawing until the resize has settled. Preserve
+        # the caller's update state even when resizing fails.
+        set guarded [expr {[info commands tk] ne "" && [tk windowingsystem] eq "aqua"}]
+        if {$guarded} {
+            set updating [display update status]
+            display update off
+        }
+        incr resizing
+        try {
+            return [resize_display_native $width $height]
+        } finally {
+            incr resizing -1
+            if {$guarded} {display update [expr {$updating ? "on" : "off"}]}
+        }
+    }
+    proc resize_display_native {width height} {
         set request [list $width $height]
         for {set correction 0} {$correction < 8} {incr correction} {
             display resize {*}$request
