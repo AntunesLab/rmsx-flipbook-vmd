@@ -27,13 +27,14 @@ proc tk {args} {return aqua}
 set mock_size {1024 1024}
 set mock_pending {}
 set mock_updates 0
+set mock_scale 1
 proc display {args} {
     switch -- [lindex $args 0] {
         get {
             if {[lindex $args 1] eq "rendermode"} {return Normal}
             return $::mock_size
         }
-        resize {set ::mock_pending [lrange $args 1 end]}
+        resize {set ::mock_pending [list [expr {[lindex $args 1]*$::mock_scale}] [expr {[lindex $args 2]*$::mock_scale}]]}
         update {
             incr ::mock_updates
             if {$::mock_updates >= 2} {set ::mock_size $::mock_pending}
@@ -45,6 +46,9 @@ proc display {args} {
 ::RMSXFlipbookTimeline::Scene::write rendermode Normal
 ::RMSXFlipbookTimeline::Scene::resize_display 600 500
 expect {$mock_size eq {600 500} && $mock_updates >= 4} "Cocoa resize returned before stable requested dimensions"
+set mock_scale 2
+::RMSXFlipbookTimeline::Scene::resize_display 800 600
+expect {$mock_size eq {800 600}} "Retina resize did not converge to requested framebuffer size"
 rename display {}
 rename tk {}
 puts "Scene render-mode and asynchronous resize regressions passed"

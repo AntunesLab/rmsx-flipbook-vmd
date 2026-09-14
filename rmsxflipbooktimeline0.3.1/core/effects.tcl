@@ -54,19 +54,32 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
     # immediately can use the previous size; restoring matrices before the
     # resize completes likewise leaves the caller's scene altered.
     proc resize_display {width height} {
-        display resize $width $height
-        if {[info commands tk] ne ""} {
+        set request [list $width $height]
+        for {set correction 0} {$correction < 8} {incr correction} {
+            display resize {*}$request
+            if {[info commands tk] eq ""} {return}
+            set previous {}
             set stable 0
             for {set attempt 0} {$attempt < 100} {incr attempt} {
                 display update ui
-                if {[display get size] eq [list $width $height]} {
-                    incr stable
-                } else {set stable 0}
-                if {$stable >= 3} {return}
+                set actual [display get size]
+                if {$actual eq $previous} {incr stable} else {set stable 0}
+                set previous $actual
+                if {$stable >= 3} {break}
                 after 10
             }
-            error "Display resize did not reach ${width}x${height}: [display get size]"
+            if {$actual eq [list $width $height]} {return}
+            # Cocoa/Retina can interpret resize in logical points while get
+            # size reports framebuffer pixels. Correct using observed sizes,
+            # rather than assuming a particular monitor's backing scale.
+            lassign $actual aw ah
+            if {$aw <= 0 || $ah <= 0} {break}
+            set next [list [expr {max(1,round([lindex $request 0]*double($width)/$aw))}] \
+                [expr {max(1,round([lindex $request 1]*double($height)/$ah))}]]
+            if {$next eq $request} {break}
+            set request $next
         }
+        error "Display resize did not reach ${width}x${height}: [display get size]"
     }
     proc write {key value} {
         variable properties
