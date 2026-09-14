@@ -50,12 +50,12 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
         variable properties
         return [uplevel #0 [lindex [dict get $properties $key] 0]]
     }
-    # X11 resize requests are asynchronous. Reading dimensions or rendering
+    # Native resize requests are asynchronous, including Cocoa. Reading dimensions or rendering
     # immediately can use the previous size; restoring matrices before the
     # resize completes likewise leaves the caller's scene altered.
     proc resize_display {width height} {
         display resize $width $height
-        if {[info commands tk] ne "" && [tk windowingsystem] eq "x11"} {
+        if {[info commands tk] ne ""} {
             set stable 0
             for {set attempt 0} {$attempt < 100} {incr attempt} {
                 display update ui
@@ -70,6 +70,8 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
     }
     proc write {key value} {
         variable properties
+        # Reapplying Normal can hang the VMD 2.0.1a1 text display.
+        if {$key eq "rendermode" && [read $key] eq $value} {return}
         set command [lindex [dict get $properties $key] 1]
         if {$key eq "size"} {return [resize_display {*}$value]}
         lappend command $value

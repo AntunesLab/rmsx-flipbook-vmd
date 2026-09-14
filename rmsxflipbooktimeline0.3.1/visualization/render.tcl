@@ -385,7 +385,11 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         display update
         render [dict get $options method] $path
         if {![file isfile $path]} {error "VMD renderer did not create an image"}
-        return [tga_content_bounds $path [dict get $options background]]
+        set image [tga_content_bounds $path [dict get $options background]]
+        if {[dict get $image width] != $width || [dict get $image height] != $height} {
+            error "Renderer used [dict get $image width]x[dict get $image height] instead of requested ${width}x${height}"
+        }
+        return $image
     }
     proc verify_residue_thickness {molid directory {checkpoint ""}} {
         set snapshot [::RMSXFlipbookTimeline::Scene::snapshot]

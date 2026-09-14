@@ -19,3 +19,32 @@ expect {[dict get $second id] > $id} "Result IDs must be monotonic"
 ::RMSXFlipbookTimeline::Results::clear
 expect {[::RMSXFlipbookTimeline::Results::get] eq {}} "Result clear failed"
 puts "RMSX Flipbook Timeline session operation smoke passed"
+
+# Model Cocoa's delayed framebuffer resize and the Linux text-display mode
+# setter that must not be called when restoring an unchanged mode.
+source -encoding utf-8 [file join [file dirname [file dirname [info script]]] core effects.tcl]
+proc tk {args} {return aqua}
+set mock_size {1024 1024}
+set mock_pending {}
+set mock_updates 0
+proc display {args} {
+    switch -- [lindex $args 0] {
+        get {
+            if {[lindex $args 1] eq "rendermode"} {return Normal}
+            return $::mock_size
+        }
+        resize {set ::mock_pending [lrange $args 1 end]}
+        update {
+            incr ::mock_updates
+            if {$::mock_updates >= 2} {set ::mock_size $::mock_pending}
+        }
+        rendermode {error "Redundant native render-mode setter invoked"}
+        default {error "Unexpected display command $args"}
+    }
+}
+::RMSXFlipbookTimeline::Scene::write rendermode Normal
+::RMSXFlipbookTimeline::Scene::resize_display 600 500
+expect {$mock_size eq {600 500} && $mock_updates >= 4} "Cocoa resize returned before stable requested dimensions"
+rename display {}
+rename tk {}
+puts "Scene render-mode and asynchronous resize regressions passed"

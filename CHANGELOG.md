@@ -2,6 +2,11 @@
 
 ## 0.3.1 — private review candidate
 
+- Wait for stable native display dimensions on Cocoa as well as X11 before
+  rendering; reject stale-size images rather than comparing incompatible
+  thickness proofs. Avoid reapplying unchanged render modes, which can hang
+  the Linux VMD text display during scene restoration.
+
 - Skip ray-traced lighting in temporary silhouette-fit proofs, while retaining
   the requested shadows and ambient occlusion in final exported images.
 - Restore residue-dependent thickness on VMD 1.9.4 using NewCartoon instead
