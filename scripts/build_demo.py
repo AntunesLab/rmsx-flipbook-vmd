@@ -129,7 +129,7 @@ def generate(payload: dict[str, bytes], package_name: str, version: str,
     files[f"{package_name}/BUILD_ID"] = (build_id + "\n").encode("ascii")
     evidence = {"schema": 1, "package": "rmsxflipbooktimeline", "version": version,
                 "build_id": build_id, "source_revision": revision,
-                "dirty_review_snapshot": dirty, "distribution_status": "private_review_build",
+                "dirty_review_snapshot": dirty, "distribution_status": "beta_review_build",
                 "release_qualified": False,
                 "files": {name: hashlib.sha256(data).hexdigest() for name, data in sorted(sources.items())}}
     files["REVIEW_BUILD.json"] = (json.dumps(evidence, indent=2, sort_keys=True) + "\n").encode("utf-8")

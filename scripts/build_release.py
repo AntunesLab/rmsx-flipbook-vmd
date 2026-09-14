@@ -24,7 +24,7 @@ def release_artifacts(snapshot, package_name, version, revision, dirty):
     contents["REVIEW_BUILD.json"] = demo.files["REVIEW_BUILD.json"]
     manifest = {"schema": 2, "package": "rmsxflipbooktimeline", "version": version,
                 "source_revision": revision, "dirty_review_snapshot": dirty,
-                "distribution_status": "private_review_build", "release_qualified": False,
+                "distribution_status": "beta_review_build", "release_qualified": False,
                 "build_id": demo.build_id,
                 "demo_payload_files": sorted(demo.source_files),
                 "files": {n: hashlib.sha256(data).hexdigest() for n, data in sorted(contents.items())}}

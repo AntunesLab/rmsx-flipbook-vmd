@@ -4,7 +4,7 @@ You need graphical **VMD with Tcl/Tk 8.6**. See [tested builds and limitations](
 
 ## 1. Open the example
 
-The public one-file download is pending. With the supplied beta file:
+**[Download TRY_RMSX_0.3.1.vmd](https://github.com/AntunesLab/rmsx-flipbook-vmd/releases/download/v0.3.1-beta.1/TRY_RMSX_0.3.1.vmd)**, then:
 
 1. Save **`TRY_RMSX_0.3.1.vmd`** anywhere on your computer.
 2. In VMD, choose **File → Load Visualization State…**.

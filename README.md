@@ -6,7 +6,7 @@ Compare trajectory windows side by side, with residue-level color and thickness,
 
 ## Try it in VMD
 
-The one-file beta download is not published yet. If you already have the supplied beta file:
+**[Download TRY_RMSX_0.3.1.vmd](https://github.com/AntunesLab/rmsx-flipbook-vmd/releases/download/v0.3.1-beta.1/TRY_RMSX_0.3.1.vmd)** · [Beta release notes](https://github.com/AntunesLab/rmsx-flipbook-vmd/releases/tag/v0.3.1-beta.1)
 
 1. Save **`TRY_RMSX_0.3.1.vmd`**.
 2. In VMD, choose **File → Load Visualization State…**.
