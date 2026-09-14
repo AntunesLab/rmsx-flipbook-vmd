@@ -18,6 +18,18 @@ On Windows, click **Open fresh VMD** if prompted to enable residue thickness.
 
 [Quick start](docs/QUICK_START.md) · [Optional source installation](rmsxflipbooktimeline0.3.1/INSTALL.md)
 
+## Tested systems
+
+| System | VMD build | Native test suite |
+|---|---|---|
+| macOS · Apple Silicon | 2.0b1 | 80/80 passed |
+| macOS · Apple Silicon | 2.0.0a7-pre2 | 80/80 passed |
+| macOS · Intel | 1.9.4a57 | 80/80 passed |
+| Windows · x64 | 2.0.0a6 | 80/80 passed |
+| Linux · x64 | 2.0.1a1 | 80/80 passed |
+
+These full-suite results cover revision `a4c60d3`. Later changes have focused regression checks; full qualification of the final beta download is pending. [Test evidence and limitations](docs/SUPPORT.md).
+
 ## See it in 30 seconds
 
 [![Watch the RMSX / Flipbook demo](docs/media/demo-thumbnail.png)](https://github.com/AntunesLab/rmsx-flipbook-vmd/raw/refs/heads/main/docs/media/demo-30s-1440p.mp4)
