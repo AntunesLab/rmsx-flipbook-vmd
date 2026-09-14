@@ -20,13 +20,15 @@ checks across four platform families. Every row is **PENDING for 0.3.1** until
 its final artifact has complete matching receipts; an installed application or
 an older successful test run is not a pass for this artifact.
 
-| Gate target | Required VMD distribution | Current evidence boundary |
+| Gate target | VMD distribution tested | Retained full-suite evidence |
 |---|---|---|
-| `macos-arm64-2.0b1` | Apple Silicon 2.0b1 | 61 backend tests passed at `afa2c22`; final artifact GUI/manual qualification pending |
-| `macos-arm64-2.0.0a7-pre2` | Apple Silicon 2.0.0a7-pre2 | 61 backend tests passed at `afa2c22`; final artifact GUI/manual qualification pending |
-| `macos-intel-1.9.4a57` | Intel macOS 1.9.4a57 | Licensed graphical runner and artifact qualification pending |
-| `windows-x64-2.0.0a6` | Windows x64 2.0.0a6 | 75 release-profile tests passed at `afa2c22`, including GUI/rendering; final download/manual qualification pending |
-| `linux-x64-2.0.1a1` | Linux x64 2.0.1a1 | Graphical VMD environment and artifact qualification pending |
+| `macos-arm64-2.0b1` | Apple Silicon 2.0b1 | 80/80 passed at `a4c60d3` |
+| `macos-arm64-2.0.0a7-pre2` | Apple Silicon 2.0.0a7-pre2 | 80/80 passed at `a4c60d3` |
+| `macos-intel-1.9.4a57` | Intel macOS 1.9.4a57 | 80/80 passed at `a4c60d3` |
+| `windows-x64-2.0.0a6` | Windows x64 2.0.0a6 | 80/80 passed at `a4c60d3` |
+| `linux-x64-2.0.1a1` | Linux x64 2.0.1a1 | 80/80 passed at `a4c60d3` |
+
+[Sanitized receipt summary](TEST_EVIDENCE.json). Later export and input-autopopulation changes have focused regression checks; these historical full-suite results are not relabeled as full qualification of those later revisions. The finished Mac video uses `4e2bb57`; input autopopulation was added in `4eb669d`.
 
 Historical ARM 1.9.4a57 backend checks and Carya Linux backend checks remain
 useful regression evidence, but do not substitute for these target builds.

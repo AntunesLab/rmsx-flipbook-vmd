@@ -1,9 +1,16 @@
-# Publication audit — private 0.3.1 candidate
+# Publication audit
 
-**Public release remains PENDING.** This is a bounded source/provenance audit,
-not an authorization to publish. Complete the final-commit rerun, artifact
-inspection and qualification gate before changing repository visibility or
-publishing a release.
+## Public source publication — 14 September 2026
+
+The owner explicitly requested public source visibility with the finished video and an HD Tachyon figure. Source publication is separate from a qualified versioned release; no final one-file release is asserted here.
+
+A fresh bounded scan of all fetched reachable refs and current files covered 63 commits, 282 trees, and 686 blobs before the publication-documentation commit. It found no matches for the credential, private-key, token, credential-URL, personal-path, or private-network patterns used in the retained audit script. The new media are app-only footage and generated molecular figures, inspected separately; committee paperwork and email drafts are excluded. The fixture checksums and explicit package inventory pass. Self-hosted VMD CI remains manually dispatched.
+
+The scan does not prove absence of unknown-format or encoded secrets. Scope excludes unreachable objects and GitHub-internal caches. The earlier provenance and notice review below remains applicable; no fixture bytes or licensing terms were changed for publication. Final-artifact qualification remains separate.
+
+## Historical audit
+
+The following records the earlier 10 September source/provenance review.
 
 ## History and secret scan
 

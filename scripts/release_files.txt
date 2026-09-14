@@ -307,3 +307,10 @@ rmsxflipbooktimeline0.3.1/tests/smoke_mouse_rotation_rigidity.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_input_view_preservation.tcl
 docs/LIVE_VIEW_POLISH.md
 rmsxflipbooktimeline0.3.1/tests/smoke_live_resize.tcl
+
+rmsxflipbooktimeline0.3.1/tests/smoke_dashboard_autopopulate.tcl
+docs/media/README.md
+docs/media/demo-thumbnail.png
+docs/media/demo-30s-1440p.mp4
+docs/media/protease-tachyon-hd.png
+docs/TEST_EVIDENCE.json

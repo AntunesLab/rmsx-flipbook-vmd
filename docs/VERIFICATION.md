@@ -1,5 +1,7 @@
 # Verification and build identity
 
+**14 September update:** [five native full suites passed 80/80 at a4c60d3](TEST_EVIDENCE.json). The published video is verified Mac media from 4e2bb57; later input autopopulation has focused Mac dashboard tests. Source is public for review; a final versioned one-file artifact remains separately qualified. Older evidence below retains its original revision scope.
+
 **0.3.1 public-release status: PENDING.** This document describes the evidence
 required for the new reviewer artifact. It does not transfer qualification from
 an earlier commit or claim that a newly generated artifact has passed.
