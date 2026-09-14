@@ -1,15 +1,15 @@
 # RMSX / Flipbook Timeline for VMD
 
 Compare motion across time windows directly on molecular structures, alongside
-linked residue heatmaps, RMSD/RMSF plots and figure export. This is a **private
-0.3.1 review build**, not a public release or an officially bundled VMD plugin.
+linked residue heatmaps, RMSD/RMSF plots and figure export. This is a **0.3.1 developer-review build**, not an officially bundled VMD plugin. Publication remains gated on the final verification report.
 
 ## Try it in three steps
 
-1. Save the maintainer-provided **`TRY_RMSX_0.3.1.vmd`** file.
-2. Open a graphical VMD session.
-3. Choose **File → Load Visualization State…** and select
-   **`TRY_RMSX_0.3.1.vmd`**. The labeled **Precomputed preview** opens automatically.
+1. Download **`TRY_RMSX_0.3.1.vmd`** from the [review assets](https://github.com/AntunesLab/rmsx-flipbook-vmd/releases).
+2. Open VMD and choose **File → Load Visualization State…**.
+3. Select the downloaded file. The labeled **Precomputed preview** opens automatically.
+
+The review assets also contain the captioned 30-second demonstration and platform-specific verification report. Until the qualification gate is complete, the repository remains private and no public download is available.
 
 To calculate again, choose the ordinary **Run** button. **Multi** opens the
 masked two-chain example. **Quick Check** performs a small fresh check;

@@ -305,3 +305,4 @@ rmsxflipbooktimeline0.3.1/tests/smoke_principal_view.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_highlight_visibility.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_mouse_rotation_rigidity.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_input_view_preservation.tcl
+docs/LIVE_VIEW_POLISH.md

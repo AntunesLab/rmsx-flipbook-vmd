@@ -78,7 +78,7 @@ def environment_failures(environment, target, capability):
     return errors
 
 
-def evaluate(evidence, artifact_sha256, build_id, revision, required_tests, base, optional_tests=(), test_capabilities=None):
+def evaluate(evidence, artifact_sha256, build_id, revision, required_tests, base, optional_tests=(), test_capabilities=None, *, profile="release", waiver=None):
     failures = []
     def need(condition, message):
         if not condition:
@@ -86,6 +86,21 @@ def evaluate(evidence, artifact_sha256, build_id, revision, required_tests, base
     need(evidence.get("schema") == 1, "Unsupported evidence schema")
     need(bool(re.fullmatch(r"[0-9a-f]{64}", build_id)), "Invalid build ID")
     need(bool(re.fullmatch(r"[0-9a-f]{40}", revision)), "Invalid source revision")
+    need(profile in {"release", "developer-review"}, "Unknown qualification profile")
+    waived = []
+    waiver_valid = False
+    if waiver is not None:
+        waiver_valid = (profile == "developer-review" and isinstance(waiver, dict)
+            and waiver.get("scope") == "developer review"
+            and waiver.get("check") == "unassisted_trial_under_two_minutes"
+            and waiver.get("status") == "WAIVED_BY_USER"
+            and waiver.get("passed") is False and waiver.get("other_checks_waived") is False
+            and isinstance(waiver.get("authorization"), str) and bool(waiver["authorization"].strip())
+            and isinstance(waiver.get("date"), str) and bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", waiver["date"]))
+            and isinstance(waiver.get("targets"), list)
+            and all(isinstance(t, str) for t in waiver["targets"])
+            and len(waiver["targets"]) == len(TARGETS) and set(waiver["targets"]) == set(TARGETS))
+        need(waiver_valid, "Invalid waiver or waiver requested outside developer-review profile")
     capabilities = test_capabilities or {name: "vmd" for name in required_tests}
     for key in ("history_audit", "fixture_provenance_audit"):
         audit = evidence.get(key, {})
@@ -104,7 +119,11 @@ def evaluate(evidence, artifact_sha256, build_id, revision, required_tests, base
         need(bool(item.get("vmd_build_date")), prefix + "VMD startup build date missing")
         need(bool(item.get("reviewer")) and bool(item.get("os")) and bool(item.get("graphics")), prefix + "machine/reviewer details missing")
         for check in MANUAL_CHECKS:
-            need(item.get("manual", {}).get(check) == "PASS", prefix + check + " has no passing observation")
+            status = item.get("manual", {}).get(check)
+            if waiver_valid and check == "unassisted_trial_under_two_minutes" and status == "WAIVED_BY_USER":
+                waived.append({"target": target, "check": check, "status": status})
+            else:
+                need(status == "PASS", prefix + check + " has no passing observation")
         for kind in ("suite", "quick_check"):
             try:
                 name = item[kind + "_report"]
@@ -149,13 +168,18 @@ def evaluate(evidence, artifact_sha256, build_id, revision, required_tests, base
                      and all(s.get("status") == "PASS" for s in stages), prefix + "Quick Check contains missing or incomplete stages")
                 for error in environment_failures(report.get("environment"), target, "quick_check"):
                     failures.append(prefix + "Quick Check: " + error)
-    return {"schema": 1, "release_qualified": not failures,
+    return {"schema": 1, "profile": profile, "qualified": not failures,
+            "release_qualified": not failures and not waived,
+            "developer_review_ready": profile == "developer-review" and not failures,
+            "waived_checks": waived,
             "artifact_sha256": artifact_sha256, "build_id": build_id,
             "source_revision": revision, "failures": failures}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--profile", choices=("release", "developer-review"), default="release")
+    parser.add_argument("--waiver", type=Path, help="Explicit user waiver; developer-review only")
     parser.add_argument("--evidence", type=Path, required=True)
     parser.add_argument("--artifact", type=Path, required=True)
     parser.add_argument("--build-id", required=True)
@@ -169,13 +193,14 @@ def main():
         result = evaluate(evidence, digest, args.build_id, args.source_revision,
                           [t["id"] for t in suite["tests"]], args.evidence.resolve().parent,
                           [t["id"] for t in suite["tests"] if t.get("optional")],
-                          {t["id"]: t["capability"] for t in suite["tests"]})
+                          {t["id"]: t["capability"] for t in suite["tests"]}, profile=args.profile,
+                          waiver=json.loads(args.waiver.read_text(encoding="utf-8")) if args.waiver else None)
     except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
         result = {"schema": 1, "release_qualified": False, "failures": [str(exc)]}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-    print("PASS: public handoff qualified" if result["release_qualified"] else "PENDING/FAIL: public handoff remains private; inspect " + str(args.output))
-    return 0 if result["release_qualified"] else 1
+    print("PASS: " + args.profile + " handoff qualified" if result.get("qualified", False) else "PENDING/FAIL: public handoff remains private; inspect " + str(args.output))
+    return 0 if result.get("qualified", False) else 1
 
 
 if __name__ == "__main__":

@@ -61,15 +61,19 @@ are explicitly labeled as earlier 0.3 examples; they do not qualify this launche
 > VMD version and operating system. We would especially value your advice on
 > supported integration hooks, packaging, maintenance, and the path to inclusion.
 
-Before sending, attach the matching `.vmd`, source ZIP, checksums, verification
-report and notices. This text is prepared for review; no invitation is sent by
-the build or test tools.
+For the developer invitation, link the review prerelease and short video instead of attaching archives. Keep the committee form in a separate email to Rafael. No invitation is sent by the build or test tools.
 
 ## Feedback to retain
 
-Use the [first-time reviewer sheet](FIRST_TRY.md) for the independent trial.
+Independent first-time trials are waived by the user for this developer review; no external tester is required. The [reviewer sheet](FIRST_TRY.md) remains optional feedback guidance. This waiver does not count as a pass or waive any technical check.
 
 Record the launcher SHA-256, BUILD_ID, VMD/Tcl/Tk versions, OS and architecture,
 Quick Check report, and the smallest steps that reproduce a problem. Include
 whether the File-menu launch, real mouse rotation, OpenGL redraw and export were
 actually inspected. “Quick Check passed” alone is not a full platform claim.
+
+## Developer-review gate
+
+Run `scripts/handoff_gate.py --profile developer-review --waiver qualification-waiver.json` with the ordinary evidence, artifact, build ID, revision and output arguments. The waiver must explicitly name only `unassisted_trial_under_two_minutes`, all five targets, developer-review scope, user authorization, and `WAIVED_BY_USER` with `passed: false` and `other_checks_waived: false`. Each corresponding evidence row must also say `WAIVED_BY_USER`; missing rows fail. Keep the authorization in the private qualification packet rather than the distributed source.
+
+`developer_review_ready` may pass with this waiver; `release_qualified` remains false. The default `release` profile rejects waivers. All native, Quick Check, manual technical, and exact-build audit requirements remain enforced.

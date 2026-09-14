@@ -45,6 +45,35 @@ class HandoffGateTests(unittest.TestCase):
         return gate.evaluate(evidence, "c" * 64, "b" * 64, "a" * 40, ["required"], root,
                              test_capabilities={"required": "render"})["release_qualified"]
 
+    def test_developer_waiver_is_explicit_scoped_and_never_a_release_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); evidence = complete_evidence(root)
+            check = "unassisted_trial_under_two_minutes"
+            waiver = dict(scope="developer review", check=check, status="WAIVED_BY_USER",
+                          passed=False, other_checks_waived=False, authorization="User approved",
+                          date="2026-09-13", targets=list(gate.TARGETS))
+            for item in evidence["targets"].values(): item["manual"][check] = "WAIVED_BY_USER"
+            def run(e=evidence, w=waiver, profile="developer-review"):
+                return gate.evaluate(e, "c"*64, "b"*64, "a"*40, ["required"], root,
+                    test_capabilities={"required":"render"}, profile=profile, waiver=w)
+            result = run()
+            self.assertTrue(result["developer_review_ready"])
+            self.assertFalse(result["release_qualified"])
+            self.assertEqual(len(result["waived_checks"]), 5)
+            self.assertFalse(run(profile="release")["qualified"])
+            self.assertFalse(run(w=None)["qualified"])
+            for change in ({"check":"live_opengl_and_export"}, {"passed":True},
+                           {"targets":list(gate.TARGETS)[:-1]}, {"authorization":""},
+                           {"other_checks_waived":True}, {"targets":[{}]}):
+                self.assertFalse(run(w=dict(waiver, **change))["qualified"], change)
+            target = next(iter(gate.TARGETS))
+            for field, value in (("source_revision", "old"), ("suite_report", "absent.json")):
+                bad=copy.deepcopy(evidence); bad["targets"][target][field]=value
+                self.assertFalse(run(e=bad)["qualified"])
+            for field in (check, "live_opengl_and_export", "cancel_close_reopen_remove"):
+                bad=copy.deepcopy(evidence); del bad["targets"][target]["manual"][field]
+                self.assertFalse(run(e=bad)["qualified"])
+
     def test_native_thickness_stage_is_required_and_must_pass(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); evidence = complete_evidence(root)
