@@ -423,6 +423,20 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             ::RMSXFlipbookTimeline::Scene::restore_snapshot $snapshot
         }
     }
+    proc render_fit_proof {options path width height} {
+        # Framing needs the molecular silhouette, not costly ray-traced lighting.
+        # Keep the final render's requested lighting unchanged, including on error.
+        set saved {}
+        foreach key {shadows ambientocclusion} {
+            dict set saved $key [::RMSXFlipbookTimeline::Scene::read $key]
+        }
+        try {
+            foreach key {shadows ambientocclusion} {::RMSXFlipbookTimeline::Scene::apply $key off}
+            return [render_to_tga $options $path $width $height]
+        } finally {
+            dict for {key value} $saved {::RMSXFlipbookTimeline::Scene::apply $key $value}
+        }
+    }
     proc render_payload {options ids path} {
         set snapshot [::RMSXFlipbookTimeline::Scene::snapshot]
         set state_before [::RMSXFlipbookTimeline::state_dict]
@@ -457,7 +471,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 set proof_width [expr {max(1,int(round($width*$proof_scale)))}]
                 set proof_height [expr {max(1,int(round($height*$proof_scale)))}]
                 for {set attempt 0} {$attempt < 2} {incr attempt} {
-                    set pixels [render_to_tga $options $proof $proof_width $proof_height]
+                    set pixels [render_fit_proof $options $proof $proof_width $proof_height]
                     set content_width [expr {[dict get $pixels x1]-[dict get $pixels x0]+1.0}]
                     set content_height [expr {[dict get $pixels y1]-[dict get $pixels y0]+1.0}]
                     set factor [expr {min(0.90*$proof_width/$content_width,0.90*$proof_height/$content_height)}]

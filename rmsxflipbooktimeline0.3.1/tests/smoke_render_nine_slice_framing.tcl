@@ -4,6 +4,17 @@ package require rmsxflipbooktimeline
 source -encoding utf-8 [file join $::env(RMSX_TEST_PACKAGE) gui reviewer.tcl]
 proc assert {condition message} {if {![uplevel 1 [list expr $condition]]} {error $message}}
 assert {"TachyonInternal" in [::RMSXFlipbookTimeline::Render::render_methods]} "Native Tachyon CPU renderer is required for the framing check"
+# Silhouette fitting must avoid expensive lighting without downgrading exports.
+rename ::RMSXFlipbookTimeline::Render::render_to_tga ::RMSXFlipbookTimeline::Render::lighting_original_render
+proc ::RMSXFlipbookTimeline::Render::render_to_tga {options path width height} {
+    set proof [string match *.proof.tga $path]
+    foreach {key option} {shadows shadows ambientocclusion ambient_occlusion} {
+        set actual [truthy [::RMSXFlipbookTimeline::Scene::read $key]]
+        set expected [expr {$proof ? 0 : [truthy [dict get $options $option]]}]
+        assert {$actual == $expected} "Incorrect $key during proof=$proof"
+    }
+    return [lighting_original_render $options $path $width $height]
+}
 set root $::env(RMSX_TEST_WORKDIR)
 foreach kind {single multi} {
     set spec [::RMSXFlipbookTimeline::Reviewer::example_spec $root $kind]
