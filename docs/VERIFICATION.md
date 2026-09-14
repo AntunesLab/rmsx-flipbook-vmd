@@ -47,35 +47,6 @@ source revision. It rejects missing, modified, linked or unlisted source files
 and never takes a revision from an unrelated enclosing Git repository. Generated
 archive metadata is part of the verified inventory, not an uncommitted change.
 
-## Historical evidence retained privately
-
-- Commit `afa2c226ccbccfc897de9d6ee8612fdcbf1ef625` passed 75/75 Windows
-  release-profile tests (including GUI and molecular rendering), and 61/61
-  backend tests on each of Apple Silicon VMD 2.0b1 and 2.0.0a7-pre2.
-  Windows used Tcl/Tk 8.6.16, an RTX 3070, and native residue-thickness
-  variables set before VMD startup. Manual nine-slice multichain inspection
-  covered upright orientation, in-place rotation, visible thickness and masks.
-  These observations do not complete the final download's File-menu, offline,
-  path, repeat-opening or independent-user qualification.
-- The subsequent marker-default change committed as `f926324` passed focused
-  `native_mask_log` and `native_real_multichain` checks before commit. Its
-  runtime-only application to the existing Windows view removed nine marker
-  overlays while preserving nine transparent representations at opacity 0.30,
-  result identity, molecule inventory and camera matrices. This live adjustment
-  is explicitly separate from testing a newly loaded immutable artifact.
-- Commit `4027f9a0ab26b50a66e533c164e8e9da7aaa11f4` (0.3) has a complete local
-  release-profile receipt on macOS ARM64. Source SHA-256:
-  `77c96f39d3dc84a85368bc0a36321546ca9c3b4dc949f2f984458e50ca12e75e`.
-  Retained receipt: `timeline-parity/qualified-4027f9a/summary.json` in the
-  private qualification archive. It explicitly sets `release_qualified: false`.
-- Earlier commit `2f425e76d98283886ebeddce51de29520ee4e1c3` has local Apple
-  Silicon release evidence and additional ARM/Linux backend receipts in the
-  dated 0.3 meeting archive. Those receipts describe that older source only.
-
-These establish a regression baseline. The 0.3.1 launcher, package rename and
-packaging changes need their own matching final receipts. Historical artifacts
-are retained privately and are not promised as public downloads.
-
 ## Required final gate
 
 Use the repository handoff gate and qualification template to bind the artifact
@@ -92,11 +63,7 @@ are required along with the distribution label. The gate validates observed
 OS, VMD architecture/version and graphical capabilities for each target; copying
 one machine's reports into the other target entries cannot qualify them.
 
-Retain an independent reviewer trial using only the delivered packet and its
-instructions. Add the final walkthrough/recording only after inspecting the
-actual encoded media and matching its build to the packet. Complete the
-[publication audit](PUBLICATION_AUDIT.md), integrate the agreed branch, and
-review the final archive inventory before any public release action.
+Qualification distinguishes production release from developer review. Production qualification requires the complete evidence set. The developer-review profile permits a documented usability-trial waiver; waived checks are never reported as passed, and technical checks remain required. See `scripts/handoff_gate.py --help` for profile options.
 
 The maintainer fills a copy of the evidence template with actual observations,
 then evaluates the final artifact, for example:

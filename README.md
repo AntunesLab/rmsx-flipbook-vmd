@@ -35,7 +35,7 @@ On Windows, click **Open fresh VMD** if prompted to enable residue thickness.
 [Report a problem](https://github.com/AntunesLab/rmsx-flipbook-vmd/issues) with your VMD version, operating system, and what happened. **Quick Check → Save report…** provides optional diagnostics; review local paths before sharing.
 
 - [User guide](rmsxflipbooktimeline0.3.1/USER_GUIDE.md) · [Scientific methods](docs/METHODS.md)
-- [Verification](docs/VERIFICATION.md) · [Maintainer guide](docs/MAINTAINING.md) · [Developer handoff](docs/HANDOFF.md)
-- [Changelog](CHANGELOG.md) · [License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Publication audit](docs/PUBLICATION_AUDIT.md)
+- [Verification](docs/VERIFICATION.md) · [Maintainer guide](docs/MAINTAINING.md) · [Example settings](docs/HANDOFF.md)
+- [Changelog](CHANGELOG.md) · [License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Provenance](docs/PUBLICATION_AUDIT.md)
 
 This beta is a standalone extension, not an official VMD distribution. Normal use needs only VMD; Python is for optional development tools.

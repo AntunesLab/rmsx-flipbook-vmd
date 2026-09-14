@@ -30,12 +30,6 @@ an older successful test run is not a pass for this artifact.
 
 [Sanitized receipt summary](TEST_EVIDENCE.json). Later export and input-autopopulation changes have focused regression checks; these historical full-suite results are not relabeled as full qualification of those later revisions. The finished Mac video uses `4e2bb57`; input autopopulation was added in `4eb669d`.
 
-Historical ARM 1.9.4a57 backend checks and Carya Linux backend checks remain
-useful regression evidence, but do not substitute for these target builds.
-Read-only Linux host discovery does not establish a working VMD display or
-renderer. A maintainer-approved stable VMD target and long-term support policy
-must still be agreed before claiming compatibility beyond this matrix.
-
 A portable Tcl job on Windows/Linux/macOS qualifies data/API tests in that Tcl
 runtime only. It does not certify VMD graphics, mouse behavior, loading, rendering
 or lifecycle. Keep the exact source hash, artifact hash, BUILD_ID, VMD/Tcl/Tk
@@ -66,8 +60,7 @@ summary records `complete_local_release_profile`, the exact source checksum,
 revision, architecture and per-test runtime versions. It never sets global
 `release_qualified` true: the other build targets still need corresponding evidence. Changing source files while
 a suite runs invalidates that qualification even when every case passes.
-The artifacts remain labeled as private review builds until the final handoff
-gate passes. A dirty snapshot cannot qualify as the clean final source.
+Generated artifacts remain unqualified until their required qualification checks pass. A dirty snapshot cannot qualify as the clean final source.
 
 ## Diagnostics
 

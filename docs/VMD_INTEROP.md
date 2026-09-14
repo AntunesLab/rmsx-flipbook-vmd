@@ -65,7 +65,7 @@ Production scene changes use redraw-only `display update` where appropriate.
 `display update ui` may reenter script/event processing during a scene operation;
 a plugin must not infer completed loading from that reentry. Render assertions
 check a valid image and actual molecular scene, followed by visual inspection
-for the meeting example.
+for the bundled example.
 
 ## User key descriptions and shutdown
 

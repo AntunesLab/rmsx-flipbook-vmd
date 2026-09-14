@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.1 — private review candidate
+## 0.3.1 — beta
 
 - Autopopulate empty dashboard inputs from one loaded VMD simulation, including
   chain choices and an explicit Timeline molecule ID. Preserve existing input
@@ -80,7 +80,7 @@
   fresh calculation and a bounded Quick Check/report workflow.
 - Bind the reviewer launcher and companion source archive to a shared BUILD_ID
   and file checksums; keep generated artifacts separate from maintained source.
-- Add explicit private handoff, maintenance ownership, publication audit and
+- Add developer documentation, maintenance ownership, provenance audit and
   artifact-specific qualification guidance. Public distribution remains pending.
 - Preserve the Tcl/Tk extension and existing Analysis-menu category; retain
   public launch callbacks and VMD’s own Timeline entry.
