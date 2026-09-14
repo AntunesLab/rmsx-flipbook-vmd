@@ -1,40 +1,39 @@
-# RMSX / Flipbook Timeline for VMD
+# RMSX / Flipbook for VMD
 
-Compare motion across time windows directly on molecular structures, alongside
-linked residue heatmaps, RMSD/RMSF plots and figure export. This is a **0.3.1 developer-review build**, not an officially bundled VMD plugin. Publication remains gated on the final verification report.
+See residue-level changes across trajectory windows at once, directly on molecular structures, with linked heatmaps, RMSD/RMSF comparison plots, and figure export.
 
-## Try it in three steps
+[![Watch the 30-second VMD demonstration](docs/media/demo-thumbnail.png)](https://github.com/AntunesLab/rmsx-flipbook-vmd/raw/refs/heads/main/docs/media/demo-30s-1440p.mp4)
 
-1. Download **`TRY_RMSX_0.3.1.vmd`** from the [review assets](https://github.com/AntunesLab/rmsx-flipbook-vmd/releases).
-2. Open VMD and choose **File → Load Visualization State…**.
-3. Select the downloaded file. The labeled **Precomputed preview** opens automatically.
+**[Watch or download the 30-second demo — 1440p MP4](https://github.com/AntunesLab/rmsx-flipbook-vmd/raw/refs/heads/main/docs/media/demo-30s-1440p.mp4)**
 
-The review assets also contain the captioned 30-second demonstration and platform-specific verification report. Until the qualification gate is complete, the repository remains private and no public download is available.
+## High-resolution Tachyon figure
 
-To calculate again, choose the ordinary **Run** button. **Multi** opens the
-masked two-chain example. **Quick Check** performs a small fresh check;
-**Save report…** saves diagnostics. The source ZIP and checksums are available
-for code review and verification; they are not needed to open the demo.
+![Nine protease trajectory windows rendered with Tachyon, with frame labels and a Viridis RMSX legend](docs/media/protease-tachyon-hd.png)
 
-On Windows, choose **Open fresh VMD** when the demo requests it. That button
-opens a separate session with residue thickness enabled before VMD starts;
-the original session stays open. Windows VMD may ignore thickness settings
-changed after startup. Quick Check tests the rendered geometry as well as values.
+[Open the full-resolution figure (2560 pixels wide)](docs/media/protease-tachyon-hd.png). Nine unmasked protease windows, three frames each, colored by RMSX in Å. Rendered in VMD on Mac with Tachyon. [Media settings and provenance](docs/media/README.md).
 
-VMD must already be installed. This route needs no Python, terminal commands,
-permanent installation, or VMD source changes. The single-file reviewer launcher
-is generated from the same reviewed source snapshot as the companion source ZIP;
-it is not maintained as a separate plugin fork. A precomputed preview is clearly
-labeled and is not evidence of a successful calculation on the reviewer’s machine.
+## Try the plugin
 
-The build opens through VMD’s existing **Analysis** extension category when
-registered. It leaves VMD’s own Timeline entry intact. The outer menu name can
-be **Extensions** or **Plugins**, depending on the VMD build.
+This is public **0.3.1 developer-review source**, not an officially bundled VMD plugin. VMD with Tcl/Tk 8.6 must already be installed.
+
+For the source checkout, follow the [quick start](docs/QUICK_START.md) or [installation instructions](rmsxflipbooktimeline0.3.1/INSTALL.md).
+
+The one-file trial is being prepared for a versioned review release. Its workflow is:
+
+1. Download **TRY_RMSX_0.3.1.vmd** from that release once available.
+2. In VMD, choose **File → Load Visualization State…**.
+3. Select the download to open the labeled precomputed nine-slice example.
+
+The one-file download is **not published yet**. The video demonstrates that workflow using the recorded review build. The launcher needs no extraction, terminal commands, Python, or permanent installation. **Run** calculates a fresh result; **Multi** offers the two-chain example; **Quick Check** saves local diagnostics. On Windows, follow the **Open fresh VMD** prompt to enable residue thickness in a separate session.
+
+Already have one simulation loaded? The current source can autopopulate empty input fields from its topology and trajectory files. See the [user guide](rmsxflipbooktimeline0.3.1/USER_GUIDE.md#already-loaded-a-simulation-in-vmd) for scope and frame-selection details.
+
+The package uses VMD's existing **Analysis** extension category; the outer menu name may be **Extensions** or **Plugins**, depending on the VMD build.
 
 ## Review and support
 
 - [First session and examples](docs/QUICK_START.md)
-- [Private handoff and feedback](docs/HANDOFF.md)
+- [Developer handoff and feedback](docs/HANDOFF.md)
 - [Verification and exact build identity](docs/VERIFICATION.md)
 - [Supported and pending environments](docs/SUPPORT.md)
 - [Maintenance and upstream integration](docs/MAINTAINING.md)
@@ -48,7 +47,4 @@ Python 3.9+ is used by optional developer installation, CI and packaging tools.
 The maintained source is `rmsxflipbooktimeline0.3.1/`; older versions remain in
 Git history. Use the archive manifest and `BUILD_ID` to identify the exact bytes.
 
-Public distribution remains **PENDING** until the publication audit and all
-required VMD qualification targets pass for the final artifact. Portable Tcl CI
-and a local Quick Check are useful evidence, but neither qualifies VMD graphics
-on an untested platform. No public download is being offered by this document.
+Source visibility is separate from release qualification. The [verification report](docs/VERIFICATION.md) and [support table](docs/SUPPORT.md) describe evidence boundaries; repository visibility does not certify untested runtimes or a final downloadable artifact.

@@ -9,6 +9,8 @@ if {[package vcompare [vmdinfo version] 2.0a1] < 0} {
     if {$actual ne "NewCartoon"} {error "Legacy VMD must default to a residue-modulating representation, got $actual"}
     if {[lsearch -exact [::RMSXFlipbookTimeline::Style::representation_choices] NewTube] >= 0} {error "Legacy VMD offers unavailable NewTube"}
 } elseif {$actual ne "NewTube"} {error "Modern VMD lost its NewTube default"}
+# Force a distinct initial size to exercise asynchronous native resizing.
+::RMSXFlipbookTimeline::Scene::resize_display 720 640
 set before [::RMSXFlipbookTimeline::Scene::snapshot]
 set selection [atomselect $molid all]
 set original [$selection get user]

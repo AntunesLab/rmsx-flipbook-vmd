@@ -380,12 +380,46 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         if {$pixels < 4} {error "Renderer produced a blank image; use a verified windowed VMD renderer"}
         return [dict create width $width height $height x0 $x0 x1 $x1 y0 $y0 y1 $y1 nonbackground_samples $pixels]
     }
+    proc bundled_tachyon {} {
+        # Read the executable from VMD's configured renderer command, but do
+        # not execute that command as a shell string or interpolate filenames.
+        if {[catch {set executable [lindex [render options Tachyon] 0]}] ||
+            $executable eq "" || ![file isfile $executable] || ![file executable $executable]} {
+            error "VMD's bundled Tachyon executable is unavailable"
+        }
+        return [file normalize $executable]
+    }
+    proc render_tachyon_file {options path width height} {
+        set executable [bundled_tachyon]
+        set scene "${path}.scene.dat"
+        try {
+            # An empty post-render command asks VMD to write only its scene.
+            # Tachyon's -res changes the output raster, not the OpenGL window.
+            render Tachyon $scene {}
+            exec $executable $scene -res $width $height -format TARGA -o $path
+            if {![file isfile $path]} {error "Tachyon did not create an image"}
+            set image [tga_content_bounds $path [dict get $options background]]
+            if {[dict get $image width] != $width || [dict get $image height] != $height} {
+                error "Tachyon did not use the requested ${width}x${height} dimensions"
+            }
+            return $image
+        } finally {
+            if {[file exists $scene]} {file delete $scene}
+        }
+    }
     proc render_to_tga {options path width height} {
-        ::RMSXFlipbookTimeline::Scene::resize_display $width $height
+        if {[dict get $options method] eq "Tachyon"} {
+            return [render_tachyon_file $options $path $width $height]
+        }
+        lassign [::RMSXFlipbookTimeline::Scene::resize_display $width $height] render_width render_height
         display update
         render [dict get $options method] $path
         if {![file isfile $path]} {error "VMD renderer did not create an image"}
-        return [tga_content_bounds $path [dict get $options background]]
+        set image [tga_content_bounds $path [dict get $options background]]
+        if {[dict get $image width] != $render_width || [dict get $image height] != $render_height} {
+            error "Renderer used [dict get $image width]x[dict get $image height] instead of settled ${render_width}x${render_height}"
+        }
+        return $image
     }
     proc verify_residue_thickness {molid directory {checkpoint ""}} {
         set snapshot [::RMSXFlipbookTimeline::Scene::snapshot]
@@ -472,6 +506,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 set proof_height [expr {max(1,int(round($height*$proof_scale)))}]
                 for {set attempt 0} {$attempt < 2} {incr attempt} {
                     set pixels [render_fit_proof $options $proof $proof_width $proof_height]
+                    set proof_width [dict get $pixels width]; set proof_height [dict get $pixels height]
                     set content_width [expr {[dict get $pixels x1]-[dict get $pixels x0]+1.0}]
                     set content_height [expr {[dict get $pixels y1]-[dict get $pixels y0]+1.0}]
                     set factor [expr {min(0.90*$proof_width/$content_width,0.90*$proof_height/$content_height)}]
@@ -484,6 +519,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 set bounds [projected_bounds $ids]
             }
             set pixels [render_to_tga $options $tga $width $height]
+            set width [dict get $pixels width]; set height [dict get $pixels height]
             if {[dict get $options framing] eq "fit" && ([dict get $pixels x0] < 2 || [dict get $pixels y0] < 2 || [dict get $pixels x1] >= $width-2 || [dict get $pixels y1] >= $height-2)} {
                 error "Rendered structures touch the image edge; select Current view or adjust the view before exporting"
             }
@@ -502,7 +538,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
             try {
                 catch {file delete $tga}; catch {file delete $proof}
                 ::RMSXFlipbookTimeline::state_replace $state_before
-                ::RMSXFlipbookTimeline::Scene::restore_snapshot $snapshot
+                ::RMSXFlipbookTimeline::Scene::restore_snapshot $snapshot [expr {[dict get $options method] ne "Tachyon"}]
             } finally {incr active -1}
         }
     }
@@ -660,7 +696,8 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         } finally {close $fp}
     }
     proc write_figure {filename args} {
-        set options [::RMSXFlipbookTimeline::parse_kv_options [dict create overwrite 0 width 2400 view_preset current framing fit] {*}$args]
+        set options [::RMSXFlipbookTimeline::parse_kv_options [dict create overwrite 0 width 2400 view_preset current framing fit \
+            method TachyonInternal ambient_occlusion 1 shadows 1] {*}$args]
         set base [file rootname [file normalize $filename]]
         set png "${base}.png"; set svg "${base}.svg"
         foreach path [list $png $svg] {
@@ -674,7 +711,8 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         set installed {}; set backups {}; set cleanup_stage 1
         try {
             set image [render_current -output_name [file join $stage figure.png] -width [dict get $options width] \
-                -view_preset [dict get $options view_preset] -framing [dict get $options framing]]
+                -view_preset [dict get $options view_preset] -framing [dict get $options framing] \
+                -method [dict get $options method] -ambient_occlusion [dict get $options ambient_occlusion] -shadows [dict get $options shadows]]
             figure_svg $image [::RMSXFlipbookTimeline::Results::get] [file join $stage figure.png] [file join $stage figure.svg]
             foreach from [list [file join $stage figure.png] [file join $stage figure.svg]] to [list $png $svg] {
                 if {[file exists $to]} {set backup [file join $stage "old-[file tail $to]"]; file rename $to $backup; dict set backups $to $backup}

@@ -1,6 +1,6 @@
-# Private reviewer handoff — 0.3.1
+# Developer reviewer handoff — 0.3.1
 
-**Status: private review; public distribution pending.** Share the generated
+**Status: public review source; versioned one-file download pending.** Share the generated
 review packet directly with the agreed reviewer. Use the exact source revision
 recorded in its build manifest; do not substitute a branch checkout, an earlier
 archive, or a launcher from another packet.
@@ -52,9 +52,9 @@ are explicitly labeled as earlier 0.3 examples; they do not qualify this launche
 
 ## Copy-ready invitation — not sent
 
-> I’d like your feedback on a private RMSX/Flipbook extension for VMD. It adds
+> I’d like your feedback on an RMSX/Flipbook extension for VMD. It adds
 > simultaneous structural views of trajectory windows, linked quantitative plots,
-> and figure export while preserving the existing Timeline workflow. To try the
+> and figure export. To try the
 > attached build, open VMD’s File → Load Visualization State and choose
 > TRY_RMSX_0.3.1.vmd. The first view is a labeled precomputed example; Run
 > performs a calculation. Please try Quick Check and send its report with your

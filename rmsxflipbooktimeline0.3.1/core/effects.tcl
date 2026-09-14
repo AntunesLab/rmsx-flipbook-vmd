@@ -34,6 +34,7 @@ namespace eval ::RMSXFlipbookTimeline::Effects {
 # property that can be read; restore it only if it still has our last value.
 namespace eval ::RMSXFlipbookTimeline::Scene {
     variable leases {}
+    variable resizing 0
     variable properties [dict create \
         projection {{display get projection} {display projection}} \
         size {{display get size} {display resize}} \
@@ -50,26 +51,64 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
         variable properties
         return [uplevel #0 [lindex [dict get $properties $key] 0]]
     }
-    # X11 resize requests are asynchronous. Reading dimensions or rendering
+    # Native resize requests are asynchronous, including Cocoa. Reading dimensions or rendering
     # immediately can use the previous size; restoring matrices before the
     # resize completes likewise leaves the caller's scene altered.
     proc resize_display {width height} {
-        display resize $width $height
-        if {[info commands tk] ne "" && [tk windowingsystem] eq "x11"} {
+        variable resizing
+        # Cocoa can draw into an incompletely resized OpenGL surface when the
+        # event pump below runs with drawing enabled. Keep processing native
+        # events, but suspend drawing until the resize has settled. Preserve
+        # the caller's update state even when resizing fails.
+        set guarded [expr {[info commands tk] ne "" && [tk windowingsystem] eq "aqua"}]
+        if {$guarded} {
+            set updating [display update status]
+            display update off
+        }
+        incr resizing
+        try {
+            return [resize_display_native $width $height]
+        } finally {
+            incr resizing -1
+            if {$guarded} {display update [expr {$updating ? "on" : "off"}]}
+        }
+    }
+    proc resize_display_native {width height} {
+        set request [list $width $height]
+        for {set correction 0} {$correction < 8} {incr correction} {
+            display resize {*}$request
+            if {[info commands tk] eq ""} {return [display get size]}
+            set previous {}
             set stable 0
             for {set attempt 0} {$attempt < 100} {incr attempt} {
                 display update ui
-                if {[display get size] eq [list $width $height]} {
-                    incr stable
-                } else {set stable 0}
-                if {$stable >= 3} {return}
+                set actual [display get size]
+                if {$actual eq $previous} {incr stable} else {set stable 0}
+                set previous $actual
+                if {$stable >= 3} {break}
                 after 10
             }
-            error "Display resize did not reach ${width}x${height}: [display get size]"
+            if {$actual eq [list $width $height]} {return $actual}
+            # A backing scale of two cannot represent an odd framebuffer
+            # dimension. After correction, accept only this one-pixel rounding
+            # and return the measured dimensions to the renderer.
+            if {$correction > 0 && abs([lindex $actual 0]-$width) <= 1 && abs([lindex $actual 1]-$height) <= 1} {return $actual}
+            # Cocoa/Retina can interpret resize in logical points while get
+            # size reports framebuffer pixels. Correct using observed sizes,
+            # rather than assuming a particular monitor's backing scale.
+            lassign $actual aw ah
+            if {$aw <= 0 || $ah <= 0} {break}
+            set next [list [expr {max(1,round([lindex $request 0]*double($width)/$aw))}] \
+                [expr {max(1,round([lindex $request 1]*double($height)/$ah))}]]
+            if {$next eq $request} {break}
+            set request $next
         }
+        error "Display resize did not reach ${width}x${height}: [display get size]"
     }
     proc write {key value} {
         variable properties
+        # Reapplying Normal can hang the VMD 2.0.1a1 text display.
+        if {$key eq "rendermode" && [read $key] eq $value} {return}
         set command [lindex [dict get $properties $key] 1]
         if {$key eq "size"} {return [resize_display {*}$value]}
         lappend command $value
@@ -152,10 +191,13 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
         }
         return $result
     }
-    proc restore_snapshot {snapshot} {
+    proc restore_snapshot {snapshot {restore_size 1}} {
         variable leases
         set errors {}
         dict for {key value} [dict get $snapshot values] {
+            # A renderer that never resized the native window must not issue a
+            # gratuitous resize while restoring its camera/display settings.
+            if {$key eq "size" && !$restore_size} {continue}
             if {[catch {write $key $value} message]} {lappend errors "$key: $message"}
         }
         foreach item [dict get $snapshot views] {

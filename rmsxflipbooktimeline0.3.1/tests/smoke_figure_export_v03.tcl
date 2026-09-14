@@ -16,6 +16,35 @@ set after [::RMSXFlipbookTimeline::Scene::snapshot]
 assert {[dict get $after values] eq [dict get $before values]} "Export changed display properties"
 assert {[dict get $after views] eq [dict get $before views]} "Export changed camera"
 assert {[dict get $after visibility] eq [dict get $before visibility]} "Export changed molecule visibility"
+# VMD's bundled Tachyon can render a different raster size without touching
+# the native window. Fail on any resize attempt, including restoration.
+rename ::RMSXFlipbookTimeline::Scene::resize_display ::RMSXFlipbookTimeline::Scene::qa_resize_display
+proc ::RMSXFlipbookTimeline::Scene::resize_display {args} {error "Offscreen export attempted native resize"}
+try {
+    foreach width {900 1200} {
+        set offscreen [::RMSXFlipbookTimeline::write_flipbook_figure \
+            [file join $::env(RMSX_TEST_WORKDIR) outputs offscreen-$width.svg] \
+            -method Tachyon -width $width -ambient_occlusion 0 -shadows 0]
+        assert {[dict get $offscreen width] == $width} "Offscreen raster width was ignored"
+        set after [::RMSXFlipbookTimeline::Scene::snapshot]
+        foreach key {values views visibility} {
+            assert {[dict get $after $key] eq [dict get $before $key]} "Offscreen export changed $key"
+        }
+    }
+    rename ::RMSXFlipbookTimeline::Render::bundled_tachyon ::RMSXFlipbookTimeline::Render::qa_bundled_tachyon
+    proc ::RMSXFlipbookTimeline::Render::bundled_tachyon {} {error "Injected missing bundled renderer"}
+    try {
+        assert {[catch {::RMSXFlipbookTimeline::write_flipbook_figure \
+            [file join $::env(RMSX_TEST_WORKDIR) outputs offscreen-missing.svg] -method Tachyon} message]} "Missing renderer succeeded"
+        assert {[string match *Injected* $message] && ![string match *resize* $message]} "Missing renderer attempted a native resize"
+    } finally {
+        rename ::RMSXFlipbookTimeline::Render::bundled_tachyon {}
+        rename ::RMSXFlipbookTimeline::Render::qa_bundled_tachyon ::RMSXFlipbookTimeline::Render::bundled_tachyon
+    }
+} finally {
+    rename ::RMSXFlipbookTimeline::Scene::resize_display {}
+    rename ::RMSXFlipbookTimeline::Scene::qa_resize_display ::RMSXFlipbookTimeline::Scene::resize_display
+}
 # An exception after export framing begins must release the refresh guard too.
 rename ::RMSXFlipbookTimeline::Render::render_to_tga ::RMSXFlipbookTimeline::Render::qa_render_to_tga
 proc ::RMSXFlipbookTimeline::Render::render_to_tga {args} {error "Injected renderer failure"}

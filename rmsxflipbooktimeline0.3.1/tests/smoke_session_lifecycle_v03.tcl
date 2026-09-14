@@ -32,7 +32,7 @@ assert {[material settings Transparent] eq $transparent} "Plugin modified shared
 ::RMSXFlipbookTimeline::load_folder $folder
 color Display Background red
 if {[dict exists $live_before antialias]} {display antialias off}
-if {[dict exists $live_before rendermode]} {display rendermode Normal}
+if {[dict exists $live_before rendermode] && [display get rendermode] ne "Normal"} {display rendermode Normal}
 set red [::RMSXFlipbookTimeline::Scene::read background]
 ::RMSXFlipbookTimeline::Hotkeys::install
 user add key u {puts CUSTOM_AFTER}

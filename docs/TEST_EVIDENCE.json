@@ -1,0 +1,50 @@
+{
+  "scope": "Historical full-suite results for a4c60d3; not final-artifact qualification for subsequent commits. Sanitized summary of retained native receipts.",
+  "targets": [
+    {
+      "target": "macos-arm64-2.0b1",
+      "revision": "a4c60d3a4ad9617e49f1a895a9920be2c046d1b1",
+      "profile": "release",
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "receipt_sha256": "3d200564a17d8baa4fa419836436565dda76c5e940956414ea549b9b7b69a01b"
+    },
+    {
+      "target": "macos-arm64-2.0.0a7-pre2",
+      "revision": "a4c60d3a4ad9617e49f1a895a9920be2c046d1b1",
+      "profile": "release",
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "receipt_sha256": "c9c87bc8b527e352360344634bc558b2b1eb16f3a093ba4faf279590927ea6ed"
+    },
+    {
+      "target": "macos-intel-1.9.4a57",
+      "revision": "a4c60d3a4ad9617e49f1a895a9920be2c046d1b1",
+      "profile": "release",
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "receipt_sha256": "298cea9ac7f97cb1bccdbf3243cc11a03d2ac9488cd65b163e070507dbb61885"
+    },
+    {
+      "target": "windows-x64-2.0.0a6",
+      "revision": "a4c60d3a4ad9617e49f1a895a9920be2c046d1b1",
+      "profile": "release",
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "receipt_sha256": "4a3491ab476e9af74d2b38f93fbcbd5052fe50d2fecf6477c318f06b1f17c4d1"
+    },
+    {
+      "target": "linux-x64-2.0.1a1",
+      "revision": "a4c60d3a4ad9617e49f1a895a9920be2c046d1b1",
+      "profile": "release",
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "receipt_sha256": "503e84c81227afe514419dec1c30bd06edee5344316145b08f182632b080f5a9"
+    }
+  ]
+}

@@ -2,6 +2,26 @@
 
 ## 0.3.1 — private review candidate
 
+- Autopopulate empty dashboard inputs from one loaded VMD simulation, including
+  chain choices and an explicit Timeline molecule ID. Preserve existing input
+  choices and refuse ambiguous or concatenated trajectory sources. RMSX retains
+  its original file-based calculation behavior.
+
+- Fix explicit `-method Tachyon` PNG/SVG exports to use VMD's bundled
+  executable at the requested resolution without resizing the OpenGL window.
+  Preserve camera, visibility, and display settings on success and failure.
+  Forward Figure's renderer and lighting options instead of ignoring them.
+- Suspend Cocoa drawing while programmatic native resizing settles, restoring
+  the previous update state on success or failure. Prevent the dashboard's
+  auto-fit timer from changing the view midway through a resize. Add live
+  OpenGL framebuffer checks alongside the independent Tachyon export tests.
+- Report measured export dimensions when Retina rounds an odd pixel size;
+  use those dimensions for fitting and annotations.
+- Wait for stable native display dimensions on Cocoa as well as X11 before
+  rendering; reject stale-size images rather than comparing incompatible
+  thickness proofs. Avoid reapplying unchanged render modes, which can hang
+  the Linux VMD text display during scene restoration.
+
 - Skip ray-traced lighting in temporary silhouette-fit proofs, while retaining
   the requested shadows and ambient occlusion in final exported images.
 - Restore residue-dependent thickness on VMD 1.9.4 using NewCartoon instead
