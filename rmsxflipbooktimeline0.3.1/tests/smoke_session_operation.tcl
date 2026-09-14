@@ -49,6 +49,8 @@ expect {$mock_size eq {600 500} && $mock_updates >= 4} "Cocoa resize returned be
 set mock_scale 2
 ::RMSXFlipbookTimeline::Scene::resize_display 800 600
 expect {$mock_size eq {800 600}} "Retina resize did not converge to requested framebuffer size"
+set rounded [::RMSXFlipbookTimeline::Scene::resize_display 801 601]
+expect {$rounded eq {802 602}} "Native one-pixel rounding was not reported accurately"
 rename display {}
 rename tk {}
 puts "Scene render-mode and asynchronous resize regressions passed"

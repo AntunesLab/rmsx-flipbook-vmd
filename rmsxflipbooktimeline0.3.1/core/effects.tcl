@@ -57,7 +57,7 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
         set request [list $width $height]
         for {set correction 0} {$correction < 8} {incr correction} {
             display resize {*}$request
-            if {[info commands tk] eq ""} {return}
+            if {[info commands tk] eq ""} {return [display get size]}
             set previous {}
             set stable 0
             for {set attempt 0} {$attempt < 100} {incr attempt} {
@@ -68,7 +68,11 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
                 if {$stable >= 3} {break}
                 after 10
             }
-            if {$actual eq [list $width $height]} {return}
+            if {$actual eq [list $width $height]} {return $actual}
+            # A backing scale of two cannot represent an odd framebuffer
+            # dimension. After correction, accept only this one-pixel rounding
+            # and return the measured dimensions to the renderer.
+            if {$correction > 0 && abs([lindex $actual 0]-$width) <= 1 && abs([lindex $actual 1]-$height) <= 1} {return $actual}
             # Cocoa/Retina can interpret resize in logical points while get
             # size reports framebuffer pixels. Correct using observed sizes,
             # rather than assuming a particular monitor's backing scale.

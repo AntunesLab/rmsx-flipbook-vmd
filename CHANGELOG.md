@@ -2,6 +2,8 @@
 
 ## 0.3.1 — private review candidate
 
+- Report measured export dimensions when Retina rounds an odd pixel size;
+  use those dimensions for fitting and annotations.
 - Wait for stable native display dimensions on Cocoa as well as X11 before
   rendering; reject stale-size images rather than comparing incompatible
   thickness proofs. Avoid reapplying unchanged render modes, which can hang

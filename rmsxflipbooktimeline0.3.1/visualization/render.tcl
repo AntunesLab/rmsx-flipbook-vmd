@@ -381,13 +381,13 @@ namespace eval ::RMSXFlipbookTimeline::Render {
         return [dict create width $width height $height x0 $x0 x1 $x1 y0 $y0 y1 $y1 nonbackground_samples $pixels]
     }
     proc render_to_tga {options path width height} {
-        ::RMSXFlipbookTimeline::Scene::resize_display $width $height
+        lassign [::RMSXFlipbookTimeline::Scene::resize_display $width $height] render_width render_height
         display update
         render [dict get $options method] $path
         if {![file isfile $path]} {error "VMD renderer did not create an image"}
         set image [tga_content_bounds $path [dict get $options background]]
-        if {[dict get $image width] != $width || [dict get $image height] != $height} {
-            error "Renderer used [dict get $image width]x[dict get $image height] instead of requested ${width}x${height}"
+        if {[dict get $image width] != $render_width || [dict get $image height] != $render_height} {
+            error "Renderer used [dict get $image width]x[dict get $image height] instead of settled ${render_width}x${render_height}"
         }
         return $image
     }
@@ -476,6 +476,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 set proof_height [expr {max(1,int(round($height*$proof_scale)))}]
                 for {set attempt 0} {$attempt < 2} {incr attempt} {
                     set pixels [render_fit_proof $options $proof $proof_width $proof_height]
+                    set proof_width [dict get $pixels width]; set proof_height [dict get $pixels height]
                     set content_width [expr {[dict get $pixels x1]-[dict get $pixels x0]+1.0}]
                     set content_height [expr {[dict get $pixels y1]-[dict get $pixels y0]+1.0}]
                     set factor [expr {min(0.90*$proof_width/$content_width,0.90*$proof_height/$content_height)}]
@@ -488,6 +489,7 @@ namespace eval ::RMSXFlipbookTimeline::Render {
                 set bounds [projected_bounds $ids]
             }
             set pixels [render_to_tga $options $tga $width $height]
+            set width [dict get $pixels width]; set height [dict get $pixels height]
             if {[dict get $options framing] eq "fit" && ([dict get $pixels x0] < 2 || [dict get $pixels y0] < 2 || [dict get $pixels x1] >= $width-2 || [dict get $pixels y1] >= $height-2)} {
                 error "Rendered structures touch the image edge; select Current view or adjust the view before exporting"
             }
