@@ -193,6 +193,7 @@ rmsxflipbooktimeline0.3.1/tests/smoke_dashboard_commands.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_dashboard_current_result.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_dashboard_show.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_figure_export_v03.tcl
+rmsxflipbooktimeline0.3.1/tests/smoke_figure_label_alignment.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_gui_native_slice_size_command.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_gui_show.tcl
 rmsxflipbooktimeline0.3.1/tests/smoke_gui_timeline_commands.tcl
