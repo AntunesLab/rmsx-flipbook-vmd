@@ -191,10 +191,13 @@ namespace eval ::RMSXFlipbookTimeline::Scene {
         }
         return $result
     }
-    proc restore_snapshot {snapshot} {
+    proc restore_snapshot {snapshot {restore_size 1}} {
         variable leases
         set errors {}
         dict for {key value} [dict get $snapshot values] {
+            # A renderer that never resized the native window must not issue a
+            # gratuitous resize while restoring its camera/display settings.
+            if {$key eq "size" && !$restore_size} {continue}
             if {[catch {write $key $value} message]} {lappend errors "$key: $message"}
         }
         foreach item [dict get $snapshot views] {

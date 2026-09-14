@@ -2,6 +2,10 @@
 
 ## 0.3.1 — private review candidate
 
+- Fix explicit `-method Tachyon` PNG/SVG exports to use VMD's bundled
+  executable at the requested resolution without resizing the OpenGL window.
+  Preserve camera, visibility, and display settings on success and failure.
+  Forward Figure's renderer and lighting options instead of ignoring them.
 - Suspend Cocoa drawing while programmatic native resizing settles, restoring
   the previous update state on success or failure. Prevent the dashboard's
   auto-fit timer from changing the view midway through a resize. Add live
