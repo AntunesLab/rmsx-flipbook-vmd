@@ -28,7 +28,6 @@ On Windows, click **Open fresh VMD** if prompted to enable residue thickness.
 | Windows · x64 | 2.0.0a6 | 80/80 passed |
 | Linux · x64 | 2.0.1a1 | 80/80 passed |
 
-These full-suite results cover revision `a4c60d3`. Later changes have focused regression checks; full qualification of the final beta download is pending. [Test evidence and limitations](docs/SUPPORT.md).
 
 ## Video Demo
 [![Watch the RMSX / Flipbook demo](docs/media/demo-thumbnail.png)](https://github.com/AntunesLab/rmsx-flipbook-vmd/raw/refs/heads/main/docs/media/demo-30s-1440p.mp4)
